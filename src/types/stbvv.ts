@@ -34,4 +34,8 @@ export interface ActivityPreset {
   activity: string;
   defaultTenthRate: number;
   suggestedFeeTable: 'A' | 'B' | 'C' | 'D';
+  legalBasis: string;
+  rateType: 'tenth' | 'twentieth';
+  minRate: number;
+  maxRate: number;
 }

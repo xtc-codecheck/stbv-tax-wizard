@@ -39,7 +39,7 @@ export const calculatePosition = (position: Position): CalculationResult => {
       
       baseFee = tableEntry ? tableEntry.fee : table[table.length - 1].fee;
       
-      // Apply tenth rate
+      // Apply rate (tenth or twentieth)
       adjustedFee = baseFee * (position.tenthRate.numerator / position.tenthRate.denominator);
       break;
   }

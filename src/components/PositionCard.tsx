@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Trash2, Calculator } from "lucide-react";
+import { Trash2, Calculator, AlertTriangle, Scale } from "lucide-react";
 import { Position } from "@/types/stbvv";
 import { calculatePosition } from "@/utils/stbvvCalculator";
 import { activityPresets, getActivityPreset } from "@/utils/activityPresets";
@@ -27,6 +27,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
   onRemove
 }) => {
   const calculation = calculatePosition(position);
+  const preset = getActivityPreset(position.activity);
 
   const handleChange = (field: keyof Position, value: any) => {
     onUpdate(position.id, { ...position, [field]: value });
@@ -38,7 +39,10 @@ const PositionCard: React.FC<PositionCardProps> = ({
       ...position,
       activity,
       ...(preset && {
-        tenthRate: { numerator: preset.defaultTenthRate, denominator: 10 },
+        tenthRate: { 
+          numerator: preset.defaultTenthRate, 
+          denominator: preset.rateType === 'twentieth' ? 20 : 10 
+        },
         feeTable: preset.suggestedFeeTable
       })
     };
@@ -47,10 +51,17 @@ const PositionCard: React.FC<PositionCardProps> = ({
 
   const handleTenthRateChange = (numerator: string) => {
     const num = parseFloat(numerator) || 1;
+    const denominator = preset?.rateType === 'twentieth' ? 20 : 10;
     onUpdate(position.id, {
       ...position,
-      tenthRate: { numerator: num, denominator: 10 }
+      tenthRate: { numerator: num, denominator }
     });
+  };
+
+  const isRateOutOfRange = () => {
+    if (!preset || position.billingType !== 'objectValue') return false;
+    const rate = position.tenthRate.numerator;
+    return rate < preset.minRate || rate > preset.maxRate;
   };
 
   const canCalculate = () => {
@@ -105,6 +116,17 @@ const PositionCard: React.FC<PositionCardProps> = ({
           </Select>
         </div>
 
+        {/* Legal Basis */}
+        {preset && (
+          <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <div className="flex items-center text-sm text-blue-700">
+              <Scale className="w-4 h-4 mr-2" />
+              <span className="font-medium">Rechtsgrundlage:</span>
+              <span className="ml-2">{preset.legalBasis} StBVV</span>
+            </div>
+          </div>
+        )}
+
         {/* Description */}
         <div className="space-y-2">
           <Label>Beschreibung (optional)</Label>
@@ -122,23 +144,35 @@ const PositionCard: React.FC<PositionCardProps> = ({
           onUpdate={handleChange}
         />
 
-        {/* Tenth Rate and Quantity */}
+        {/* Rate and Quantity */}
         <div className="grid grid-cols-2 gap-4">
-          {position.billingType === 'objectValue' && (
+          {position.billingType === 'objectValue' && preset && (
             <div className="space-y-2">
-              <Label>Zehntelsatz</Label>
+              <Label>
+                {preset.rateType === 'twentieth' ? 'Zwanzigstel' : 'Zehntelsatz'}
+              </Label>
               <div className="flex items-center space-x-2">
                 <Input
                   type="number"
                   value={position.tenthRate.numerator}
                   onChange={(e) => handleTenthRateChange(e.target.value)}
                   min="0.1"
-                  max="20"
-                  step="0.1"
-                  className="w-20"
+                  max={preset.rateType === 'twentieth' ? "20" : "50"}
+                  step="0.5"
+                  className={`w-20 ${isRateOutOfRange() ? 'border-red-300' : ''}`}
                 />
-                <span className="text-gray-500">/10</span>
+                <span className="text-gray-500">
+                  /{preset.rateType === 'twentieth' ? '20' : '10'}
+                </span>
               </div>
+              {isRateOutOfRange() && (
+                <div className="flex items-center text-sm text-red-600 bg-red-50 p-2 rounded">
+                  <AlertTriangle className="w-4 h-4 mr-2" />
+                  <span>
+                    Rahmen verlassen! Zulässig: {preset.minRate}/{preset.rateType === 'twentieth' ? '20' : '10'} bis {preset.maxRate}/{preset.rateType === 'twentieth' ? '20' : '10'}
+                  </span>
+                </div>
+              )}
             </div>
           )}
 

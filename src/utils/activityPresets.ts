@@ -1,31 +1,222 @@
-
 import { ActivityPreset } from "@/types/stbvv";
 
 export const activityPresets: ActivityPreset[] = [
-  { activity: 'Einkommensteuererklärung', defaultTenthRate: 6, suggestedFeeTable: 'A' },
-  { activity: 'Einkommensteuer Mantelbogen', defaultTenthRate: 3.5, suggestedFeeTable: 'A' },
-  { activity: 'Anlage N (Einkünfte aus nichtselbständiger Arbeit)', defaultTenthRate: 6.5, suggestedFeeTable: 'A' },
-  { activity: 'Anlage V (Vermietung und Verpachtung)', defaultTenthRate: 6.5, suggestedFeeTable: 'A' },
-  { activity: 'Anlage G (Gewerbebetrieb)', defaultTenthRate: 6.5, suggestedFeeTable: 'A' },
-  { activity: 'Anlage S (Einkünfte aus selbständiger Arbeit)', defaultTenthRate: 6, suggestedFeeTable: 'A' },
-  { activity: 'Anlage KAP (Kapitalerträge)', defaultTenthRate: 6.5, suggestedFeeTable: 'A' },
-  { activity: 'Anlage SO (Sonstige Einkünfte)', defaultTenthRate: 6.5, suggestedFeeTable: 'A' },
-  { activity: 'Anlage R (Renten)', defaultTenthRate: 6, suggestedFeeTable: 'A' },
-  { activity: 'Anlage L (Land- und Forstwirtschaft)', defaultTenthRate: 6, suggestedFeeTable: 'D' },
-  { activity: 'Anlage EÜR (Einnahmen-Überschuss-Rechnung)', defaultTenthRate: 17.5, suggestedFeeTable: 'A' },
-  { activity: 'Jahresabschluss GmbH', defaultTenthRate: 20, suggestedFeeTable: 'B' },
-  { activity: 'Jahresabschluss Einzelunternehmen', defaultTenthRate: 20, suggestedFeeTable: 'B' },
-  { activity: 'Jahresabschluss Übermittlung an Bundesanzeiger', defaultTenthRate: 7, suggestedFeeTable: 'B' },
-  { activity: 'Jahresabschluss Übermittlung an das Finanzamt', defaultTenthRate: 7, suggestedFeeTable: 'B' },
-  { activity: 'Überleitung Handelsbilanz nach Steuerbilanz', defaultTenthRate: 8.5, suggestedFeeTable: 'B' },
-  { activity: 'Umsatzsteuer-Voranmeldung', defaultTenthRate: 4, suggestedFeeTable: 'A' },
-  { activity: 'Umsatzsteuererklärung', defaultTenthRate: 4.5, suggestedFeeTable: 'A' },
-  { activity: 'Gewerbesteuererklärung', defaultTenthRate: 3.5, suggestedFeeTable: 'A' },
-  { activity: 'Körperschaftsteuererklärung', defaultTenthRate: 5, suggestedFeeTable: 'A' },
-  { activity: 'Buchführung (monatlich)', defaultTenthRate: 7, suggestedFeeTable: 'C' },
-  { activity: 'Lohnbuchhaltung', defaultTenthRate: 6, suggestedFeeTable: 'C' },
-  { activity: 'Prüfung Steuerbescheid', defaultTenthRate: 6, suggestedFeeTable: 'A' },
-  { activity: 'Auslagen für externe Kosten', defaultTenthRate: 10, suggestedFeeTable: 'A' }
+  { 
+    activity: 'Einkommensteuererklärung', 
+    defaultTenthRate: 6, 
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 24 Abs. 1 Nr. 1', 
+    rateType: 'tenth', 
+    minRate: 1, 
+    maxRate: 6 
+  },
+  { 
+    activity: 'Einkommensteuer Mantelbogen', 
+    defaultTenthRate: 3.5, 
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 24 Abs. 1 Nr. 1', 
+    rateType: 'tenth', 
+    minRate: 1, 
+    maxRate: 6 
+  },
+  { 
+    activity: 'Anlage N (Einkünfte aus nichtselbständiger Arbeit)', 
+    defaultTenthRate: 6.5, 
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 27', 
+    rateType: 'twentieth', 
+    minRate: 1, 
+    maxRate: 12 
+  },
+  { 
+    activity: 'Anlage V (Vermietung und Verpachtung)', 
+    defaultTenthRate: 6.5, 
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 27', 
+    rateType: 'twentieth', 
+    minRate: 1, 
+    maxRate: 12 
+  },
+  { 
+    activity: 'Anlage G (Gewerbebetrieb)', 
+    defaultTenthRate: 6.5, 
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 27', 
+    rateType: 'twentieth', 
+    minRate: 1, 
+    maxRate: 12 
+  },
+  { 
+    activity: 'Anlage S (Einkünfte aus selbständiger Arbeit)', 
+    defaultTenthRate: 6, 
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 27', 
+    rateType: 'twentieth', 
+    minRate: 1, 
+    maxRate: 12 
+  },
+  { 
+    activity: 'Anlage KAP (Kapitalerträge)', 
+    defaultTenthRate: 6.5, 
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 24 Abs. 1 Nr. 14', 
+    rateType: 'twentieth', 
+    minRate: 1, 
+    maxRate: 6 
+  },
+  { 
+    activity: 'Anlage SO (Sonstige Einkünfte)', 
+    defaultTenthRate: 6.5, 
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 27', 
+    rateType: 'twentieth', 
+    minRate: 1, 
+    maxRate: 12 
+  },
+  { 
+    activity: 'Anlage R (Renten)', 
+    defaultTenthRate: 6, 
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 27', 
+    rateType: 'twentieth', 
+    minRate: 1, 
+    maxRate: 12 
+  },
+  { 
+    activity: 'Anlage L (Land- und Forstwirtschaft)', 
+    defaultTenthRate: 6, 
+    suggestedFeeTable: 'D', 
+    legalBasis: '§ 27', 
+    rateType: 'twentieth', 
+    minRate: 1, 
+    maxRate: 12 
+  },
+  { 
+    activity: 'Anlage EÜR (Einnahmen-Überschuss-Rechnung)', 
+    defaultTenthRate: 17.5, 
+    suggestedFeeTable: 'B', 
+    legalBasis: '§ 25', 
+    rateType: 'tenth', 
+    minRate: 5, 
+    maxRate: 30 
+  },
+  { 
+    activity: 'Jahresabschluss GmbH', 
+    defaultTenthRate: 20, 
+    suggestedFeeTable: 'B', 
+    legalBasis: '§ 35 Abs. 1 Nr. 1a', 
+    rateType: 'tenth', 
+    minRate: 10, 
+    maxRate: 40 
+  },
+  { 
+    activity: 'Jahresabschluss Einzelunternehmen', 
+    defaultTenthRate: 20, 
+    suggestedFeeTable: 'B', 
+    legalBasis: '§ 35 Abs. 1 Nr. 1a', 
+    rateType: 'tenth', 
+    minRate: 10, 
+    maxRate: 40 
+  },
+  { 
+    activity: 'Jahresabschluss Übermittlung an Bundesanzeiger', 
+    defaultTenthRate: 7, 
+    suggestedFeeTable: 'B', 
+    legalBasis: '§ 35 Abs. 1 Nr. 6', 
+    rateType: 'tenth', 
+    minRate: 10, 
+    maxRate: 40 
+  },
+  { 
+    activity: 'Jahresabschluss Übermittlung an das Finanzamt', 
+    defaultTenthRate: 7, 
+    suggestedFeeTable: 'B', 
+    legalBasis: '§ 35 Abs. 1 Nr. 6', 
+    rateType: 'tenth', 
+    minRate: 10, 
+    maxRate: 40 
+  },
+  { 
+    activity: 'Überleitung Handelsbilanz nach Steuerbilanz', 
+    defaultTenthRate: 8.5, 
+    suggestedFeeTable: 'B', 
+    legalBasis: '§ 35 Abs. 1 Nr. 4b', 
+    rateType: 'tenth', 
+    minRate: 5, 
+    maxRate: 12 
+  },
+  { 
+    activity: 'Umsatzsteuer-Voranmeldung', 
+    defaultTenthRate: 4, 
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 24 Abs. 1 Nr. 8', 
+    rateType: 'tenth', 
+    minRate: 1, 
+    maxRate: 8 
+  },
+  { 
+    activity: 'Umsatzsteuererklärung', 
+    defaultTenthRate: 4.5, 
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 24 Abs. 1 Nr. 8', 
+    rateType: 'tenth', 
+    minRate: 1, 
+    maxRate: 8 
+  },
+  { 
+    activity: 'Gewerbesteuererklärung', 
+    defaultTenthRate: 3.5, 
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 24 Abs. 1 Nr. 5', 
+    rateType: 'tenth', 
+    minRate: 1, 
+    maxRate: 6 
+  },
+  { 
+    activity: 'Körperschaftsteuererklärung', 
+    defaultTenthRate: 5, 
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 24 Abs. 1 Nr. 3', 
+    rateType: 'tenth', 
+    minRate: 2, 
+    maxRate: 8 
+  },
+  { 
+    activity: 'Buchführung (monatlich)', 
+    defaultTenthRate: 7, 
+    suggestedFeeTable: 'C', 
+    legalBasis: '§ 33', 
+    rateType: 'tenth', 
+    minRate: 1, 
+    maxRate: 12 
+  },
+  { 
+    activity: 'Lohnbuchhaltung', 
+    defaultTenthRate: 6, 
+    suggestedFeeTable: 'C', 
+    legalBasis: '§ 33', 
+    rateType: 'tenth', 
+    minRate: 1, 
+    maxRate: 12 
+  },
+  { 
+    activity: 'Prüfung Steuerbescheid', 
+    defaultTenthRate: 6, 
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 24 Abs. 1 Nr. 1', 
+    rateType: 'tenth', 
+    minRate: 1, 
+    maxRate: 6 
+  },
+  { 
+    activity: 'Auslagen für externe Kosten', 
+    defaultTenthRate: 10, 
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 24 Abs. 1 Nr. 1', 
+    rateType: 'tenth', 
+    minRate: 1, 
+    maxRate: 10 
+  }
 ];
 
 export const getActivityPreset = (activity: string): ActivityPreset | undefined => {
