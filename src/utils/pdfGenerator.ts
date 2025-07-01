@@ -9,7 +9,6 @@ export const generatePDF = (
 ) => {
   const totals = calculateTotal(positions, documentFee, includeVAT);
   
-  // Create a simple HTML structure for the PDF
   const htmlContent = `
     <!DOCTYPE html>
     <html>
@@ -46,6 +45,7 @@ export const generatePDF = (
           border: 1px solid #ddd; 
           padding: 8px; 
           text-align: left; 
+          font-size: 12px;
         }
         th { 
           background-color: #f8f9fa; 
@@ -53,6 +53,11 @@ export const generatePDF = (
         }
         .text-right { 
           text-align: right; 
+        }
+        .description {
+          font-style: italic;
+          color: #666;
+          font-size: 11px;
         }
         .total-section { 
           margin-top: 30px; 
@@ -94,9 +99,9 @@ export const generatePDF = (
           <tr>
             <th>Pos.</th>
             <th>Tätigkeit</th>
-            <th>Gegenstandswert</th>
-            <th>Tabelle</th>
-            <th>Zehntelsatz</th>
+            <th>Beschreibung</th>
+            <th>Abrechnungsart</th>
+            <th>Details</th>
             <th>Anzahl</th>
             <th>Gebühr</th>
             <th>Auslagen</th>
@@ -106,13 +111,29 @@ export const generatePDF = (
         <tbody>
           ${positions.map((position, index) => {
             const calc = calculatePosition(position);
+            let billingDetails = '';
+            
+            switch (position.billingType) {
+              case 'hourly':
+                billingDetails = `${position.hourlyRate?.toFixed(2) || '0'} €/h × ${position.hours || '0'} h`;
+                break;
+              case 'flatRate':
+                billingDetails = `Pauschale: ${position.flatRate?.toFixed(2) || '0'} €`;
+                break;
+              case 'objectValue':
+              default:
+                billingDetails = `${position.objectValue.toFixed(2)} € (Tab. ${position.feeTable}, ${position.tenthRate.numerator}/${position.tenthRate.denominator})`;
+                break;
+            }
+            
             return `
               <tr>
                 <td>${index + 1}</td>
                 <td>${position.activity}</td>
-                <td class="text-right">${position.objectValue.toFixed(2)} €</td>
-                <td>${position.feeTable}</td>
-                <td>${position.tenthRate.numerator}/${position.tenthRate.denominator}</td>
+                <td class="description">${position.description || '-'}</td>
+                <td>${position.billingType === 'hourly' ? 'Stunden' : 
+                      position.billingType === 'flatRate' ? 'Pauschale' : 'Gegenstandswert'}</td>
+                <td>${billingDetails}</td>
                 <td>${position.quantity}</td>
                 <td class="text-right">${calc.adjustedFee.toFixed(2)} €</td>
                 <td class="text-right">${calc.expenseFee.toFixed(2)} €</td>

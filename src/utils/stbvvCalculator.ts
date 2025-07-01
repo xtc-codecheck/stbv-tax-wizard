@@ -3,28 +3,46 @@ import { Position, CalculationResult } from "@/types/stbvv";
 import { getFeeTables } from "./stbvvTables";
 
 export const calculatePosition = (position: Position): CalculationResult => {
-  if (!position.objectValue || position.objectValue <= 0) {
-    return {
-      baseFee: 0,
-      adjustedFee: 0,
-      expenseFee: 0,
-      totalNet: 0
-    };
-  }
+  let baseFee = 0;
+  let adjustedFee = 0;
 
-  const feeTables = getFeeTables();
-  const table = feeTables[position.feeTable];
-  
-  // Find the appropriate fee from the table
-  const tableEntry = table.find(entry => 
-    position.objectValue >= entry.minValue && 
-    position.objectValue < entry.maxValue
-  );
-  
-  const baseFee = tableEntry ? tableEntry.fee : table[table.length - 1].fee;
-  
-  // Apply tenth rate
-  const adjustedFee = baseFee * (position.tenthRate.numerator / position.tenthRate.denominator);
+  switch (position.billingType) {
+    case 'hourly':
+      adjustedFee = (position.hourlyRate || 0) * (position.hours || 0);
+      baseFee = adjustedFee;
+      break;
+      
+    case 'flatRate':
+      adjustedFee = position.flatRate || 0;
+      baseFee = adjustedFee;
+      break;
+      
+    case 'objectValue':
+    default:
+      if (!position.objectValue || position.objectValue <= 0) {
+        return {
+          baseFee: 0,
+          adjustedFee: 0,
+          expenseFee: 0,
+          totalNet: 0
+        };
+      }
+
+      const feeTables = getFeeTables();
+      const table = feeTables[position.feeTable];
+      
+      // Find the appropriate fee from the table
+      const tableEntry = table.find(entry => 
+        position.objectValue >= entry.minValue && 
+        position.objectValue < entry.maxValue
+      );
+      
+      baseFee = tableEntry ? tableEntry.fee : table[table.length - 1].fee;
+      
+      // Apply tenth rate
+      adjustedFee = baseFee * (position.tenthRate.numerator / position.tenthRate.denominator);
+      break;
+  }
   
   // Calculate expense fee (20% of adjusted fee, max 20€)
   const expenseFee = position.applyExpenseFee 

@@ -17,11 +17,16 @@ const Index = () => {
     const newPosition: Position = {
       id: Date.now().toString(),
       activity: '',
+      description: '',
       objectValue: 0,
       tenthRate: { numerator: 6, denominator: 10 },
       quantity: 1,
       feeTable: 'A',
-      applyExpenseFee: true
+      applyExpenseFee: true,
+      billingType: 'objectValue',
+      hourlyRate: 0,
+      hours: 0,
+      flatRate: 0
     };
     setPositions([...positions, newPosition]);
   };

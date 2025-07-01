@@ -2,6 +2,7 @@
 export interface Position {
   id: string;
   activity: string;
+  description?: string;
   objectValue: number;
   tenthRate: {
     numerator: number;
@@ -10,6 +11,10 @@ export interface Position {
   quantity: number;
   feeTable: 'A' | 'B' | 'C' | 'D';
   applyExpenseFee: boolean;
+  billingType: 'objectValue' | 'hourly' | 'flatRate';
+  hourlyRate?: number;
+  hours?: number;
+  flatRate?: number;
 }
 
 export interface FeeTableEntry {
@@ -23,4 +28,10 @@ export interface CalculationResult {
   adjustedFee: number;
   expenseFee: number;
   totalNet: number;
+}
+
+export interface ActivityPreset {
+  activity: string;
+  defaultTenthRate: number;
+  suggestedFeeTable: 'A' | 'B' | 'C' | 'D';
 }

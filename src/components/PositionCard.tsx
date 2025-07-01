@@ -6,9 +6,12 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { Trash2, Calculator } from "lucide-react";
 import { Position } from "@/types/stbvv";
 import { calculatePosition } from "@/utils/stbvvCalculator";
+import { activityPresets, getActivityPreset } from "@/utils/activityPresets";
+import BillingTypeSelector from "./BillingTypeSelector";
 
 interface PositionCardProps {
   position: Position;
@@ -29,29 +32,38 @@ const PositionCard: React.FC<PositionCardProps> = ({
     onUpdate(position.id, { ...position, [field]: value });
   };
 
+  const handleActivityChange = (activity: string) => {
+    const preset = getActivityPreset(activity);
+    const updatedPosition = {
+      ...position,
+      activity,
+      ...(preset && {
+        tenthRate: { numerator: preset.defaultTenthRate, denominator: 10 },
+        feeTable: preset.suggestedFeeTable
+      })
+    };
+    onUpdate(position.id, updatedPosition);
+  };
+
   const handleTenthRateChange = (numerator: string) => {
-    const num = parseInt(numerator) || 1;
+    const num = parseFloat(numerator) || 1;
     onUpdate(position.id, {
       ...position,
       tenthRate: { numerator: num, denominator: 10 }
     });
   };
 
-  const activityOptions = [
-    'Einkommensteuererklärung',
-    'Einkommensteuer Mantelbogen',
-    'Anlage N (Einkünfte aus nichtselbständiger Arbeit)',
-    'Anlage V (Vermietung und Verpachtung)',
-    'Anlage G (Gewerbebetrieb)',
-    'Anlage S (Einkünfte aus selbständiger Arbeit)',
-    'Jahresabschluss GmbH',
-    'Jahresabschluss Einzelunternehmen',
-    'Umsatzsteuer-Voranmeldung',
-    'Umsatzsteuererklärung',
-    'Gewerbesteuererklärung',
-    'Buchführung (monatlich)',
-    'Lohnbuchhaltung'
-  ];
+  const canCalculate = () => {
+    switch (position.billingType) {
+      case 'hourly':
+        return (position.hourlyRate || 0) > 0 && (position.hours || 0) > 0;
+      case 'flatRate':
+        return (position.flatRate || 0) > 0;
+      case 'objectValue':
+      default:
+        return position.objectValue > 0;
+    }
+  };
 
   return (
     <Card className="border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
@@ -75,80 +87,64 @@ const PositionCard: React.FC<PositionCardProps> = ({
       <CardContent className="space-y-4">
         {/* Activity */}
         <div className="space-y-2">
-          <Label htmlFor={`activity-${position.id}`}>Tätigkeit</Label>
+          <Label>Tätigkeit</Label>
           <Select
             value={position.activity}
-            onValueChange={(value) => handleChange('activity', value)}
+            onValueChange={handleActivityChange}
           >
             <SelectTrigger>
               <SelectValue placeholder="Tätigkeit auswählen..." />
             </SelectTrigger>
             <SelectContent>
-              {activityOptions.map((activity) => (
-                <SelectItem key={activity} value={activity}>
-                  {activity}
+              {activityPresets.map((preset) => (
+                <SelectItem key={preset.activity} value={preset.activity}>
+                  {preset.activity}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
 
-        {/* Object Value and Fee Table */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor={`objectValue-${position.id}`}>Gegenstandswert (€)</Label>
-            <Input
-              id={`objectValue-${position.id}`}
-              type="number"
-              value={position.objectValue || ''}
-              onChange={(e) => handleChange('objectValue', parseFloat(e.target.value) || 0)}
-              placeholder="0"
-              min="0"
-              step="0.01"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor={`feeTable-${position.id}`}>Gebührentabelle</Label>
-            <Select
-              value={position.feeTable}
-              onValueChange={(value) => handleChange('feeTable', value)}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="A">Tabelle A (Erklärungen, Beratung)</SelectItem>
-                <SelectItem value="B">Tabelle B (Abschlüsse)</SelectItem>
-                <SelectItem value="C">Tabelle C (Buchführung)</SelectItem>
-                <SelectItem value="D">Tabelle D (Landwirtschaft)</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+        {/* Description */}
+        <div className="space-y-2">
+          <Label>Beschreibung (optional)</Label>
+          <Textarea
+            value={position.description || ''}
+            onChange={(e) => handleChange('description', e.target.value)}
+            placeholder="Zusätzliche Beschreibung zur Position..."
+            rows={2}
+          />
         </div>
+
+        {/* Billing Type Selector */}
+        <BillingTypeSelector
+          position={position}
+          onUpdate={handleChange}
+        />
 
         {/* Tenth Rate and Quantity */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor={`tenthRate-${position.id}`}>Zehntelsatz</Label>
-            <div className="flex items-center space-x-2">
-              <Input
-                id={`tenthRate-${position.id}`}
-                type="number"
-                value={position.tenthRate.numerator}
-                onChange={(e) => handleTenthRateChange(e.target.value)}
-                min="1"
-                max="10"
-                className="w-16"
-              />
-              <span className="text-gray-500">/10</span>
+          {position.billingType === 'objectValue' && (
+            <div className="space-y-2">
+              <Label>Zehntelsatz</Label>
+              <div className="flex items-center space-x-2">
+                <Input
+                  type="number"
+                  value={position.tenthRate.numerator}
+                  onChange={(e) => handleTenthRateChange(e.target.value)}
+                  min="0.1"
+                  max="20"
+                  step="0.1"
+                  className="w-20"
+                />
+                <span className="text-gray-500">/10</span>
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="space-y-2">
-            <Label htmlFor={`quantity-${position.id}`}>Anzahl</Label>
+            <Label>Anzahl</Label>
             <Input
-              id={`quantity-${position.id}`}
               type="number"
               value={position.quantity}
               onChange={(e) => handleChange('quantity', parseInt(e.target.value) || 1)}
@@ -161,26 +157,21 @@ const PositionCard: React.FC<PositionCardProps> = ({
         {/* Expense Fee Checkbox */}
         <div className="flex items-center space-x-2">
           <Checkbox
-            id={`expenseFee-${position.id}`}
             checked={position.applyExpenseFee}
             onCheckedChange={(checked) => handleChange('applyExpenseFee', checked)}
           />
-          <Label htmlFor={`expenseFee-${position.id}`} className="text-sm">
+          <Label className="text-sm">
             Auslagenpauschale anwenden (20% der Nettogebühr, max. 20€)
           </Label>
         </div>
 
         {/* Calculation Display */}
-        {position.objectValue > 0 && (
+        {canCalculate() && (
           <div className="mt-4 p-4 bg-gray-50 rounded-lg border">
             <h4 className="font-semibold text-gray-800 mb-2">Berechnung:</h4>
             <div className="space-y-1 text-sm">
               <div className="flex justify-between">
-                <span>10/10-Gebühr:</span>
-                <span>{calculation.baseFee.toFixed(2)} €</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Zehntelsatz ({position.tenthRate.numerator}/10):</span>
+                <span>Gebühr:</span>
                 <span>{calculation.adjustedFee.toFixed(2)} €</span>
               </div>
               {position.applyExpenseFee && (
