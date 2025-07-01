@@ -2,7 +2,9 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calculator, Plus, FileText, Download } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Calculator, Plus, FileText, Download, ArrowUp, ArrowDown } from "lucide-react";
 import PositionCard from "@/components/PositionCard";
 import TotalCalculation from "@/components/TotalCalculation";
 import { Position } from "@/types/stbvv";
@@ -12,6 +14,7 @@ const Index = () => {
   const [positions, setPositions] = useState<Position[]>([]);
   const [documentFee, setDocumentFee] = useState(12);
   const [includeVAT, setIncludeVAT] = useState(true);
+  const [documentType, setDocumentType] = useState<'quote' | 'invoice'>('quote');
 
   const addPosition = () => {
     const newPosition: Position = {
@@ -37,6 +40,18 @@ const Index = () => {
 
   const removePosition = (id: string) => {
     setPositions(positions.filter(pos => pos.id !== id));
+  };
+
+  const movePosition = (id: string, direction: 'up' | 'down') => {
+    const currentIndex = positions.findIndex(pos => pos.id === id);
+    if (currentIndex === -1) return;
+    
+    const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    if (newIndex < 0 || newIndex >= positions.length) return;
+    
+    const newPositions = [...positions];
+    [newPositions[currentIndex], newPositions[newIndex]] = [newPositions[newIndex], newPositions[currentIndex]];
+    setPositions(newPositions);
   };
 
   const handleGeneratePDF = () => {
@@ -82,13 +97,17 @@ const Index = () => {
             {/* Positions List */}
             <div className="space-y-4">
               {positions.map((position, index) => (
-                <PositionCard
-                  key={position.id}
-                  position={position}
-                  index={index + 1}
-                  onUpdate={updatePosition}
-                  onRemove={removePosition}
-                />
+                <div key={position.id} className="relative">
+                  <PositionCard
+                    position={position}
+                    index={index + 1}
+                    onUpdate={updatePosition}
+                    onRemove={removePosition}
+                    canMoveUp={index > 0}
+                    canMoveDown={index < positions.length - 1}
+                    onMove={movePosition}
+                  />
+                </div>
               ))}
             </div>
 
@@ -109,7 +128,7 @@ const Index = () => {
 
           {/* Calculation Column */}
           <div className="lg:col-span-1">
-            <div className="sticky top-8">
+            <div className="sticky top-8 space-y-4">
               <TotalCalculation
                 positions={positions}
                 documentFee={documentFee}
@@ -118,10 +137,31 @@ const Index = () => {
                 onVATChange={setIncludeVAT}
               />
               
+              {/* Document Type Selection */}
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="space-y-2">
+                    <Label>Dokumenttyp</Label>
+                    <Select
+                      value={documentType}
+                      onValueChange={(value: 'quote' | 'invoice') => setDocumentType(value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="quote">Angebot</SelectItem>
+                        <SelectItem value="invoice">Rechnung</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </CardContent>
+              </Card>
+              
               {positions.length > 0 && (
                 <Button
                   onClick={handleGeneratePDF}
-                  className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
                 >
                   <Download className="w-4 h-4 mr-2" />
                   PDF herunterladen

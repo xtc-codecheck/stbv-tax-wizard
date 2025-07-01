@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -7,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Trash2, Calculator, AlertTriangle, Scale } from "lucide-react";
+import { Trash2, Calculator, AlertTriangle, Scale, ArrowUp, ArrowDown } from "lucide-react";
 import { Position } from "@/types/stbvv";
 import { calculatePosition } from "@/utils/stbvvCalculator";
 import { activityPresets, getActivityPreset } from "@/utils/activityPresets";
@@ -18,13 +17,19 @@ interface PositionCardProps {
   index: number;
   onUpdate: (id: string, position: Position) => void;
   onRemove: (id: string) => void;
+  canMoveUp: boolean;
+  canMoveDown: boolean;
+  onMove: (id: string, direction: 'up' | 'down') => void;
 }
 
 const PositionCard: React.FC<PositionCardProps> = ({
   position,
   index,
   onUpdate,
-  onRemove
+  onRemove,
+  canMoveUp,
+  canMoveDown,
+  onMove
 }) => {
   const calculation = calculatePosition(position);
   const preset = getActivityPreset(position.activity);
@@ -35,7 +40,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 
   const handleActivityChange = (activity: string) => {
     const preset = getActivityPreset(activity);
-    const updatedPosition = {
+    let updatedPosition = {
       ...position,
       activity,
       ...(preset && {
@@ -46,6 +51,23 @@ const PositionCard: React.FC<PositionCardProps> = ({
         feeTable: preset.suggestedFeeTable
       })
     };
+
+    // Spezielle Behandlung für bestimmte Aktivitäten
+    if (activity === 'Prüfung Steuerbescheid') {
+      updatedPosition = {
+        ...updatedPosition,
+        billingType: 'hourly',
+        hourlyRate: 100,
+        hours: 1
+      };
+    } else if (activity === 'Lohnbuchhaltung') {
+      updatedPosition = {
+        ...updatedPosition,
+        billingType: 'flatRate',
+        flatRate: 18
+      };
+    }
+
     onUpdate(position.id, updatedPosition);
   };
 
@@ -84,14 +106,35 @@ const PositionCard: React.FC<PositionCardProps> = ({
             <Calculator className="w-5 h-5 mr-2 text-blue-600" />
             Position {index}
           </CardTitle>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onRemove(position.id)}
-            className="text-red-500 hover:text-red-700 hover:bg-red-50"
-          >
-            <Trash2 className="w-4 h-4" />
-          </Button>
+          <div className="flex items-center space-x-2">
+            {/* Move Buttons */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onMove(position.id, 'up')}
+              disabled={!canMoveUp}
+              className="text-gray-500 hover:text-gray-700 disabled:opacity-30"
+            >
+              <ArrowUp className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onMove(position.id, 'down')}
+              disabled={!canMoveDown}
+              className="text-gray-500 hover:text-gray-700 disabled:opacity-30"
+            >
+              <ArrowDown className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onRemove(position.id)}
+              className="text-red-500 hover:text-red-700 hover:bg-red-50"
+            >
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
       </CardHeader>
 
