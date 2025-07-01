@@ -2,19 +2,30 @@
 import { Position } from "@/types/stbvv";
 import { calculatePosition, calculateTotal } from "./stbvvCalculator";
 
+interface ClientData {
+  name: string;
+  street: string;
+  postalCode: string;
+  city: string;
+}
+
 export const generatePDF = (
   positions: Position[], 
   documentFee: number, 
-  includeVAT: boolean
+  includeVAT: boolean,
+  documentType: 'quote' | 'invoice' = 'quote',
+  clientData?: ClientData
 ) => {
   const totals = calculateTotal(positions, documentFee, includeVAT);
+  const documentTitle = documentType === 'quote' ? 'Angebot' : 'Rechnung';
+  const documentTitleLong = documentType === 'quote' ? 'Kostenvoranschlag' : 'Rechnung';
   
   const htmlContent = `
     <!DOCTYPE html>
     <html>
     <head>
       <meta charset="utf-8">
-      <title>STBVV Abrechnung</title>
+      <title>STBVV ${documentTitle}</title>
       <style>
         body { 
           font-family: Arial, sans-serif; 
@@ -35,6 +46,16 @@ export const generatePDF = (
         .header p { 
           margin: 5px 0; 
           color: #666;
+        }
+        .client-info {
+          margin: 20px 0;
+          padding: 15px;
+          background-color: #f8f9fa;
+          border-radius: 8px;
+        }
+        .client-info h3 {
+          margin: 0 0 10px 0;
+          color: #2563eb;
         }
         table { 
           width: 100%; 
@@ -85,14 +106,27 @@ export const generatePDF = (
           font-size: 12px;
           color: #666;
         }
+        @media print {
+          body { margin: 0; }
+          .header { break-after: avoid; }
+        }
       </style>
     </head>
     <body>
       <div class="header">
-        <h1>🧾 STBVV-Abrechnung</h1>
-        <p>Steuerberatervergütung nach StBVV 2025</p>
+        <h1>📄 STBVV-${documentTitle}</h1>
+        <p>${documentTitleLong} - Steuerberatervergütung nach StBVV 2025</p>
         <p>Erstellt am: ${new Date().toLocaleDateString('de-DE')}</p>
       </div>
+
+      ${clientData && (clientData.name || clientData.street || clientData.postalCode || clientData.city) ? `
+        <div class="client-info">
+          <h3>Mandant:</h3>
+          ${clientData.name ? `<p><strong>${clientData.name}</strong></p>` : ''}
+          ${clientData.street ? `<p>${clientData.street}</p>` : ''}
+          ${(clientData.postalCode || clientData.city) ? `<p>${clientData.postalCode} ${clientData.city}</p>` : ''}
+        </div>
+      ` : ''}
 
       <table>
         <thead>
@@ -171,9 +205,8 @@ export const generatePDF = (
 
       <div class="footer">
         <p><strong>Rechtsgrundlage:</strong> Steuerberatervergütungsverordnung (StBVV) in der Fassung von 2025</p>
-        <p><strong>Hinweis:</strong> Diese Abrechnung wurde automatisch erstellt und entspricht den gesetzlichen Bestimmungen der StBVV.</p>
+        <p><strong>Hinweis:</strong> ${documentType === 'quote' ? 'Dieses Angebot' : 'Diese Rechnung'} wurde automatisch erstellt und entspricht den gesetzlichen Bestimmungen der StBVV.</p>
         <br>
-        <p>Mandant: _________________________</p>
         <p>Datum: ___________________________</p>
         <p>Unterschrift: ____________________</p>
       </div>
@@ -181,15 +214,26 @@ export const generatePDF = (
     </html>
   `;
 
-  // Create and download the PDF
-  const printWindow = window.open('', '_blank');
-  if (printWindow) {
-    printWindow.document.write(htmlContent);
-    printWindow.document.close();
-    
-    // Wait for content to load, then print
-    setTimeout(() => {
-      printWindow.print();
-    }, 500);
-  }
+  // Create blob and download
+  const blob = new Blob([htmlContent], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `stbvv-${documentType}-${new Date().toISOString().split('T')[0]}.html`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+  
+  // Alternative: Open in new window for printing
+  setTimeout(() => {
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(htmlContent);
+      printWindow.document.close();
+      setTimeout(() => {
+        printWindow.print();
+      }, 500);
+    }
+  }, 100);
 };

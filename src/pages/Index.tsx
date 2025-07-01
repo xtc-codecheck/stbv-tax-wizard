@@ -4,17 +4,31 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Calculator, Plus, FileText, Download, ArrowUp, ArrowDown } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Calculator, Plus, FileText, Download, ArrowUp, ArrowDown, User } from "lucide-react";
 import PositionCard from "@/components/PositionCard";
 import TotalCalculation from "@/components/TotalCalculation";
 import { Position } from "@/types/stbvv";
 import { generatePDF } from "@/utils/pdfGenerator";
 
+interface ClientData {
+  name: string;
+  street: string;
+  postalCode: string;
+  city: string;
+}
+
 const Index = () => {
   const [positions, setPositions] = useState<Position[]>([]);
-  const [documentFee, setDocumentFee] = useState(12);
+  const [documentFee, setDocumentFee] = useState(0);
   const [includeVAT, setIncludeVAT] = useState(true);
   const [documentType, setDocumentType] = useState<'quote' | 'invoice'>('quote');
+  const [clientData, setClientData] = useState<ClientData>({
+    name: '',
+    street: '',
+    postalCode: '',
+    city: ''
+  });
 
   const addPosition = () => {
     const newPosition: Position = {
@@ -54,8 +68,12 @@ const Index = () => {
     setPositions(newPositions);
   };
 
+  const updateClientData = (field: keyof ClientData, value: string) => {
+    setClientData(prev => ({ ...prev, [field]: value }));
+  };
+
   const handleGeneratePDF = () => {
-    generatePDF(positions, documentFee, includeVAT);
+    generatePDF(positions, documentFee, includeVAT, documentType, clientData);
   };
 
   return (
@@ -76,21 +94,53 @@ const Index = () => {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Positions Column */}
           <div className="lg:col-span-2 space-y-6">
-            <Card className="border-2 border-dashed border-blue-200 bg-blue-50/30">
-              <CardHeader className="text-center">
-                <CardTitle className="text-lg font-semibold text-blue-700 flex items-center justify-center">
-                  <Plus className="w-5 h-5 mr-2" />
-                  Neue Position hinzufügen
+            {/* Client Data Card */}
+            <Card className="border-2 border-green-200 bg-green-50/30">
+              <CardHeader>
+                <CardTitle className="text-lg font-semibold text-green-700 flex items-center">
+                  <User className="w-5 h-5 mr-2" />
+                  Mandantendaten
                 </CardTitle>
               </CardHeader>
-              <CardContent className="text-center">
-                <Button 
-                  onClick={addPosition}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Position hinzufügen
-                </Button>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="clientName">Name/Firma</Label>
+                    <Input
+                      id="clientName"
+                      value={clientData.name}
+                      onChange={(e) => updateClientData('name', e.target.value)}
+                      placeholder="Max Mustermann / Mustermann GmbH"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="clientStreet">Straße, Hausnummer</Label>
+                    <Input
+                      id="clientStreet"
+                      value={clientData.street}
+                      onChange={(e) => updateClientData('street', e.target.value)}
+                      placeholder="Musterstraße 123"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="clientPostalCode">PLZ</Label>
+                    <Input
+                      id="clientPostalCode"
+                      value={clientData.postalCode}
+                      onChange={(e) => updateClientData('postalCode', e.target.value)}
+                      placeholder="12345"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="clientCity">Ort</Label>
+                    <Input
+                      id="clientCity"
+                      value={clientData.city}
+                      onChange={(e) => updateClientData('city', e.target.value)}
+                      placeholder="Musterstadt"
+                    />
+                  </div>
+                </div>
               </CardContent>
             </Card>
 
@@ -124,6 +174,25 @@ const Index = () => {
                 </CardContent>
               </Card>
             )}
+
+            {/* Add Position Card - moved here */}
+            <Card className="border-2 border-dashed border-blue-200 bg-blue-50/30">
+              <CardHeader className="text-center">
+                <CardTitle className="text-lg font-semibold text-blue-700 flex items-center justify-center">
+                  <Plus className="w-5 h-5 mr-2" />
+                  Neue Position hinzufügen
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-center">
+                <Button 
+                  onClick={addPosition}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Position hinzufügen
+                </Button>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Calculation Column */}
@@ -164,7 +233,7 @@ const Index = () => {
                   className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
                 >
                   <Download className="w-4 h-4 mr-2" />
-                  PDF herunterladen
+                  {documentType === 'quote' ? 'Angebot' : 'Rechnung'} als PDF herunterladen
                 </Button>
               )}
             </div>
