@@ -5,17 +5,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Calculator, Plus, FileText, Download, ArrowUp, ArrowDown, User } from "lucide-react";
+import { Calculator, Plus, FileText, Download, ArrowUp, ArrowDown, User, Mail } from "lucide-react";
 import PositionCard from "@/components/PositionCard";
 import TotalCalculation from "@/components/TotalCalculation";
 import { Position } from "@/types/stbvv";
 import { generatePDF } from "@/utils/pdfGenerator";
+import { calculateTotal } from "@/utils/stbvvCalculator";
 
 interface ClientData {
   name: string;
   street: string;
   postalCode: string;
   city: string;
+  email: string;
 }
 
 const Index = () => {
@@ -27,7 +29,8 @@ const Index = () => {
     name: '',
     street: '',
     postalCode: '',
-    city: ''
+    city: '',
+    email: ''
   });
 
   const addPosition = () => {
@@ -74,6 +77,28 @@ const Index = () => {
 
   const handleGeneratePDF = () => {
     generatePDF(positions, documentFee, includeVAT, documentType, clientData);
+  };
+
+  const handleSendEmail = () => {
+    if (!clientData.email) {
+      alert('Bitte geben Sie eine E-Mail-Adresse ein.');
+      return;
+    }
+
+    const totals = calculateTotal(positions, documentFee, includeVAT);
+    const documentTitle = documentType === 'quote' ? 'Angebot' : 'Rechnung';
+    
+    const subject = encodeURIComponent(`${documentTitle} - Steuerberatervergütung`);
+    const body = encodeURIComponent(`Sehr geehrte Damen und Herren,
+
+anbei erhalten Sie unser${documentType === 'quote' ? ' Angebot' : 'e Rechnung'} über Steuerberatungsleistungen.
+
+Gesamtsumme: ${totals.totalGross.toFixed(2)} €
+
+Mit freundlichen Grüßen`);
+
+    const mailtoLink = `mailto:${clientData.email}?subject=${subject}&body=${body}`;
+    window.location.href = mailtoLink;
   };
 
   return (
@@ -140,6 +165,16 @@ const Index = () => {
                       placeholder="Musterstadt"
                     />
                   </div>
+                  <div className="space-y-2 md:col-span-2">
+                    <Label htmlFor="clientEmail">E-Mail-Adresse</Label>
+                    <Input
+                      id="clientEmail"
+                      type="email"
+                      value={clientData.email}
+                      onChange={(e) => updateClientData('email', e.target.value)}
+                      placeholder="max.mustermann@email.de"
+                    />
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -175,7 +210,7 @@ const Index = () => {
               </Card>
             )}
 
-            {/* Add Position Card - moved here */}
+            {/* Add Position Card */}
             <Card className="border-2 border-dashed border-blue-200 bg-blue-50/30">
               <CardHeader className="text-center">
                 <CardTitle className="text-lg font-semibold text-blue-700 flex items-center justify-center">
@@ -228,13 +263,26 @@ const Index = () => {
               </Card>
               
               {positions.length > 0 && (
-                <Button
-                  onClick={handleGeneratePDF}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  {documentType === 'quote' ? 'Angebot' : 'Rechnung'} als PDF herunterladen
-                </Button>
+                <div className="space-y-2">
+                  <Button
+                    onClick={handleGeneratePDF}
+                    className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    {documentType === 'quote' ? 'Angebot' : 'Rechnung'} als PDF herunterladen
+                  </Button>
+                  
+                  {clientData.email && (
+                    <Button
+                      onClick={handleSendEmail}
+                      variant="outline"
+                      className="w-full border-green-600 text-green-600 hover:bg-green-50 py-3 rounded-lg font-medium transition-all duration-200"
+                    >
+                      <Mail className="w-4 h-4 mr-2" />
+                      E-Mail senden an {clientData.email}
+                    </Button>
+                  )}
+                </div>
               )}
             </div>
           </div>

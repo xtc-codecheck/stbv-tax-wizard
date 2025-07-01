@@ -7,6 +7,7 @@ interface ClientData {
   street: string;
   postalCode: string;
   city: string;
+  email: string;
 }
 
 export const generatePDF = (
@@ -119,12 +120,13 @@ export const generatePDF = (
         <p>Erstellt am: ${new Date().toLocaleDateString('de-DE')}</p>
       </div>
 
-      ${clientData && (clientData.name || clientData.street || clientData.postalCode || clientData.city) ? `
+      ${clientData && (clientData.name || clientData.street || clientData.postalCode || clientData.city || clientData.email) ? `
         <div class="client-info">
           <h3>Mandant:</h3>
           ${clientData.name ? `<p><strong>${clientData.name}</strong></p>` : ''}
           ${clientData.street ? `<p>${clientData.street}</p>` : ''}
           ${(clientData.postalCode || clientData.city) ? `<p>${clientData.postalCode} ${clientData.city}</p>` : ''}
+          ${clientData.email ? `<p>E-Mail: ${clientData.email}</p>` : ''}
         </div>
       ` : ''}
 
