@@ -110,12 +110,22 @@ export const generatePDF = (
         @media print {
           body { margin: 0; }
           .header { break-after: avoid; }
+          @page {
+            margin: 0;
+            size: A4;
+          }
+          html, body {
+            height: 100%;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: hidden;
+          }
         }
       </style>
     </head>
     <body>
       <div class="header">
-        <h1>📄 STBVV-${documentTitle}</h1>
+        <h1>STBVV-${documentTitle}</h1>
         <p>${documentTitleLong} - Steuerberatervergütung nach StBVV 2025</p>
         <p>Erstellt am: ${new Date().toLocaleDateString('de-DE')}</p>
       </div>
@@ -200,7 +210,7 @@ export const generatePDF = (
           </div>
         ` : ''}
         <div class="total-row total-final">
-          <span>💰 Gesamtsumme brutto:</span>
+          <span>Gesamtsumme brutto:</span>
           <span>${totals.totalGross.toFixed(2)} €</span>
         </div>
       </div>

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -210,15 +209,9 @@ Mit freundlichen Grüßen`);
               </Card>
             )}
 
-            {/* Add Position Card */}
+            {/* Add Position Button */}
             <Card className="border-2 border-dashed border-blue-200 bg-blue-50/30">
-              <CardHeader className="text-center">
-                <CardTitle className="text-lg font-semibold text-blue-700 flex items-center justify-center">
-                  <Plus className="w-5 h-5 mr-2" />
-                  Neue Position hinzufügen
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="text-center">
+              <CardContent className="text-center py-6">
                 <Button 
                   onClick={addPosition}
                   className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
