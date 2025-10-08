@@ -67,6 +67,27 @@ const PositionCard: React.FC<PositionCardProps> = ({
         billingType: 'flatRate',
         flatRate: 18
       };
+    } else if (activity === 'Lohnabrechnung pro Arbeitnehmer (monatlich)') {
+      updatedPosition = {
+        ...updatedPosition,
+        billingType: 'flatRate',
+        flatRate: 15
+      };
+    } else if (
+      activity.startsWith('Beratung') || 
+      activity === 'Schriftliche Gutachten' ||
+      activity === 'Steuerschätzung' ||
+      activity === 'Fristverlängerung beantragen' ||
+      activity === 'Bescheinigungen ausstellen' ||
+      activity === 'Betriebswirtschaftliche Beratung' ||
+      activity === 'Finanzplanung und Liquiditätsplanung'
+    ) {
+      updatedPosition = {
+        ...updatedPosition,
+        billingType: 'hourly',
+        hourlyRate: preset?.defaultTenthRate || 100,
+        hours: 1
+      };
     }
 
     onUpdate(position.id, updatedPosition);

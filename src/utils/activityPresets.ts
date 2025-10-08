@@ -217,6 +217,255 @@ export const activityPresets: ActivityPreset[] = [
     rateType: 'tenth', 
     minRate: 1, 
     maxRate: 10 
+  },
+  // ===== BERATUNGSLEISTUNGEN (§ 23 StBVV) =====
+  { 
+    activity: 'Beratung allgemein', 
+    defaultTenthRate: 100, // Stundensatz
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 23 Abs. 1', 
+    rateType: 'tenth', 
+    minRate: 50, 
+    maxRate: 200 
+  },
+  { 
+    activity: 'Beratung bei Betriebseröffnung/-übernahme', 
+    defaultTenthRate: 120, // Stundensatz
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 23 Abs. 3', 
+    rateType: 'tenth', 
+    minRate: 80, 
+    maxRate: 200 
+  },
+  { 
+    activity: 'Beratung bei Umstrukturierung', 
+    defaultTenthRate: 120, // Stundensatz
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 23 Abs. 3', 
+    rateType: 'tenth', 
+    minRate: 80, 
+    maxRate: 200 
+  },
+  { 
+    activity: 'Schriftliche Gutachten', 
+    defaultTenthRate: 150, // Stundensatz
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 23 Abs. 4', 
+    rateType: 'tenth', 
+    minRate: 100, 
+    maxRate: 250 
+  },
+  // ===== EINSPRUCHS- UND RECHTSBEHELFSVERFAHREN (§ 40 StBVV) =====
+  { 
+    activity: 'Einspruch beim Finanzamt', 
+    defaultTenthRate: 4.5, // Mittelwert zwischen 1 und 8
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 40 Abs. 1', 
+    rateType: 'tenth', 
+    minRate: 1, 
+    maxRate: 8 
+  },
+  { 
+    activity: 'Aussetzung der Vollziehung (AdV)', 
+    defaultTenthRate: 4.5, // Mittelwert zwischen 1 und 8
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 40 Abs. 1', 
+    rateType: 'tenth', 
+    minRate: 1, 
+    maxRate: 8 
+  },
+  // ===== WEITERE STEUERERKLÄRUNGEN =====
+  { 
+    activity: 'Erbschaftsteuererklärung', 
+    defaultTenthRate: 5, // Mittelwert zwischen 2 und 8
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 24 Abs. 1 Nr. 2', 
+    rateType: 'tenth', 
+    minRate: 2, 
+    maxRate: 8 
+  },
+  { 
+    activity: 'Schenkungsteuererklärung', 
+    defaultTenthRate: 5, // Mittelwert zwischen 2 und 8
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 24 Abs. 1 Nr. 2', 
+    rateType: 'tenth', 
+    minRate: 2, 
+    maxRate: 8 
+  },
+  { 
+    activity: 'Grunderwerbsteuererklärung', 
+    defaultTenthRate: 3.5, // Mittelwert zwischen 1 und 6
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 24 Abs. 1 Nr. 4', 
+    rateType: 'tenth', 
+    minRate: 1, 
+    maxRate: 6 
+  },
+  { 
+    activity: 'Zusammenfassende Meldung (ZM)', 
+    defaultTenthRate: 2, // Mittelwert zwischen 1 und 3
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 24 Abs. 1 Nr. 8', 
+    rateType: 'tenth', 
+    minRate: 1, 
+    maxRate: 3 
+  },
+  { 
+    activity: 'Antrag auf Feststellung des verbleibenden Verlustvortrags', 
+    defaultTenthRate: 3.5, // Mittelwert zwischen 1 und 6
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 24 Abs. 1 Nr. 10', 
+    rateType: 'tenth', 
+    minRate: 1, 
+    maxRate: 6 
+  },
+  // ===== WEITERE EINKOMMENSTEUER-ANLAGEN =====
+  { 
+    activity: 'Anlage Kind', 
+    defaultTenthRate: 3, // Mittelwert zwischen 1 und 5
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 27', 
+    rateType: 'twentieth', 
+    minRate: 1, 
+    maxRate: 5 
+  },
+  { 
+    activity: 'Anlage AV (Altersvorsorge)', 
+    defaultTenthRate: 3, // Mittelwert zwischen 1 und 5
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 27', 
+    rateType: 'twentieth', 
+    minRate: 1, 
+    maxRate: 5 
+  },
+  { 
+    activity: 'Anlage Unterhalt', 
+    defaultTenthRate: 4, // Mittelwert zwischen 1 und 7
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 27', 
+    rateType: 'twentieth', 
+    minRate: 1, 
+    maxRate: 7 
+  },
+  { 
+    activity: 'Anlage Vorsorgeaufwand', 
+    defaultTenthRate: 3, // Mittelwert zwischen 1 und 5
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 27', 
+    rateType: 'twentieth', 
+    minRate: 1, 
+    maxRate: 5 
+  },
+  { 
+    activity: 'Anlage Sonderausgaben', 
+    defaultTenthRate: 3, // Mittelwert zwischen 1 und 5
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 27', 
+    rateType: 'twentieth', 
+    minRate: 1, 
+    maxRate: 5 
+  },
+  { 
+    activity: 'Anlage Außergewöhnliche Belastungen', 
+    defaultTenthRate: 3, // Mittelwert zwischen 1 und 5
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 27', 
+    rateType: 'twentieth', 
+    minRate: 1, 
+    maxRate: 5 
+  },
+  { 
+    activity: 'Anlage Haushaltsnahe Aufwendungen', 
+    defaultTenthRate: 2, // Mittelwert zwischen 1 und 4
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 27', 
+    rateType: 'twentieth', 
+    minRate: 1, 
+    maxRate: 4 
+  },
+  // ===== LOHNBUCHHALTUNG & LOHNABRECHNUNGEN (§ 34 StBVV) =====
+  { 
+    activity: 'Lohnabrechnung pro Arbeitnehmer (monatlich)', 
+    defaultTenthRate: 15, // Pauschalbetrag
+    suggestedFeeTable: 'C', 
+    legalBasis: '§ 34 Abs. 1', 
+    rateType: 'tenth', 
+    minRate: 10, 
+    maxRate: 25 
+  },
+  { 
+    activity: 'Anmeldung Lohnsteuer', 
+    defaultTenthRate: 2.5, // Mittelwert zwischen 1 und 4
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 34 Abs. 2', 
+    rateType: 'tenth', 
+    minRate: 1, 
+    maxRate: 4 
+  },
+  // ===== WEITERE WICHTIGE TÄTIGKEITEN =====
+  { 
+    activity: 'Fristverlängerung beantragen', 
+    defaultTenthRate: 80, // Stundensatz
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 23', 
+    rateType: 'tenth', 
+    minRate: 50, 
+    maxRate: 150 
+  },
+  { 
+    activity: 'Bescheinigungen ausstellen', 
+    defaultTenthRate: 80, // Stundensatz
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 23', 
+    rateType: 'tenth', 
+    minRate: 50, 
+    maxRate: 150 
+  },
+  { 
+    activity: 'E-Bilanz Übermittlung', 
+    defaultTenthRate: 2, // Mittelwert zwischen 1 und 3
+    suggestedFeeTable: 'B', 
+    legalBasis: '§ 35 Abs. 1 Nr. 6', 
+    rateType: 'tenth', 
+    minRate: 1, 
+    maxRate: 3 
+  },
+  { 
+    activity: 'Steuerschätzung', 
+    defaultTenthRate: 100, // Stundensatz
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 22', 
+    rateType: 'tenth', 
+    minRate: 60, 
+    maxRate: 180 
+  },
+  { 
+    activity: 'Liquidationsbilanz', 
+    defaultTenthRate: 25, // Mittelwert zwischen 10 und 40
+    suggestedFeeTable: 'B', 
+    legalBasis: '§ 35 Abs. 1 Nr. 1b', 
+    rateType: 'tenth', 
+    minRate: 10, 
+    maxRate: 40 
+  },
+  { 
+    activity: 'Betriebswirtschaftliche Beratung', 
+    defaultTenthRate: 120, // Stundensatz
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 35 Abs. 2', 
+    rateType: 'tenth', 
+    minRate: 80, 
+    maxRate: 200 
+  },
+  { 
+    activity: 'Finanzplanung und Liquiditätsplanung', 
+    defaultTenthRate: 100, // Stundensatz
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 35 Abs. 2', 
+    rateType: 'tenth', 
+    minRate: 60, 
+    maxRate: 180 
   }
 ];
 
