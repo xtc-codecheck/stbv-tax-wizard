@@ -80,6 +80,9 @@ const Index = () => {
   // State for restore dialog
   const [showRestoreDialog, setShowRestoreDialog] = useState(false);
   const [savedTimestamp, setSavedTimestamp] = useState<string>('');
+  
+  // State to prevent auto-save right after template load
+  const [lastTemplateLoadTime, setLastTemplateLoadTime] = useState<number>(0);
 
   // DnD sensors
   const sensors = useSensors(
@@ -116,8 +119,16 @@ const Index = () => {
   // Auto-save every 10 seconds
   useEffect(() => {
     const interval = setInterval(() => {
+      // Don't auto-save if template was just loaded (within last 2 seconds)
+      const timeSinceLoad = Date.now() - lastTemplateLoadTime;
+      if (timeSinceLoad < 2000) {
+        console.log('[Auto-Save] Skipping auto-save - template was just loaded', timeSinceLoad + 'ms ago');
+        return;
+      }
+
       if (positions.length > 0 || clientData.name || clientData.email) {
         try {
+          console.log('[Auto-Save] Saving data at', new Date().toISOString(), '- Positions:', positions.length);
           localStorage.setItem(STORAGE_KEYS.positions, JSON.stringify(positions));
           localStorage.setItem(STORAGE_KEYS.clientData, JSON.stringify(clientData));
           localStorage.setItem(STORAGE_KEYS.documentFee, documentFee.toString());
@@ -130,14 +141,15 @@ const Index = () => {
             localStorage.setItem(STORAGE_KEYS.discount, JSON.stringify(discount));
           }
           localStorage.setItem(STORAGE_KEYS.lastSaveTimestamp, new Date().toISOString());
+          console.log('[Auto-Save] Save completed successfully');
         } catch (error) {
-          console.error('Auto-save failed:', error);
+          console.error('[Auto-Save] Failed:', error);
         }
       }
     }, 10000); // 10 seconds
 
     return () => clearInterval(interval);
-  }, [positions, clientData, documentFee, includeVAT, documentType, invoiceNumber, invoiceDate, servicePeriod, discount]);
+  }, [positions, clientData, documentFee, includeVAT, documentType, invoiceNumber, invoiceDate, servicePeriod, discount, lastTemplateLoadTime]);
 
   const restoreSession = () => {
     try {
@@ -254,13 +266,34 @@ const Index = () => {
   };
 
   const loadTemplate = (template: Template) => {
-    console.log('Loading template:', template.name, 'with', template.positions.length, 'positions');
+    console.log('[Template] Loading template:', template.name, 'with', template.positions.length, 'positions');
+    
+    // Clear all auto-save data to start fresh
+    console.log('[Template] Clearing localStorage auto-save data...');
+    Object.values(STORAGE_KEYS).forEach(key => {
+      const oldValue = localStorage.getItem(key);
+      if (oldValue) {
+        console.log('[Template] Clearing key:', key);
+        localStorage.removeItem(key);
+      }
+    });
+    
+    // Create new positions with unique IDs
     const newPositions = template.positions.map((pos, index) => ({
       ...pos,
       id: `${Date.now()}-${index}-${Math.random().toString(36).substr(2, 9)}`
     }));
-    console.log('New positions:', newPositions);
+    
+    console.log('[Template] Generated', newPositions.length, 'new positions with IDs:', newPositions.map(p => p.id));
+    console.log('[Template] Position activities:', newPositions.map(p => p.activity));
+    
+    // Set timestamp to prevent immediate auto-save
+    setLastTemplateLoadTime(Date.now());
+    
+    // Update positions
     setPositions(newPositions);
+    
+    console.log('[Template] State updated. Positions set to:', newPositions.length);
     toast.success(`Vorlage "${template.name}" mit ${newPositions.length} Positionen geladen`);
   };
 
