@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Combobox } from "@/components/ui/combobox";
 import { Trash2, Calculator, AlertTriangle, Scale, ArrowUp, ArrowDown, ChevronDown } from "lucide-react";
 import { Position } from "@/types/stbvv";
 import { calculatePosition } from "@/utils/stbvvCalculator";
@@ -164,21 +165,19 @@ const PositionCard: React.FC<PositionCardProps> = ({
         {/* Activity */}
         <div className="space-y-2">
           <Label>Tätigkeit</Label>
-          <Select
+          <Combobox
+            options={activityPresets.map((preset) => ({
+              value: preset.activity,
+              label: preset.activity,
+              category: preset.category,
+              keywords: preset.searchKeywords,
+            }))}
             value={position.activity}
             onValueChange={handleActivityChange}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Tätigkeit auswählen..." />
-            </SelectTrigger>
-            <SelectContent>
-              {activityPresets.map((preset) => (
-                <SelectItem key={preset.activity} value={preset.activity}>
-                  {preset.activity}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            placeholder="Tätigkeit auswählen..."
+            emptyText="Keine Tätigkeit gefunden."
+            searchPlaceholder="Tätigkeit suchen..."
+          />
         </div>
 
         {/* Billing Type */}

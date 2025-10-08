@@ -38,4 +38,6 @@ export interface ActivityPreset {
   rateType: 'tenth' | 'twentieth';
   minRate: number;
   maxRate: number;
+  searchKeywords?: string[];
+  category?: string;
 }
