@@ -49,7 +49,7 @@ const TotalCalculation: React.FC<TotalCalculationProps> = ({
           <Input
             id="documentFee"
             type="number"
-            value={documentFee}
+            value={documentFee === 0 ? '' : documentFee}
             onChange={(e) => onDocumentFeeChange(parseFloat(e.target.value) || 0)}
             min="0"
             step="0.01"

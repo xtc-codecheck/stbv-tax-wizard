@@ -185,7 +185,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
               <Label>Gegenstandswert (€)</Label>
               <Input
                 type="number"
-                value={position.objectValue || ''}
+                value={position.objectValue === 0 ? '' : position.objectValue}
                 onChange={(e) => handleChange('objectValue', parseFloat(e.target.value) || 0)}
                 placeholder="0"
                 min="0"
@@ -198,7 +198,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
               <Label>Stundensatz (€)</Label>
               <Input
                 type="number"
-                value={position.hourlyRate || ''}
+                value={position.hourlyRate === 0 ? '' : position.hourlyRate}
                 onChange={(e) => handleChange('hourlyRate', parseFloat(e.target.value) || 0)}
                 placeholder="0"
                 min="0"
@@ -211,7 +211,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
               <Label>Pauschalbetrag (€)</Label>
               <Input
                 type="number"
-                value={position.flatRate || ''}
+                value={position.flatRate === 0 ? '' : position.flatRate}
                 onChange={(e) => handleChange('flatRate', parseFloat(e.target.value) || 0)}
                 placeholder="0"
                 min="0"
@@ -328,7 +328,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
                 <Label>Anzahl Stunden</Label>
                 <Input
                   type="number"
-                  value={position.hours || ''}
+                  value={position.hours === 0 ? '' : position.hours}
                   onChange={(e) => handleChange('hours', parseFloat(e.target.value) || 0)}
                   placeholder="0"
                   min="0"
