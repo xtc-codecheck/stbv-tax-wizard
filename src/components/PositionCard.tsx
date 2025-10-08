@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Combobox } from "@/components/ui/combobox";
-import { Trash2, Calculator, AlertTriangle, Scale, ArrowUp, ArrowDown, ChevronDown } from "lucide-react";
+import { Trash2, Calculator, AlertTriangle, Scale, ArrowUp, ArrowDown, ChevronDown, Copy } from "lucide-react";
 import { Position } from "@/types/stbvv";
 import { calculatePosition } from "@/utils/stbvvCalculator";
 import { activityPresets, getActivityPreset } from "@/utils/activityPresets";
@@ -18,6 +18,7 @@ interface PositionCardProps {
   index: number;
   onUpdate: (id: string, position: Position) => void;
   onRemove: (id: string) => void;
+  onDuplicate: (id: string) => void;
   canMoveUp: boolean;
   canMoveDown: boolean;
   onMove: (id: string, direction: 'up' | 'down') => void;
@@ -28,6 +29,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
   index,
   onUpdate,
   onRemove,
+  onDuplicate,
   canMoveUp,
   canMoveDown,
   onMove
@@ -132,6 +134,16 @@ const PositionCard: React.FC<PositionCardProps> = ({
             Position {index}
           </CardTitle>
           <div className="flex items-center space-x-2">
+            {/* Duplicate Button */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onDuplicate(position.id)}
+              className="text-blue-500 hover:text-blue-700 hover:bg-blue-50"
+              title="Position duplizieren"
+            >
+              <Copy className="w-4 h-4" />
+            </Button>
             {/* Move Buttons */}
             <Button
               variant="ghost"

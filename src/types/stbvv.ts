@@ -49,3 +49,11 @@ export interface ActivityPreset {
   searchKeywords?: string[];
   category?: string;
 }
+
+export interface Template {
+  id: string;
+  name: string;
+  positions: Position[];
+  isCustom: boolean;
+  createdAt: string;
+}
