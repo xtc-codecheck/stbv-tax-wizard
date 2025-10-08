@@ -4,16 +4,38 @@ import { Position, Template } from "@/types/stbvv";
 export const DEFAULT_TEMPLATES: Template[] = [
   {
     id: 'template-1',
-    name: 'Einkommensteuererklärung Privatperson',
+    name: 'Einkommensteuererklärung Privatperson (Arbeitnehmer)',
     isCustom: false,
     createdAt: new Date().toISOString(),
     positions: [
       {
         id: '1',
-        activity: 'Einkommensteuererklärung (Privatperson)',
-        description: 'Einkommensteuererklärung für Privatperson',
+        activity: 'Einkommensteuer Mantelbogen',
+        description: 'Mantelbogen zur Einkommensteuererklärung',
         objectValue: 30000,
-        tenthRate: { numerator: 6, denominator: 10 },
+        tenthRate: { numerator: 35, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '2',
+        activity: 'Anlage N (Einkünfte aus nichtselbständiger Arbeit)',
+        description: 'Einkünfte aus nichtselbständiger Arbeit',
+        objectValue: 30000,
+        tenthRate: { numerator: 65, denominator: 20 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '3',
+        activity: 'Prüfung Steuerbescheid',
+        description: 'Prüfung des Einkommensteuerbescheids',
+        objectValue: 30000,
+        tenthRate: { numerator: 35, denominator: 10 },
         quantity: 1,
         feeTable: 'A',
         applyExpenseFee: true,
@@ -23,14 +45,14 @@ export const DEFAULT_TEMPLATES: Template[] = [
   },
   {
     id: 'template-2',
-    name: 'Jahresabschluss kleine GmbH',
+    name: 'Jahresabschluss GmbH',
     isCustom: false,
     createdAt: new Date().toISOString(),
     positions: [
       {
         id: '1',
         activity: 'Jahresabschluss (Kapitalgesellschaften)',
-        description: 'Jahresabschluss für kleine GmbH',
+        description: 'Jahresabschluss GmbH',
         objectValue: 250000,
         tenthRate: { numerator: 15, denominator: 10 },
         quantity: 1,
@@ -40,12 +62,78 @@ export const DEFAULT_TEMPLATES: Template[] = [
       },
       {
         id: '2',
-        activity: 'Finanzbuchhaltung (monatlich)',
-        description: 'Monatliche Finanzbuchhaltung',
-        objectValue: 20000,
+        activity: 'Überleitungsrechnung (§ 60 Abs. 3 EStG)',
+        description: 'Überleitung Handelsbilanz nach Steuerbilanz',
+        objectValue: 250000,
+        tenthRate: { numerator: 10, denominator: 10 },
+        quantity: 1,
+        feeTable: 'B',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '3',
+        activity: 'Elektronische Übermittlung an Bundesanzeiger',
+        description: 'Jahresabschluss Übermittlung an Bundesanzeiger',
+        objectValue: 250000,
         tenthRate: { numerator: 5, denominator: 10 },
-        quantity: 12,
-        feeTable: 'C',
+        quantity: 1,
+        feeTable: 'B',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '4',
+        activity: 'Elektronische Übermittlung an Finanzamt',
+        description: 'Jahresabschluss Übermittlung an das Finanzamt',
+        objectValue: 250000,
+        tenthRate: { numerator: 5, denominator: 10 },
+        quantity: 1,
+        feeTable: 'B',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '5',
+        activity: 'Körperschaftsteuererklärung',
+        description: 'Körperschaftsteuererklärung',
+        objectValue: 500000,
+        tenthRate: { numerator: 6, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '6',
+        activity: 'Gewerbesteuererklärung',
+        description: 'Gewerbesteuererklärung',
+        objectValue: 500000,
+        tenthRate: { numerator: 6, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '7',
+        activity: 'Umsatzsteuererklärung',
+        description: 'Umsatzsteuererklärung',
+        objectValue: 500000,
+        tenthRate: { numerator: 2, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '8',
+        activity: 'Prüfung Steuerbescheid',
+        description: 'Prüfung sämtlicher Steuerbescheide',
+        objectValue: 500000,
+        tenthRate: { numerator: 35, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
         applyExpenseFee: true,
         billingType: 'objectValue'
       }
@@ -53,54 +141,64 @@ export const DEFAULT_TEMPLATES: Template[] = [
   },
   {
     id: 'template-3',
-    name: 'Umsatzsteuer-Voranmeldung (Quartal)',
+    name: 'Einzelunternehmen mit EÜR',
     isCustom: false,
     createdAt: new Date().toISOString(),
     positions: [
       {
         id: '1',
-        activity: 'Umsatzsteuer-Voranmeldung',
-        description: 'Quartalsweise USt-Voranmeldung',
-        objectValue: 50000,
-        tenthRate: { numerator: 2, denominator: 10 },
-        quantity: 4,
+        activity: 'Einkommensteuer Mantelbogen',
+        description: 'Mantelbogen zur Einkommensteuererklärung',
+        objectValue: 80000,
+        tenthRate: { numerator: 35, denominator: 10 },
+        quantity: 1,
         feeTable: 'A',
         applyExpenseFee: true,
         billingType: 'objectValue'
-      }
-    ]
-  },
-  {
-    id: 'template-4',
-    name: 'Gründungsberatung',
-    isCustom: false,
-    createdAt: new Date().toISOString(),
-    positions: [
-      {
-        id: '1',
-        activity: 'Beratung bei Unternehmensgründung',
-        description: 'Beratung zu Rechtsform und Steuerfragen',
-        billingType: 'hourly',
-        hourlyRate: 150,
-        hours: 4,
-        quantity: 1,
-        objectValue: 0,
-        tenthRate: { numerator: 6, denominator: 10 },
-        feeTable: 'A',
-        applyExpenseFee: true
       },
       {
         id: '2',
-        activity: 'Betriebswirtschaftliche Beratung',
-        description: 'Erstellung Businessplan und Finanzplanung',
-        billingType: 'hourly',
-        hourlyRate: 150,
-        hours: 6,
+        activity: 'Anlage EÜR (Einnahmen-Überschuss-Rechnung)',
+        description: 'Einnahmen-Überschuss-Rechnung',
+        objectValue: 80000,
+        tenthRate: { numerator: 10, denominator: 10 },
         quantity: 1,
-        objectValue: 0,
+        feeTable: 'C',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '3',
+        activity: 'Gewerbesteuererklärung',
+        description: 'Gewerbesteuererklärung',
+        objectValue: 80000,
         tenthRate: { numerator: 6, denominator: 10 },
+        quantity: 1,
         feeTable: 'A',
-        applyExpenseFee: true
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '4',
+        activity: 'Umsatzsteuererklärung',
+        description: 'Umsatzsteuererklärung',
+        objectValue: 80000,
+        tenthRate: { numerator: 2, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '5',
+        activity: 'Prüfung Steuerbescheid',
+        description: 'Prüfung sämtlicher Steuerbescheide',
+        objectValue: 80000,
+        tenthRate: { numerator: 35, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
       }
     ]
   }
