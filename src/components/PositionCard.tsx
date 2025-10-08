@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,6 +14,7 @@ import { calculatePosition } from "@/utils/stbvvCalculator";
 import { activityPresets, getActivityPreset } from "@/utils/activityPresets";
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { useDebounce } from "@/hooks/useDebounce";
 
 interface PositionCardProps {
   position: Position;
@@ -37,6 +38,60 @@ const PositionCard: React.FC<PositionCardProps> = ({
   onMove
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
+  
+  // Local state for debounced inputs
+  const [localObjectValue, setLocalObjectValue] = useState(position.objectValue);
+  const [localHourlyRate, setLocalHourlyRate] = useState(position.hourlyRate || 0);
+  const [localHours, setLocalHours] = useState(position.hours || 0);
+  const [localFlatRate, setLocalFlatRate] = useState(position.flatRate || 0);
+  
+  // Debounce numeric inputs for better performance
+  const debouncedObjectValue = useDebounce(localObjectValue, 300);
+  const debouncedHourlyRate = useDebounce(localHourlyRate, 300);
+  const debouncedHours = useDebounce(localHours, 300);
+  const debouncedFlatRate = useDebounce(localFlatRate, 300);
+  
+  // Update parent when debounced values change
+  useEffect(() => {
+    if (debouncedObjectValue !== position.objectValue) {
+      handleChange('objectValue', debouncedObjectValue);
+    }
+  }, [debouncedObjectValue]);
+  
+  useEffect(() => {
+    if (debouncedHourlyRate !== position.hourlyRate) {
+      handleChange('hourlyRate', debouncedHourlyRate);
+    }
+  }, [debouncedHourlyRate]);
+  
+  useEffect(() => {
+    if (debouncedHours !== position.hours) {
+      handleChange('hours', debouncedHours);
+    }
+  }, [debouncedHours]);
+  
+  useEffect(() => {
+    if (debouncedFlatRate !== position.flatRate) {
+      handleChange('flatRate', debouncedFlatRate);
+    }
+  }, [debouncedFlatRate]);
+  
+  // Sync local state when position changes from external source
+  useEffect(() => {
+    setLocalObjectValue(position.objectValue);
+  }, [position.objectValue]);
+  
+  useEffect(() => {
+    setLocalHourlyRate(position.hourlyRate || 0);
+  }, [position.hourlyRate]);
+  
+  useEffect(() => {
+    setLocalHours(position.hours || 0);
+  }, [position.hours]);
+  
+  useEffect(() => {
+    setLocalFlatRate(position.flatRate || 0);
+  }, [position.flatRate]);
   
   const {
     attributes,
@@ -247,8 +302,8 @@ const PositionCard: React.FC<PositionCardProps> = ({
               <Label>Gegenstandswert (€)</Label>
               <Input
                 type="number"
-                value={position.objectValue === 0 ? '' : position.objectValue}
-                onChange={(e) => handleChange('objectValue', parseFloat(e.target.value) || 0)}
+                value={localObjectValue === 0 ? '' : localObjectValue}
+                onChange={(e) => setLocalObjectValue(parseFloat(e.target.value) || 0)}
                 placeholder="0"
                 min="0"
                 step="0.01"
@@ -260,8 +315,8 @@ const PositionCard: React.FC<PositionCardProps> = ({
               <Label>Stundensatz (€)</Label>
               <Input
                 type="number"
-                value={position.hourlyRate === 0 ? '' : position.hourlyRate}
-                onChange={(e) => handleChange('hourlyRate', parseFloat(e.target.value) || 0)}
+                value={localHourlyRate === 0 ? '' : localHourlyRate}
+                onChange={(e) => setLocalHourlyRate(parseFloat(e.target.value) || 0)}
                 placeholder="0"
                 min="0"
                 step="0.01"
@@ -273,8 +328,8 @@ const PositionCard: React.FC<PositionCardProps> = ({
               <Label>Pauschalbetrag (€)</Label>
               <Input
                 type="number"
-                value={position.flatRate === 0 ? '' : position.flatRate}
-                onChange={(e) => handleChange('flatRate', parseFloat(e.target.value) || 0)}
+                value={localFlatRate === 0 ? '' : localFlatRate}
+                onChange={(e) => setLocalFlatRate(parseFloat(e.target.value) || 0)}
                 placeholder="0"
                 min="0"
                 step="0.01"
@@ -390,8 +445,8 @@ const PositionCard: React.FC<PositionCardProps> = ({
                 <Label>Anzahl Stunden</Label>
                 <Input
                   type="number"
-                  value={position.hours === 0 ? '' : position.hours}
-                  onChange={(e) => handleChange('hours', parseFloat(e.target.value) || 0)}
+                  value={localHours === 0 ? '' : localHours}
+                  onChange={(e) => setLocalHours(parseFloat(e.target.value) || 0)}
                   placeholder="0"
                   min="0"
                   step="0.25"

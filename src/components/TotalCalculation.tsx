@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,7 +29,11 @@ const TotalCalculation: React.FC<TotalCalculationProps> = ({
   onVATChange,
   onDiscountChange
 }) => {
-  const totals = calculateTotal(positions, documentFee, includeVAT, discount);
+  // Memoize calculation to prevent unnecessary recalculations
+  const totals = useMemo(
+    () => calculateTotal(positions, documentFee, includeVAT, discount),
+    [positions, documentFee, includeVAT, discount]
+  );
 
   const handleDiscountTypeChange = (type: 'percentage' | 'fixed') => {
     onDiscountChange(discount ? { ...discount, type } : { type, value: 0 });

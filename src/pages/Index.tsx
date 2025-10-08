@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -33,10 +33,8 @@ import PositionCard from "@/components/PositionCard";
 import TotalCalculation from "@/components/TotalCalculation";
 import TemplateSelector from "@/components/TemplateSelector";
 import { Position, ClientData, Template, Discount } from "@/types/stbvv";
-import { generatePDF } from "@/utils/pdfGenerator";
 import { calculateTotal } from "@/utils/stbvvCalculator";
 import { saveCustomTemplate } from "@/utils/templateManager";
-import { exportToExcel } from "@/utils/excelExporter";
 import { loadBrandingSettings } from "@/utils/brandingStorage";
 
 // Email validation schema
@@ -426,7 +424,7 @@ const Index = () => {
     return true;
   };
 
-  const handleGeneratePDF = () => {
+  const handleGeneratePDF = async () => {
     if (!validateBeforeGenerate()) return;
 
     // Increment invoice counter
@@ -434,6 +432,9 @@ const Index = () => {
 
     const branding = loadBrandingSettings();
 
+    // Lazy-load PDF generator for better bundle size
+    const { generatePDF } = await import("@/utils/pdfGenerator");
+    
     generatePDF(
       positions, 
       documentFee, 
@@ -450,12 +451,15 @@ const Index = () => {
     toast.success(`${documentType === 'quote' ? 'Angebot' : 'Rechnung'} erfolgreich erstellt`);
   };
 
-  const handleExportExcel = () => {
+  const handleExportExcel = async () => {
     if (positions.length === 0) {
       toast.error('Bitte fügen Sie mindestens eine Position hinzu');
       return;
     }
 
+    // Lazy-load Excel exporter for better bundle size
+    const { exportToExcel } = await import("@/utils/excelExporter");
+    
     exportToExcel(
       positions,
       documentFee,
@@ -617,7 +621,7 @@ Mit freundlichen Grüßen`);
                 onDragEnd={handleDragEnd}
               >
                 <SortableContext
-                  items={positions.map(p => p.id)}
+                  items={useMemo(() => positions.map(p => p.id), [positions])}
                   strategy={verticalListSortingStrategy}
                 >
                   <div className="space-y-4">
