@@ -34,7 +34,9 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
     const template = templates.find(t => t.id === selectedTemplateId);
     if (template) {
       onLoadTemplate(template);
-      toast.success(`Vorlage "${template.name}" geladen`);
+      // Toast wird jetzt in der loadTemplate-Funktion angezeigt
+    } else {
+      toast.error('Vorlage konnte nicht geladen werden');
     }
   };
 

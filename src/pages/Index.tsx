@@ -207,11 +207,14 @@ const Index = () => {
   };
 
   const loadTemplate = (template: Template) => {
-    const newPositions = template.positions.map(pos => ({
+    console.log('Loading template:', template.name, 'with', template.positions.length, 'positions');
+    const newPositions = template.positions.map((pos, index) => ({
       ...pos,
-      id: Date.now().toString() + Math.random().toString(36).substr(2, 9)
+      id: `${Date.now()}-${index}-${Math.random().toString(36).substr(2, 9)}`
     }));
+    console.log('New positions:', newPositions);
     setPositions(newPositions);
+    toast.success(`Vorlage "${template.name}" mit ${newPositions.length} Positionen geladen`);
   };
 
   const saveAsTemplate = (name: string) => {
