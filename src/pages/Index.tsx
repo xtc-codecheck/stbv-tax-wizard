@@ -10,7 +10,6 @@ import TotalCalculation from "@/components/TotalCalculation";
 import { Position } from "@/types/stbvv";
 import { generatePDF } from "@/utils/pdfGenerator";
 import { calculateTotal } from "@/utils/stbvvCalculator";
-
 interface ClientData {
   name: string;
   street: string;
@@ -18,7 +17,6 @@ interface ClientData {
   city: string;
   email: string;
 }
-
 const Index = () => {
   const [positions, setPositions] = useState<Position[]>([]);
   const [documentFee, setDocumentFee] = useState(0);
@@ -31,14 +29,16 @@ const Index = () => {
     city: '',
     email: ''
   });
-
   const addPosition = () => {
     const newPosition: Position = {
       id: Date.now().toString(),
       activity: '',
       description: '',
       objectValue: 0,
-      tenthRate: { numerator: 6, denominator: 10 },
+      tenthRate: {
+        numerator: 6,
+        denominator: 10
+      },
       quantity: 1,
       feeTable: 'A',
       applyExpenseFee: true,
@@ -49,44 +49,37 @@ const Index = () => {
     };
     setPositions([...positions, newPosition]);
   };
-
   const updatePosition = (id: string, updatedPosition: Position) => {
     setPositions(positions.map(pos => pos.id === id ? updatedPosition : pos));
   };
-
   const removePosition = (id: string) => {
     setPositions(positions.filter(pos => pos.id !== id));
   };
-
   const movePosition = (id: string, direction: 'up' | 'down') => {
     const currentIndex = positions.findIndex(pos => pos.id === id);
     if (currentIndex === -1) return;
-    
     const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
     if (newIndex < 0 || newIndex >= positions.length) return;
-    
     const newPositions = [...positions];
     [newPositions[currentIndex], newPositions[newIndex]] = [newPositions[newIndex], newPositions[currentIndex]];
     setPositions(newPositions);
   };
-
   const updateClientData = (field: keyof ClientData, value: string) => {
-    setClientData(prev => ({ ...prev, [field]: value }));
+    setClientData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
-
   const handleGeneratePDF = () => {
     generatePDF(positions, documentFee, includeVAT, documentType, clientData);
   };
-
   const handleSendEmail = () => {
     if (!clientData.email) {
       alert('Bitte geben Sie eine E-Mail-Adresse ein.');
       return;
     }
-
     const totals = calculateTotal(positions, documentFee, includeVAT);
     const documentTitle = documentType === 'quote' ? 'Angebot' : 'Rechnung';
-    
     const subject = encodeURIComponent(`${documentTitle} - Steuerberatervergütung`);
     const body = encodeURIComponent(`Sehr geehrte Damen und Herren,
 
@@ -95,13 +88,10 @@ anbei erhalten Sie unser${documentType === 'quote' ? ' Angebot' : 'e Rechnung'} 
 Gesamtsumme: ${totals.totalGross.toFixed(2)} €
 
 Mit freundlichen Grüßen`);
-
     const mailtoLink = `mailto:${clientData.email}?subject=${subject}&body=${body}`;
     window.location.href = mailtoLink;
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+  return <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         {/* Header */}
         <div className="text-center mb-8">
@@ -109,9 +99,8 @@ Mit freundlichen Grüßen`);
             <Calculator className="w-8 h-8 text-blue-600 mr-3" />
             <h1 className="text-4xl font-bold text-gray-900">STBVV-Rechner</h1>
           </div>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Gesetzeskonforme Steuerberatervergütung nach StBVV 2025 mit automatischer PDF-Erstellung
-          </p>
+          <p className="text-gray-600 max-w-2xl mx-auto text-xl">Gesetzeskonforme Steuerberatervergütung nach StBVV 2025 mit automatischer PDF-Erstellung.
+(Hinweis: Berechnung erfolgt nach gesetzlichen Mittelwerten)</p>
         </div>
 
         {/* Main Content */}
@@ -130,49 +119,23 @@ Mit freundlichen Grüßen`);
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="clientName">Name/Firma</Label>
-                    <Input
-                      id="clientName"
-                      value={clientData.name}
-                      onChange={(e) => updateClientData('name', e.target.value)}
-                      placeholder="Max Mustermann / Mustermann GmbH"
-                    />
+                    <Input id="clientName" value={clientData.name} onChange={e => updateClientData('name', e.target.value)} placeholder="Max Mustermann / Mustermann GmbH" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="clientStreet">Straße, Hausnummer</Label>
-                    <Input
-                      id="clientStreet"
-                      value={clientData.street}
-                      onChange={(e) => updateClientData('street', e.target.value)}
-                      placeholder="Musterstraße 123"
-                    />
+                    <Input id="clientStreet" value={clientData.street} onChange={e => updateClientData('street', e.target.value)} placeholder="Musterstraße 123" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="clientPostalCode">PLZ</Label>
-                    <Input
-                      id="clientPostalCode"
-                      value={clientData.postalCode}
-                      onChange={(e) => updateClientData('postalCode', e.target.value)}
-                      placeholder="12345"
-                    />
+                    <Input id="clientPostalCode" value={clientData.postalCode} onChange={e => updateClientData('postalCode', e.target.value)} placeholder="12345" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="clientCity">Ort</Label>
-                    <Input
-                      id="clientCity"
-                      value={clientData.city}
-                      onChange={(e) => updateClientData('city', e.target.value)}
-                      placeholder="Musterstadt"
-                    />
+                    <Input id="clientCity" value={clientData.city} onChange={e => updateClientData('city', e.target.value)} placeholder="Musterstadt" />
                   </div>
                   <div className="space-y-2 md:col-span-2">
                     <Label htmlFor="clientEmail">E-Mail-Adresse</Label>
-                    <Input
-                      id="clientEmail"
-                      type="email"
-                      value={clientData.email}
-                      onChange={(e) => updateClientData('email', e.target.value)}
-                      placeholder="max.mustermann@email.de"
-                    />
+                    <Input id="clientEmail" type="email" value={clientData.email} onChange={e => updateClientData('email', e.target.value)} placeholder="max.mustermann@email.de" />
                   </div>
                 </div>
               </CardContent>
@@ -180,23 +143,12 @@ Mit freundlichen Grüßen`);
 
             {/* Positions List */}
             <div className="space-y-4">
-              {positions.map((position, index) => (
-                <div key={position.id} className="relative">
-                  <PositionCard
-                    position={position}
-                    index={index + 1}
-                    onUpdate={updatePosition}
-                    onRemove={removePosition}
-                    canMoveUp={index > 0}
-                    canMoveDown={index < positions.length - 1}
-                    onMove={movePosition}
-                  />
-                </div>
-              ))}
+              {positions.map((position, index) => <div key={position.id} className="relative">
+                  <PositionCard position={position} index={index + 1} onUpdate={updatePosition} onRemove={removePosition} canMoveUp={index > 0} canMoveDown={index < positions.length - 1} onMove={movePosition} />
+                </div>)}
             </div>
 
-            {positions.length === 0 && (
-              <Card className="text-center py-12">
+            {positions.length === 0 && <Card className="text-center py-12">
                 <CardContent>
                   <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                   <h3 className="text-xl font-semibold text-gray-600 mb-2">
@@ -206,16 +158,12 @@ Mit freundlichen Grüßen`);
                     Fügen Sie Ihre erste Position hinzu, um mit der Berechnung zu beginnen.
                   </p>
                 </CardContent>
-              </Card>
-            )}
+              </Card>}
 
             {/* Add Position Button */}
             <Card className="border-2 border-dashed border-blue-200 bg-blue-50/30">
               <CardContent className="text-center py-6">
-                <Button 
-                  onClick={addPosition}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
-                >
+                <Button onClick={addPosition} className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105">
                   <Plus className="w-4 h-4 mr-2" />
                   Position hinzufügen
                 </Button>
@@ -226,23 +174,14 @@ Mit freundlichen Grüßen`);
           {/* Calculation Column */}
           <div className="lg:col-span-1">
             <div className="sticky top-8 space-y-4">
-              <TotalCalculation
-                positions={positions}
-                documentFee={documentFee}
-                includeVAT={includeVAT}
-                onDocumentFeeChange={setDocumentFee}
-                onVATChange={setIncludeVAT}
-              />
+              <TotalCalculation positions={positions} documentFee={documentFee} includeVAT={includeVAT} onDocumentFeeChange={setDocumentFee} onVATChange={setIncludeVAT} />
               
               {/* Document Type Selection */}
               <Card>
                 <CardContent className="pt-6">
                   <div className="space-y-2">
                     <Label>Dokumenttyp</Label>
-                    <Select
-                      value={documentType}
-                      onValueChange={(value: 'quote' | 'invoice') => setDocumentType(value)}
-                    >
+                    <Select value={documentType} onValueChange={(value: 'quote' | 'invoice') => setDocumentType(value)}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -255,34 +194,21 @@ Mit freundlichen Grüßen`);
                 </CardContent>
               </Card>
               
-              {positions.length > 0 && (
-                <div className="space-y-2">
-                  <Button
-                    onClick={handleGeneratePDF}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
-                  >
+              {positions.length > 0 && <div className="space-y-2">
+                  <Button onClick={handleGeneratePDF} className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105">
                     <Download className="w-4 h-4 mr-2" />
                     {documentType === 'quote' ? 'Angebot' : 'Rechnung'} als PDF herunterladen
                   </Button>
                   
-                  {clientData.email && (
-                    <Button
-                      onClick={handleSendEmail}
-                      variant="outline"
-                      className="w-full border-green-600 text-green-600 hover:bg-green-50 py-3 rounded-lg font-medium transition-all duration-200"
-                    >
+                  {clientData.email && <Button onClick={handleSendEmail} variant="outline" className="w-full border-green-600 text-green-600 hover:bg-green-50 py-3 rounded-lg font-medium transition-all duration-200">
                       <Mail className="w-4 h-4 mr-2" />
                       E-Mail senden an {clientData.email}
-                    </Button>
-                  )}
-                </div>
-              )}
+                    </Button>}
+                </div>}
             </div>
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
