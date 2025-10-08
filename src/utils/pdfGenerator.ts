@@ -2,6 +2,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { Position, ClientData } from "@/types/stbvv";
 import { calculatePosition, calculateTotal } from "./stbvvCalculator";
+import { formatBillingDetails } from "./formatBillingDetails";
 
 export const generatePDF = (
   positions: Position[], 
@@ -127,20 +128,7 @@ export const generatePDF = (
   // Positions Table
   const tableData = positions.map((position, index) => {
     const calc = calculatePosition(position);
-    let billingDetails = '';
-    
-    switch (position.billingType) {
-      case 'hourly':
-        billingDetails = `${position.hourlyRate?.toFixed(2) || '0'} €/h × ${position.hours || '0'} h`;
-        break;
-      case 'flatRate':
-        billingDetails = `Pauschale: ${position.flatRate?.toFixed(2) || '0'} €`;
-        break;
-      case 'objectValue':
-      default:
-        billingDetails = `${position.objectValue.toFixed(2)} € (Tab. ${position.feeTable}, ${position.tenthRate.numerator}/${position.tenthRate.denominator})`;
-        break;
-    }
+    const billingDetails = formatBillingDetails(position);
     
     return [
       (index + 1).toString(),

@@ -54,7 +54,26 @@ const STORAGE_KEYS = {
   servicePeriod: 'stbvv_autosave_servicePeriod',
   discount: 'stbvv_autosave_discount',
   invoiceCounter: 'stbvv_invoice_counter',
-  lastSaveTimestamp: 'stbvv_autosave_timestamp'
+  lastSaveTimestamp: 'stbvv_autosave_timestamp',
+  lastSaveHash: 'stbvv_autosave_hash'
+};
+
+// Helper function to generate next document number
+const getNextDocumentNumber = (type: 'quote' | 'invoice', increment = false): string => {
+  const counter = parseInt(localStorage.getItem(STORAGE_KEYS.invoiceCounter) || '1000');
+  const nextCounter = increment ? counter + 1 : counter + 1;
+  const prefix = type === 'invoice' ? 'RE' : 'AG';
+  
+  if (increment) {
+    localStorage.setItem(STORAGE_KEYS.invoiceCounter, nextCounter.toString());
+  }
+  
+  return `${prefix}-${nextCounter}`;
+};
+
+// Helper function to create data hash for change detection
+const createDataHash = (data: any): string => {
+  return JSON.stringify(data);
 };
 
 const Index = () => {
@@ -95,18 +114,23 @@ const Index = () => {
     })
   );
 
-  // Auto-generate invoice number
+  // Auto-generate and update invoice number based on document type
   useEffect(() => {
-    if (documentType === 'invoice' && !invoiceNumber) {
-      const counter = parseInt(localStorage.getItem(STORAGE_KEYS.invoiceCounter) || '1000');
-      const newNumber = `RE-${counter + 1}`;
-      setInvoiceNumber(newNumber);
-    } else if (documentType === 'quote' && !invoiceNumber) {
-      const counter = parseInt(localStorage.getItem(STORAGE_KEYS.invoiceCounter) || '1000');
-      const newNumber = `AG-${counter + 1}`;
-      setInvoiceNumber(newNumber);
+    // Generate new number if empty
+    if (!invoiceNumber) {
+      setInvoiceNumber(getNextDocumentNumber(documentType));
+      return;
     }
-  }, [documentType]);
+    
+    // Update prefix if document type changed
+    const currentPrefix = invoiceNumber.split('-')[0];
+    const expectedPrefix = documentType === 'invoice' ? 'RE' : 'AG';
+    
+    if (currentPrefix !== expectedPrefix) {
+      const numberPart = invoiceNumber.split('-')[1] || '1001';
+      setInvoiceNumber(`${expectedPrefix}-${numberPart}`);
+    }
+  }, [documentType, invoiceNumber]);
 
   // Check for saved data on mount
   useEffect(() => {
@@ -119,37 +143,53 @@ const Index = () => {
     }
   }, []);
 
-  // Auto-save every 10 seconds
+  // Auto-save every 10 seconds (optimized with change detection)
   useEffect(() => {
     const interval = setInterval(() => {
-      // Don't auto-save if template was just loaded (within last 2 seconds)
+      // Don't auto-save if template was just loaded
       const timeSinceLoad = Date.now() - lastTemplateLoadTime;
       if (timeSinceLoad < 2000) {
-        console.log('[Auto-Save] Skipping auto-save - template was just loaded', timeSinceLoad + 'ms ago');
         return;
       }
 
       if (positions.length > 0 || clientData.name || clientData.email) {
         try {
-          console.log('[Auto-Save] Saving data at', new Date().toISOString(), '- Positions:', positions.length);
-          localStorage.setItem(STORAGE_KEYS.positions, JSON.stringify(positions));
-          localStorage.setItem(STORAGE_KEYS.clientData, JSON.stringify(clientData));
-          localStorage.setItem(STORAGE_KEYS.documentFee, documentFee.toString());
-          localStorage.setItem(STORAGE_KEYS.includeVAT, includeVAT.toString());
-          localStorage.setItem(STORAGE_KEYS.documentType, documentType);
-          localStorage.setItem(STORAGE_KEYS.invoiceNumber, invoiceNumber);
-          localStorage.setItem(STORAGE_KEYS.invoiceDate, invoiceDate.toISOString());
-          localStorage.setItem(STORAGE_KEYS.servicePeriod, servicePeriod);
-          if (discount) {
-            localStorage.setItem(STORAGE_KEYS.discount, JSON.stringify(discount));
+          // Create hash of current data
+          const currentData = {
+            positions,
+            clientData,
+            documentFee,
+            includeVAT,
+            documentType,
+            invoiceNumber,
+            invoiceDate: invoiceDate.toISOString(),
+            servicePeriod,
+            discount
+          };
+          const currentHash = createDataHash(currentData);
+          const lastHash = localStorage.getItem(STORAGE_KEYS.lastSaveHash);
+          
+          // Only save if data has changed
+          if (currentHash !== lastHash) {
+            localStorage.setItem(STORAGE_KEYS.positions, JSON.stringify(positions));
+            localStorage.setItem(STORAGE_KEYS.clientData, JSON.stringify(clientData));
+            localStorage.setItem(STORAGE_KEYS.documentFee, documentFee.toString());
+            localStorage.setItem(STORAGE_KEYS.includeVAT, includeVAT.toString());
+            localStorage.setItem(STORAGE_KEYS.documentType, documentType);
+            localStorage.setItem(STORAGE_KEYS.invoiceNumber, invoiceNumber);
+            localStorage.setItem(STORAGE_KEYS.invoiceDate, invoiceDate.toISOString());
+            localStorage.setItem(STORAGE_KEYS.servicePeriod, servicePeriod);
+            if (discount) {
+              localStorage.setItem(STORAGE_KEYS.discount, JSON.stringify(discount));
+            }
+            localStorage.setItem(STORAGE_KEYS.lastSaveTimestamp, new Date().toISOString());
+            localStorage.setItem(STORAGE_KEYS.lastSaveHash, currentHash);
           }
-          localStorage.setItem(STORAGE_KEYS.lastSaveTimestamp, new Date().toISOString());
-          console.log('[Auto-Save] Save completed successfully');
         } catch (error) {
           console.error('[Auto-Save] Failed:', error);
         }
       }
-    }, 10000); // 10 seconds
+    }, 10000);
 
     return () => clearInterval(interval);
   }, [positions, clientData, documentFee, includeVAT, documentType, invoiceNumber, invoiceDate, servicePeriod, discount, lastTemplateLoadTime]);
@@ -269,27 +309,17 @@ const Index = () => {
   };
 
   const loadTemplate = (template: Template) => {
-    console.log('[Template] Loading template:', template.name, 'with', template.positions.length, 'positions');
-    
     // Clear all auto-save data to start fresh
-    console.log('[Template] Clearing localStorage auto-save data...');
     Object.values(STORAGE_KEYS).forEach(key => {
-      const oldValue = localStorage.getItem(key);
-      if (oldValue) {
-        console.log('[Template] Clearing key:', key);
-        localStorage.removeItem(key);
-      }
+      localStorage.removeItem(key);
     });
     
-    // Create new positions with unique IDs (with time offset to prevent collisions)
+    // Create new positions with unique IDs (time offset prevents collisions)
     const baseTime = Date.now();
     const newPositions = template.positions.map((pos, index) => ({
       ...pos,
       id: `${baseTime + index * 100}-${Math.random().toString(36).substr(2, 9)}`
     }));
-    
-    console.log('[Template] Generated', newPositions.length, 'new positions with IDs:', newPositions.map(p => p.id));
-    console.log('[Template] Position activities:', newPositions.map(p => p.activity));
     
     // Set timestamp to prevent immediate auto-save
     setLastTemplateLoadTime(Date.now());
@@ -297,13 +327,9 @@ const Index = () => {
     // Update positions
     setPositions(newPositions);
     
-    console.log('[Template] State updated. Positions set to:', newPositions.length);
-    
-    // Force re-render after a short delay to ensure DnD properly registers all items
+    // Force re-render to ensure DnD properly registers all items
     setTimeout(() => {
-      console.log('[Template] Forcing UI re-render...');
       setRenderKey(prev => prev + 1);
-      console.log('[Template] UI re-render complete');
     }, 100);
     
     toast.success(`Vorlage "${template.name}" mit ${newPositions.length} Positionen geladen`);
@@ -403,11 +429,8 @@ const Index = () => {
   const handleGeneratePDF = () => {
     if (!validateBeforeGenerate()) return;
 
-    // Increment invoice counter if it's an invoice
-    if (documentType === 'invoice') {
-      const currentCounter = parseInt(localStorage.getItem(STORAGE_KEYS.invoiceCounter) || '1000');
-      localStorage.setItem(STORAGE_KEYS.invoiceCounter, (currentCounter + 1).toString());
-    }
+    // Increment invoice counter
+    getNextDocumentNumber(documentType, true);
 
     const branding = loadBrandingSettings();
 
@@ -598,25 +621,19 @@ Mit freundlichen Grüßen`);
                   strategy={verticalListSortingStrategy}
                 >
                   <div className="space-y-4">
-                    {(() => {
-                      console.log('[Render] Rendering', positions.length, 'positions:', positions.map(p => ({ id: p.id, activity: p.activity })));
-                      return positions.map((position, index) => {
-                        console.log('[Render] Rendering position', index + 1, ':', position.activity, 'with ID:', position.id);
-                        return (
-                          <PositionCard
-                            key={position.id}
-                            position={position}
-                            index={index + 1}
-                            onUpdate={updatePosition}
-                            onRemove={removePosition}
-                            onDuplicate={duplicatePosition}
-                            canMoveUp={index > 0}
-                            canMoveDown={index < positions.length - 1}
-                            onMove={movePosition}
-                          />
-                        );
-                      });
-                    })()}
+                    {positions.map((position, index) => (
+                      <PositionCard
+                        key={position.id}
+                        position={position}
+                        index={index + 1}
+                        onUpdate={updatePosition}
+                        onRemove={removePosition}
+                        onDuplicate={duplicatePosition}
+                        canMoveUp={index > 0}
+                        canMoveDown={index < positions.length - 1}
+                        onMove={movePosition}
+                      />
+                    ))}
                   </div>
                 </SortableContext>
               </DndContext>
