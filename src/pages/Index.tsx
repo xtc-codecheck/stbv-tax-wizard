@@ -83,6 +83,9 @@ const Index = () => {
   
   // State to prevent auto-save right after template load
   const [lastTemplateLoadTime, setLastTemplateLoadTime] = useState<number>(0);
+  
+  // State to force re-render after template load
+  const [renderKey, setRenderKey] = useState<number>(0);
 
   // DnD sensors
   const sensors = useSensors(
@@ -278,10 +281,11 @@ const Index = () => {
       }
     });
     
-    // Create new positions with unique IDs
+    // Create new positions with unique IDs (with time offset to prevent collisions)
+    const baseTime = Date.now();
     const newPositions = template.positions.map((pos, index) => ({
       ...pos,
-      id: `${Date.now()}-${index}-${Math.random().toString(36).substr(2, 9)}`
+      id: `${baseTime + index * 100}-${Math.random().toString(36).substr(2, 9)}`
     }));
     
     console.log('[Template] Generated', newPositions.length, 'new positions with IDs:', newPositions.map(p => p.id));
@@ -294,6 +298,14 @@ const Index = () => {
     setPositions(newPositions);
     
     console.log('[Template] State updated. Positions set to:', newPositions.length);
+    
+    // Force re-render after a short delay to ensure DnD properly registers all items
+    setTimeout(() => {
+      console.log('[Template] Forcing UI re-render...');
+      setRenderKey(prev => prev + 1);
+      console.log('[Template] UI re-render complete');
+    }, 100);
+    
     toast.success(`Vorlage "${template.name}" mit ${newPositions.length} Positionen geladen`);
   };
 
@@ -576,6 +588,7 @@ Mit freundlichen Grüßen`);
 
               {/* Positions List */}
               <DndContext
+                key={renderKey}
                 sensors={sensors}
                 collisionDetection={closestCenter}
                 onDragEnd={handleDragEnd}
@@ -585,19 +598,25 @@ Mit freundlichen Grüßen`);
                   strategy={verticalListSortingStrategy}
                 >
                   <div className="space-y-4">
-                    {positions.map((position, index) => (
-                      <PositionCard
-                        key={position.id}
-                        position={position}
-                        index={index + 1}
-                        onUpdate={updatePosition}
-                        onRemove={removePosition}
-                        onDuplicate={duplicatePosition}
-                        canMoveUp={index > 0}
-                        canMoveDown={index < positions.length - 1}
-                        onMove={movePosition}
-                      />
-                    ))}
+                    {(() => {
+                      console.log('[Render] Rendering', positions.length, 'positions:', positions.map(p => ({ id: p.id, activity: p.activity })));
+                      return positions.map((position, index) => {
+                        console.log('[Render] Rendering position', index + 1, ':', position.activity, 'with ID:', position.id);
+                        return (
+                          <PositionCard
+                            key={position.id}
+                            position={position}
+                            index={index + 1}
+                            onUpdate={updatePosition}
+                            onRemove={removePosition}
+                            onDuplicate={duplicatePosition}
+                            canMoveUp={index > 0}
+                            canMoveDown={index < positions.length - 1}
+                            onMove={movePosition}
+                          />
+                        );
+                      });
+                    })()}
                   </div>
                 </SortableContext>
               </DndContext>
