@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -6,11 +6,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Trash2, Calculator, AlertTriangle, Scale, ArrowUp, ArrowDown } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Trash2, Calculator, AlertTriangle, Scale, ArrowUp, ArrowDown, ChevronDown } from "lucide-react";
 import { Position } from "@/types/stbvv";
 import { calculatePosition } from "@/utils/stbvvCalculator";
 import { activityPresets, getActivityPreset } from "@/utils/activityPresets";
-import BillingTypeSelector from "./BillingTypeSelector";
 
 interface PositionCardProps {
   position: Position;
@@ -31,6 +31,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
   canMoveDown,
   onMove
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
   const calculation = calculatePosition(position);
   const preset = getActivityPreset(position.activity);
 
@@ -159,63 +160,63 @@ const PositionCard: React.FC<PositionCardProps> = ({
           </Select>
         </div>
 
-        {/* Legal Basis */}
-        {preset && (
-          <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-            <div className="flex items-center text-sm text-blue-700">
-              <Scale className="w-4 h-4 mr-2" />
-              <span className="font-medium">Rechtsgrundlage:</span>
-              <span className="ml-2">{preset.legalBasis} StBVV</span>
-            </div>
-          </div>
-        )}
-
-        {/* Description */}
+        {/* Billing Type */}
         <div className="space-y-2">
-          <Label>Beschreibung (optional)</Label>
-          <Textarea
-            value={position.description || ''}
-            onChange={(e) => handleChange('description', e.target.value)}
-            placeholder="Zusätzliche Beschreibung zur Position..."
-            rows={2}
-          />
+          <Label>Abrechnungsart</Label>
+          <Select
+            value={position.billingType}
+            onValueChange={(value) => handleChange('billingType', value)}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="objectValue">Nach Gegenstandswert</SelectItem>
+              <SelectItem value="hourly">Nach Stunden</SelectItem>
+              <SelectItem value="flatRate">Pauschale</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
-        {/* Billing Type Selector */}
-        <BillingTypeSelector
-          position={position}
-          onUpdate={handleChange}
-        />
-
-        {/* Rate and Quantity */}
+        {/* Value and Quantity side by side */}
         <div className="grid grid-cols-2 gap-4">
-          {position.billingType === 'objectValue' && preset && (
+          {position.billingType === 'objectValue' && (
             <div className="space-y-2">
-              <Label>
-                {preset.rateType === 'twentieth' ? 'Zwanzigstel' : 'Zehntelsatz'}
-              </Label>
-              <div className="flex items-center space-x-2">
-                <Input
-                  type="number"
-                  value={position.tenthRate.numerator}
-                  onChange={(e) => handleTenthRateChange(e.target.value)}
-                  min="0.1"
-                  max={preset.rateType === 'twentieth' ? "20" : "50"}
-                  step="0.5"
-                  className={`w-20 ${isRateOutOfRange() ? 'border-red-300' : ''}`}
-                />
-                <span className="text-gray-500">
-                  /{preset.rateType === 'twentieth' ? '20' : '10'}
-                </span>
-              </div>
-              {isRateOutOfRange() && (
-                <div className="flex items-center text-sm text-red-600 bg-red-50 p-2 rounded">
-                  <AlertTriangle className="w-4 h-4 mr-2" />
-                  <span>
-                    Rahmen verlassen! Zulässig: {preset.minRate}/{preset.rateType === 'twentieth' ? '20' : '10'} bis {preset.maxRate}/{preset.rateType === 'twentieth' ? '20' : '10'}
-                  </span>
-                </div>
-              )}
+              <Label>Gegenstandswert (€)</Label>
+              <Input
+                type="number"
+                value={position.objectValue || ''}
+                onChange={(e) => handleChange('objectValue', parseFloat(e.target.value) || 0)}
+                placeholder="0"
+                min="0"
+                step="0.01"
+              />
+            </div>
+          )}
+          {position.billingType === 'hourly' && (
+            <div className="space-y-2">
+              <Label>Stundensatz (€)</Label>
+              <Input
+                type="number"
+                value={position.hourlyRate || ''}
+                onChange={(e) => handleChange('hourlyRate', parseFloat(e.target.value) || 0)}
+                placeholder="0"
+                min="0"
+                step="0.01"
+              />
+            </div>
+          )}
+          {position.billingType === 'flatRate' && (
+            <div className="space-y-2">
+              <Label>Pauschalbetrag (€)</Label>
+              <Input
+                type="number"
+                value={position.flatRate || ''}
+                onChange={(e) => handleChange('flatRate', parseFloat(e.target.value) || 0)}
+                placeholder="0"
+                min="0"
+                step="0.01"
+              />
             </div>
           )}
 
@@ -231,39 +232,146 @@ const PositionCard: React.FC<PositionCardProps> = ({
           </div>
         </div>
 
-        {/* Expense Fee Checkbox */}
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            checked={position.applyExpenseFee}
-            onCheckedChange={(checked) => handleChange('applyExpenseFee', checked)}
-          />
-          <Label className="text-sm">
-            Auslagenpauschale anwenden (20% der Nettogebühr, max. 20€)
-          </Label>
-        </div>
-
-        {/* Calculation Display */}
-        {canCalculate() && (
-          <div className="mt-4 p-4 bg-gray-50 rounded-lg border">
-            <h4 className="font-semibold text-gray-800 mb-2">Berechnung:</h4>
-            <div className="space-y-1 text-sm">
-              <div className="flex justify-between">
-                <span>Gebühr:</span>
-                <span>{calculation.adjustedFee.toFixed(2)} €</span>
-              </div>
-              {position.applyExpenseFee && (
-                <div className="flex justify-between">
-                  <span>Auslagenpauschale:</span>
-                  <span>{calculation.expenseFee.toFixed(2)} €</span>
+        {/* Collapsible Section for Details */}
+        <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+          <CollapsibleTrigger asChild>
+            <Button 
+              variant="outline" 
+              className="w-full flex items-center justify-between"
+            >
+              <span>Details & Berechnung</span>
+              <ChevronDown 
+                className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`}
+              />
+            </Button>
+          </CollapsibleTrigger>
+          
+          <CollapsibleContent className="space-y-4 mt-4">
+            {/* Legal Basis */}
+            {preset && (
+              <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="flex items-center text-sm text-blue-700">
+                  <Scale className="w-4 h-4 mr-2" />
+                  <span className="font-medium">Rechtsgrundlage:</span>
+                  <span className="ml-2">{preset.legalBasis} StBVV</span>
                 </div>
-              )}
-              <div className="flex justify-between font-semibold text-blue-700 border-t pt-1">
-                <span>Gesamt netto:</span>
-                <span>{calculation.totalNet.toFixed(2)} €</span>
               </div>
+            )}
+
+            {/* Description */}
+            <div className="space-y-2">
+              <Label>Beschreibung (optional)</Label>
+              <Textarea
+                value={position.description || ''}
+                onChange={(e) => handleChange('description', e.target.value)}
+                placeholder="Zusätzliche Beschreibung zur Position..."
+                rows={2}
+              />
             </div>
-          </div>
-        )}
+
+            {/* Fee Table and Rate for objectValue billing */}
+            {position.billingType === 'objectValue' && (
+              <>
+                <div className="space-y-2">
+                  <Label>Gebührentabelle</Label>
+                  <Select
+                    value={position.feeTable}
+                    onValueChange={(value) => handleChange('feeTable', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="A">Tabelle A (Erklärungen, Beratung)</SelectItem>
+                      <SelectItem value="B">Tabelle B (Abschlüsse)</SelectItem>
+                      <SelectItem value="C">Tabelle C (Buchführung)</SelectItem>
+                      <SelectItem value="D">Tabelle D (Landwirtschaft)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {preset && (
+                  <div className="space-y-2">
+                    <Label>
+                      {preset.rateType === 'twentieth' ? 'Zwanzigstel' : 'Zehntelsatz'}
+                    </Label>
+                    <div className="flex items-center space-x-2">
+                      <Input
+                        type="number"
+                        value={position.tenthRate.numerator}
+                        onChange={(e) => handleTenthRateChange(e.target.value)}
+                        min="0.1"
+                        max={preset.rateType === 'twentieth' ? "20" : "50"}
+                        step="0.5"
+                        className={`w-20 ${isRateOutOfRange() ? 'border-red-300' : ''}`}
+                      />
+                      <span className="text-gray-500">
+                        /{preset.rateType === 'twentieth' ? '20' : '10'}
+                      </span>
+                    </div>
+                    {isRateOutOfRange() && (
+                      <div className="flex items-center text-sm text-red-600 bg-red-50 p-2 rounded">
+                        <AlertTriangle className="w-4 h-4 mr-2" />
+                        <span>
+                          Rahmen verlassen! Zulässig: {preset.minRate}/{preset.rateType === 'twentieth' ? '20' : '10'} bis {preset.maxRate}/{preset.rateType === 'twentieth' ? '20' : '10'}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Hours for hourly billing */}
+            {position.billingType === 'hourly' && (
+              <div className="space-y-2">
+                <Label>Anzahl Stunden</Label>
+                <Input
+                  type="number"
+                  value={position.hours || ''}
+                  onChange={(e) => handleChange('hours', parseFloat(e.target.value) || 0)}
+                  placeholder="0"
+                  min="0"
+                  step="0.25"
+                />
+              </div>
+            )}
+
+            {/* Expense Fee Checkbox */}
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                checked={position.applyExpenseFee}
+                onCheckedChange={(checked) => handleChange('applyExpenseFee', checked)}
+              />
+              <Label className="text-sm">
+                Auslagenpauschale anwenden (20% der Nettogebühr, max. 20€)
+              </Label>
+            </div>
+
+            {/* Calculation Display */}
+            {canCalculate() && (
+              <div className="p-4 bg-gray-50 rounded-lg border">
+                <h4 className="font-semibold text-gray-800 mb-2">Berechnung:</h4>
+                <div className="space-y-1 text-sm">
+                  <div className="flex justify-between">
+                    <span>Gebühr:</span>
+                    <span>{calculation.adjustedFee.toFixed(2)} €</span>
+                  </div>
+                  {position.applyExpenseFee && (
+                    <div className="flex justify-between">
+                      <span>Auslagenpauschale:</span>
+                      <span>{calculation.expenseFee.toFixed(2)} €</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between font-semibold text-blue-700 border-t pt-1">
+                    <span>Gesamt netto:</span>
+                    <span>{calculation.totalNet.toFixed(2)} €</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </CollapsibleContent>
+        </Collapsible>
       </CardContent>
     </Card>
   );

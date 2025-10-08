@@ -100,10 +100,7 @@ const TotalCalculation: React.FC<TotalCalculationProps> = ({
           <Separator />
 
           <div className="flex justify-between text-lg font-bold text-green-700">
-            <span className="flex items-center">
-              <Euro className="w-4 h-4 mr-1" />
-              Gesamtsumme brutto:
-            </span>
+            <span>Gesamtsumme brutto:</span>
             <span>{totalGross.toFixed(2)} €</span>
           </div>
         </div>
