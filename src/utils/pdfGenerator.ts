@@ -1,14 +1,5 @@
-
-import { Position } from "@/types/stbvv";
+import { Position, ClientData } from "@/types/stbvv";
 import { calculatePosition, calculateTotal } from "./stbvvCalculator";
-
-interface ClientData {
-  name: string;
-  street: string;
-  postalCode: string;
-  city: string;
-  email: string;
-}
 
 export const generatePDF = (
   positions: Position[], 
@@ -236,16 +227,4 @@ export const generatePDF = (
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
-  
-  // Alternative: Open in new window for printing
-  setTimeout(() => {
-    const printWindow = window.open('', '_blank');
-    if (printWindow) {
-      printWindow.document.write(htmlContent);
-      printWindow.document.close();
-      setTimeout(() => {
-        printWindow.print();
-      }, 500);
-    }
-  }, 100);
 };

@@ -30,6 +30,14 @@ export interface CalculationResult {
   totalNet: number;
 }
 
+export interface ClientData {
+  name: string;
+  street: string;
+  postalCode: string;
+  city: string;
+  email: string;
+}
+
 export interface ActivityPreset {
   activity: string;
   defaultTenthRate: number;

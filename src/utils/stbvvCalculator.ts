@@ -1,6 +1,6 @@
-
 import { Position, CalculationResult } from "@/types/stbvv";
 import { getFeeTables } from "./stbvvTables";
+import { VAT_RATE, EXPENSE_FEE_RATE, EXPENSE_FEE_MAX } from "./constants";
 
 export const calculatePosition = (position: Position): CalculationResult => {
   let baseFee = 0;
@@ -44,9 +44,9 @@ export const calculatePosition = (position: Position): CalculationResult => {
       break;
   }
   
-  // Calculate expense fee (20% of adjusted fee, max 20€)
+  // Calculate expense fee
   const expenseFee = position.applyExpenseFee 
-    ? Math.min(adjustedFee * 0.2, 20) 
+    ? Math.min(adjustedFee * EXPENSE_FEE_RATE, EXPENSE_FEE_MAX) 
     : 0;
   
   const totalNet = adjustedFee + expenseFee;
@@ -70,7 +70,7 @@ export const calculateTotal = (
   }, 0);
 
   const subtotalNet = positionsTotal + documentFee;
-  const vatAmount = includeVAT ? subtotalNet * 0.19 : 0;
+  const vatAmount = includeVAT ? subtotalNet * VAT_RATE : 0;
   const totalGross = subtotalNet + vatAmount;
 
   return {

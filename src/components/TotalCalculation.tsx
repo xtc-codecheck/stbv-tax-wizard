@@ -5,9 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
-import { Receipt, Euro } from "lucide-react";
+import { Receipt } from "lucide-react";
 import { Position } from "@/types/stbvv";
-import { calculatePosition } from "@/utils/stbvvCalculator";
+import { calculateTotal } from "@/utils/stbvvCalculator";
 
 interface TotalCalculationProps {
   positions: Position[];
@@ -24,14 +24,8 @@ const TotalCalculation: React.FC<TotalCalculationProps> = ({
   onDocumentFeeChange,
   onVATChange
 }) => {
-  const positionsTotal = positions.reduce((total, position) => {
-    const calculation = calculatePosition(position);
-    return total + (calculation.totalNet * position.quantity);
-  }, 0);
-
-  const subtotalNet = positionsTotal + documentFee;
-  const vatAmount = includeVAT ? subtotalNet * 0.19 : 0;
-  const totalGross = subtotalNet + vatAmount;
+  const totals = calculateTotal(positions, documentFee, includeVAT);
+  const { positionsTotal, subtotalNet, vatAmount, totalGross } = totals;
 
   return (
     <Card className="border-2 border-blue-200 bg-blue-50/30">

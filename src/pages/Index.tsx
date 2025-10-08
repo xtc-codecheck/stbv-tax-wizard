@@ -7,16 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Calculator, Plus, FileText, Download, ArrowUp, ArrowDown, User, Mail } from "lucide-react";
 import PositionCard from "@/components/PositionCard";
 import TotalCalculation from "@/components/TotalCalculation";
-import { Position } from "@/types/stbvv";
+import { Position, ClientData } from "@/types/stbvv";
 import { generatePDF } from "@/utils/pdfGenerator";
 import { calculateTotal } from "@/utils/stbvvCalculator";
-interface ClientData {
-  name: string;
-  street: string;
-  postalCode: string;
-  city: string;
-  email: string;
-}
 const Index = () => {
   const [positions, setPositions] = useState<Position[]>([]);
   const [documentFee, setDocumentFee] = useState(0);

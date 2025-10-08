@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -33,8 +33,10 @@ const PositionCard: React.FC<PositionCardProps> = ({
   onMove
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const calculation = calculatePosition(position);
-  const preset = getActivityPreset(position.activity);
+  
+  // Memoize calculation to prevent unnecessary recalculations
+  const calculation = useMemo(() => calculatePosition(position), [position]);
+  const preset = useMemo(() => getActivityPreset(position.activity), [position.activity]);
 
   const handleChange = (field: keyof Position, value: any) => {
     onUpdate(position.id, { ...position, [field]: value });
