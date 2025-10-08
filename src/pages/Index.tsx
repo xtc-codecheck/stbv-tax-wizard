@@ -97,7 +97,7 @@ Mit freundlichen Grüßen`);
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
             <Calculator className="w-8 h-8 text-blue-600 mr-3" />
-            <h1 className="text-4xl font-bold text-gray-900">STBVV-Rechner</h1>
+            <h1 className="text-4xl font-bold text-gray-900">STBVV-Rechner by Steuern mit Kopf</h1>
           </div>
           <p className="text-gray-600 max-w-2xl mx-auto text-xl">Gesetzeskonforme Steuerberatervergütung nach StBVV 2025 mit automatischer PDF-Erstellung.
 (Hinweis: Berechnung erfolgt nach gesetzlichen Mittelwerten)</p>
