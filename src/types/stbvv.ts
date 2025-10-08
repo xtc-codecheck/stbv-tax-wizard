@@ -57,3 +57,22 @@ export interface Template {
   isCustom: boolean;
   createdAt: string;
 }
+
+export interface Discount {
+  type: 'percentage' | 'fixed';
+  value: number;
+}
+
+export interface BrandingSettings {
+  logoUrl?: string;
+  companyName: string;
+  street: string;
+  postalCode: string;
+  city: string;
+  phone: string;
+  email: string;
+  taxNumber: string;
+  bankName: string;
+  iban: string;
+  bic: string;
+}

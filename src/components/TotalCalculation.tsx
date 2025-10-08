@@ -5,27 +5,49 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
-import { Receipt } from "lucide-react";
-import { Position } from "@/types/stbvv";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Receipt, Percent, Euro, Minus } from "lucide-react";
+import { Position, Discount } from "@/types/stbvv";
 import { calculateTotal } from "@/utils/stbvvCalculator";
 
 interface TotalCalculationProps {
   positions: Position[];
   documentFee: number;
   includeVAT: boolean;
+  discount: Discount | null;
   onDocumentFeeChange: (fee: number) => void;
   onVATChange: (include: boolean) => void;
+  onDiscountChange: (discount: Discount | null) => void;
 }
 
 const TotalCalculation: React.FC<TotalCalculationProps> = ({
   positions,
   documentFee,
   includeVAT,
+  discount,
   onDocumentFeeChange,
-  onVATChange
+  onVATChange,
+  onDiscountChange
 }) => {
-  const totals = calculateTotal(positions, documentFee, includeVAT);
-  const { positionsTotal, subtotalNet, vatAmount, totalGross } = totals;
+  const totals = calculateTotal(positions, documentFee, includeVAT, discount);
+
+  const handleDiscountTypeChange = (type: 'percentage' | 'fixed') => {
+    onDiscountChange(discount ? { ...discount, type } : { type, value: 0 });
+  };
+
+  const handleDiscountValueChange = (value: number) => {
+    if (!discount) {
+      onDiscountChange({ type: 'percentage', value });
+    } else {
+      onDiscountChange({ ...discount, value });
+    }
+  };
+
+  const handleClearDiscount = () => {
+    onDiscountChange(null);
+  };
+  
+  const { positionsTotal, discountAmount, subtotalNet, vatAmount, totalGross } = totals;
 
   return (
     <Card className="border-2 border-blue-200 bg-blue-50/30">
@@ -65,6 +87,63 @@ const TotalCalculation: React.FC<TotalCalculationProps> = ({
 
         <Separator />
 
+        {/* Discount Section */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <Label className="text-base font-semibold flex items-center">
+              <Minus className="w-4 h-4 mr-2 text-orange-600" />
+              Rabatt / Nachlass
+            </Label>
+            {discount && discount.value > 0 && (
+              <button
+                onClick={handleClearDiscount}
+                className="text-xs text-red-500 hover:text-red-700"
+              >
+                Entfernen
+              </button>
+            )}
+          </div>
+          
+          <div className="grid grid-cols-3 gap-2">
+            <div className="col-span-1">
+              <Select
+                value={discount?.type || 'percentage'}
+                onValueChange={handleDiscountTypeChange}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="percentage">
+                    <div className="flex items-center">
+                      <Percent className="w-3 h-3 mr-1" />
+                      %
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="fixed">
+                    <div className="flex items-center">
+                      <Euro className="w-3 h-3 mr-1" />
+                      €
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="col-span-2">
+              <Input
+                type="number"
+                value={discount?.value || 0}
+                onChange={(e) => handleDiscountValueChange(parseFloat(e.target.value) || 0)}
+                placeholder={discount?.type === 'percentage' ? "z.B. 10" : "z.B. 50.00"}
+                min="0"
+                step={discount?.type === 'percentage' ? "1" : "0.01"}
+              />
+            </div>
+          </div>
+        </div>
+
+        <Separator />
+
         {/* Calculation Breakdown */}
         <div className="space-y-3">
           <div className="flex justify-between text-sm">
@@ -76,6 +155,15 @@ const TotalCalculation: React.FC<TotalCalculationProps> = ({
             <span>Dokumentenpauschale:</span>
             <span>{documentFee.toFixed(2)} €</span>
           </div>
+
+          {discount && discount.value > 0 && (
+            <div className="flex justify-between text-sm text-orange-600">
+              <span>
+                Rabatt ({discount.type === 'percentage' ? `${discount.value}%` : `${discount.value.toFixed(2)} €`}):
+              </span>
+              <span>-{discountAmount.toFixed(2)} €</span>
+            </div>
+          )}
 
           <Separator />
 

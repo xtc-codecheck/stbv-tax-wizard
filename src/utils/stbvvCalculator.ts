@@ -62,20 +62,34 @@ export const calculatePosition = (position: Position): CalculationResult => {
 export const calculateTotal = (
   positions: Position[], 
   documentFee: number, 
-  includeVAT: boolean
+  includeVAT: boolean,
+  discount?: { type: 'percentage' | 'fixed'; value: number } | null
 ) => {
   const positionsTotal = positions.reduce((total, position) => {
     const calculation = calculatePosition(position);
     return total + (calculation.totalNet * position.quantity);
   }, 0);
 
-  const subtotalNet = positionsTotal + documentFee;
+  const subtotalBeforeDiscount = positionsTotal + documentFee;
+  
+  // Calculate discount
+  let discountAmount = 0;
+  if (discount && discount.value > 0) {
+    if (discount.type === 'percentage') {
+      discountAmount = subtotalBeforeDiscount * (discount.value / 100);
+    } else {
+      discountAmount = discount.value;
+    }
+  }
+
+  const subtotalNet = subtotalBeforeDiscount - discountAmount;
   const vatAmount = includeVAT ? subtotalNet * VAT_RATE : 0;
   const totalGross = subtotalNet + vatAmount;
 
   return {
     positionsTotal,
     documentFee,
+    discountAmount,
     subtotalNet,
     vatAmount,
     totalGross

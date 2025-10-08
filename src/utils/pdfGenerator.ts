@@ -7,14 +7,16 @@ export const generatePDF = (
   positions: Position[], 
   documentFee: number, 
   includeVAT: boolean,
+  discount: { type: 'percentage' | 'fixed'; value: number } | null,
   documentType: 'quote' | 'invoice' = 'quote',
   clientData?: ClientData,
   invoiceNumber?: string,
   invoiceDate?: Date,
-  servicePeriod?: string
+  servicePeriod?: string,
+  branding?: any
 ) => {
   const doc = new jsPDF();
-  const totals = calculateTotal(positions, documentFee, includeVAT);
+  const totals = calculateTotal(positions, documentFee, includeVAT, discount);
   const documentTitle = documentType === 'quote' ? 'Angebot' : 'Rechnung';
   
   let yPosition = 20;
@@ -28,6 +30,35 @@ export const generatePDF = (
   doc.setFontSize(10);
   doc.setTextColor(100, 100, 100);
   doc.text('Steuerberatervergütung nach StBVV 2025', 20, yPosition);
+  
+  // Branding (right side)
+  if (branding && branding.companyName) {
+    doc.setFontSize(9);
+    doc.setTextColor(0, 0, 0);
+    let brandingY = 20;
+    
+    if (branding.companyName) {
+      doc.setFont('helvetica', 'bold');
+      doc.text(branding.companyName, 200, brandingY, { align: 'right' });
+      brandingY += 5;
+      doc.setFont('helvetica', 'normal');
+    }
+    if (branding.street) {
+      doc.text(branding.street, 200, brandingY, { align: 'right' });
+      brandingY += 4;
+    }
+    if (branding.postalCode || branding.city) {
+      doc.text(`${branding.postalCode} ${branding.city}`.trim(), 200, brandingY, { align: 'right' });
+      brandingY += 4;
+    }
+    if (branding.phone) {
+      doc.text(`Tel: ${branding.phone}`, 200, brandingY, { align: 'right' });
+      brandingY += 4;
+    }
+    if (branding.email) {
+      doc.text(branding.email, 200, brandingY, { align: 'right' });
+    }
+  }
   
   yPosition += 15;
   
@@ -169,6 +200,17 @@ export const generatePDF = (
   doc.text('Dokumentenpauschale:', 25, totalY);
   doc.text(`${totals.documentFee.toFixed(2)} €`, 185, totalY, { align: 'right' });
   
+  if (discount && discount.value > 0) {
+    totalY += 7;
+    const discountLabel = discount.type === 'percentage' 
+      ? `Rabatt (-${discount.value}%)` 
+      : `Rabatt (-${discount.value.toFixed(2)} €)`;
+    doc.setTextColor(255, 87, 34); // Orange
+    doc.text(discountLabel, 25, totalY);
+    doc.text(`-${totals.discountAmount.toFixed(2)} €`, 185, totalY, { align: 'right' });
+    doc.setTextColor(0, 0, 0); // Reset to black
+  }
+  
   totalY += 7;
   doc.text('Zwischensumme netto:', 25, totalY);
   doc.text(`${totals.subtotalNet.toFixed(2)} €`, 185, totalY, { align: 'right' });
@@ -194,6 +236,23 @@ export const generatePDF = (
   
   doc.text('Rechtsgrundlage: Steuerberatervergütungsverordnung (StBVV) in der Fassung von 2025', 20, footerY);
   doc.text(`Hinweis: ${documentType === 'quote' ? 'Dieses Angebot' : 'Diese Rechnung'} wurde automatisch erstellt und entspricht den gesetzlichen Bestimmungen der StBVV.`, 20, footerY + 5);
+  
+  // Branding footer (if available)
+  if (branding && (branding.taxNumber || branding.bankName)) {
+    let footerY2 = footerY + 10;
+    doc.setFontSize(7);
+    
+    if (branding.taxNumber) {
+      doc.text(`Steuernummer: ${branding.taxNumber}`, 20, footerY2);
+      footerY2 += 3;
+    }
+    if (branding.bankName && branding.iban) {
+      doc.text(`Bank: ${branding.bankName} | IBAN: ${branding.iban}`, 20, footerY2);
+      if (branding.bic) {
+        doc.text(` | BIC: ${branding.bic}`, 20, footerY2 + 3);
+      }
+    }
+  }
   
   // Signature lines
   doc.setDrawColor(200, 200, 200);

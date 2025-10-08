@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,10 +8,12 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Combobox } from "@/components/ui/combobox";
-import { Trash2, Calculator, AlertTriangle, Scale, ArrowUp, ArrowDown, ChevronDown, Copy } from "lucide-react";
+import { Trash2, Calculator, AlertTriangle, Scale, ArrowUp, ArrowDown, ChevronDown, Copy, GripVertical } from "lucide-react";
 import { Position } from "@/types/stbvv";
 import { calculatePosition } from "@/utils/stbvvCalculator";
 import { activityPresets, getActivityPreset } from "@/utils/activityPresets";
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface PositionCardProps {
   position: Position;
@@ -34,11 +36,26 @@ const PositionCard: React.FC<PositionCardProps> = ({
   canMoveDown,
   onMove
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = React.useState(false);
+  
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: position.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
   
   // Memoize calculation to prevent unnecessary recalculations
-  const calculation = useMemo(() => calculatePosition(position), [position]);
-  const preset = useMemo(() => getActivityPreset(position.activity), [position.activity]);
+  const calculation = React.useMemo(() => calculatePosition(position), [position]);
+  const preset = React.useMemo(() => getActivityPreset(position.activity), [position.activity]);
 
   const handleChange = (field: keyof Position, value: any) => {
     onUpdate(position.id, { ...position, [field]: value });
@@ -126,10 +143,21 @@ const PositionCard: React.FC<PositionCardProps> = ({
   };
 
   return (
-    <Card className="border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+    <Card 
+      ref={setNodeRef}
+      style={style}
+      className="border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200"
+    >
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-semibold text-gray-800 flex items-center">
+            <button
+              className="cursor-grab active:cursor-grabbing mr-2 text-gray-400 hover:text-gray-600"
+              {...attributes}
+              {...listeners}
+            >
+              <GripVertical className="w-5 h-5" />
+            </button>
             <Calculator className="w-5 h-5 mr-2 text-blue-600" />
             Position {index}
           </CardTitle>

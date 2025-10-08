@@ -7,19 +7,37 @@ import { Input } from "@/components/ui/input";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { Calculator, Plus, FileText, Download, User, Mail, Calendar as CalendarIcon } from "lucide-react";
+import { Calculator, Plus, FileText, Download, User, Mail, Calendar as CalendarIcon, Settings as SettingsIcon, FileSpreadsheet } from "lucide-react";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 import { z } from "zod";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import PositionCard from "@/components/PositionCard";
 import TotalCalculation from "@/components/TotalCalculation";
 import TemplateSelector from "@/components/TemplateSelector";
-import { Position, ClientData, Template } from "@/types/stbvv";
+import { Position, ClientData, Template, Discount } from "@/types/stbvv";
 import { generatePDF } from "@/utils/pdfGenerator";
 import { calculateTotal } from "@/utils/stbvvCalculator";
 import { saveCustomTemplate } from "@/utils/templateManager";
+import { exportToExcel } from "@/utils/excelExporter";
+import { loadBrandingSettings } from "@/utils/brandingStorage";
 
 // Email validation schema
 const emailSchema = z.string().email();
@@ -34,14 +52,17 @@ const STORAGE_KEYS = {
   invoiceNumber: 'stbvv_autosave_invoiceNumber',
   invoiceDate: 'stbvv_autosave_invoiceDate',
   servicePeriod: 'stbvv_autosave_servicePeriod',
+  discount: 'stbvv_autosave_discount',
   invoiceCounter: 'stbvv_invoice_counter',
   lastSaveTimestamp: 'stbvv_autosave_timestamp'
 };
 
 const Index = () => {
+  const navigate = useNavigate();
   const [positions, setPositions] = useState<Position[]>([]);
   const [documentFee, setDocumentFee] = useState(0);
   const [includeVAT, setIncludeVAT] = useState(true);
+  const [discount, setDiscount] = useState<Discount | null>(null);
   const [documentType, setDocumentType] = useState<'quote' | 'invoice'>('quote');
   const [clientData, setClientData] = useState<ClientData>({
     name: '',
@@ -59,6 +80,14 @@ const Index = () => {
   // State for restore dialog
   const [showRestoreDialog, setShowRestoreDialog] = useState(false);
   const [savedTimestamp, setSavedTimestamp] = useState<string>('');
+
+  // DnD sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   // Auto-generate invoice number
   useEffect(() => {
@@ -97,6 +126,9 @@ const Index = () => {
           localStorage.setItem(STORAGE_KEYS.invoiceNumber, invoiceNumber);
           localStorage.setItem(STORAGE_KEYS.invoiceDate, invoiceDate.toISOString());
           localStorage.setItem(STORAGE_KEYS.servicePeriod, servicePeriod);
+          if (discount) {
+            localStorage.setItem(STORAGE_KEYS.discount, JSON.stringify(discount));
+          }
           localStorage.setItem(STORAGE_KEYS.lastSaveTimestamp, new Date().toISOString());
         } catch (error) {
           console.error('Auto-save failed:', error);
@@ -105,7 +137,7 @@ const Index = () => {
     }, 10000); // 10 seconds
 
     return () => clearInterval(interval);
-  }, [positions, clientData, documentFee, includeVAT, documentType, invoiceNumber, invoiceDate, servicePeriod]);
+  }, [positions, clientData, documentFee, includeVAT, documentType, invoiceNumber, invoiceDate, servicePeriod, discount]);
 
   const restoreSession = () => {
     try {
@@ -117,6 +149,7 @@ const Index = () => {
       const savedInvoiceNumber = localStorage.getItem(STORAGE_KEYS.invoiceNumber);
       const savedInvoiceDate = localStorage.getItem(STORAGE_KEYS.invoiceDate);
       const savedServicePeriod = localStorage.getItem(STORAGE_KEYS.servicePeriod);
+      const savedDiscount = localStorage.getItem(STORAGE_KEYS.discount);
 
       if (savedPositions) setPositions(JSON.parse(savedPositions));
       if (savedClientData) setClientData(JSON.parse(savedClientData));
@@ -126,6 +159,7 @@ const Index = () => {
       if (savedInvoiceNumber) setInvoiceNumber(savedInvoiceNumber);
       if (savedInvoiceDate) setInvoiceDate(new Date(savedInvoiceDate));
       if (savedServicePeriod) setServicePeriod(savedServicePeriod);
+      if (savedDiscount) setDiscount(JSON.parse(savedDiscount));
 
       toast.success('Sitzung wiederhergestellt');
     } catch (error) {
@@ -199,6 +233,19 @@ const Index = () => {
     setPositions(newPositions);
   };
 
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      setPositions((items) => {
+        const oldIndex = items.findIndex(item => item.id === active.id);
+        const newIndex = items.findIndex(item => item.id === over.id);
+
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
+
   const updateClientData = (field: keyof ClientData, value: string) => {
     setClientData(prev => ({
       ...prev,
@@ -259,7 +306,7 @@ const Index = () => {
     });
 
     // Check total amount
-    const totals = calculateTotal(positions, documentFee, includeVAT);
+    const totals = calculateTotal(positions, documentFee, includeVAT, discount);
     if (totals.totalGross < 50) {
       warnings.push(`Gesamtsumme (${totals.totalGross.toFixed(2)} €) ist sehr niedrig`);
     }
@@ -317,18 +364,43 @@ const Index = () => {
       localStorage.setItem(STORAGE_KEYS.invoiceCounter, (currentCounter + 1).toString());
     }
 
+    const branding = loadBrandingSettings();
+
     generatePDF(
       positions, 
       documentFee, 
-      includeVAT, 
+      includeVAT,
+      discount,
       documentType, 
+      clientData,
+      invoiceNumber,
+      invoiceDate,
+      servicePeriod,
+      branding
+    );
+    
+    toast.success(`${documentType === 'quote' ? 'Angebot' : 'Rechnung'} erfolgreich erstellt`);
+  };
+
+  const handleExportExcel = () => {
+    if (positions.length === 0) {
+      toast.error('Bitte fügen Sie mindestens eine Position hinzu');
+      return;
+    }
+
+    exportToExcel(
+      positions,
+      documentFee,
+      includeVAT,
+      discount,
+      documentType,
       clientData,
       invoiceNumber,
       invoiceDate,
       servicePeriod
     );
-    
-    toast.success(`${documentType === 'quote' ? 'Angebot' : 'Rechnung'} erfolgreich erstellt`);
+
+    toast.success('Excel-Datei erfolgreich erstellt');
   };
 
   const handleSendEmail = () => {
@@ -337,7 +409,7 @@ const Index = () => {
       return;
     }
 
-    const totals = calculateTotal(positions, documentFee, includeVAT);
+    const totals = calculateTotal(positions, documentFee, includeVAT, discount);
     const documentTitle = documentType === 'quote' ? 'Angebot' : 'Rechnung';
     const subject = encodeURIComponent(`${documentTitle} - Steuerberatervergütung`);
     const body = encodeURIComponent(`Sehr geehrte Damen und Herren,
@@ -382,6 +454,15 @@ Mit freundlichen Grüßen`);
             <div className="flex items-center justify-center mb-4">
               <Calculator className="w-8 h-8 text-blue-600 mr-3" />
               <h1 className="text-4xl font-bold text-gray-900">STBVV-Rechner by Steuern mit Kopf</h1>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate('/settings')}
+                className="ml-4 text-gray-600 hover:text-blue-600"
+                title="Kanzlei-Einstellungen"
+              >
+                <SettingsIcon className="w-6 h-6" />
+              </Button>
             </div>
             <p className="text-gray-600 max-w-2xl mx-auto text-xl">
               Gesetzeskonforme Steuerberatervergütung nach StBVV 2025 mit automatischer PDF-Erstellung.
@@ -461,22 +542,32 @@ Mit freundlichen Grüßen`);
               </Card>
 
               {/* Positions List */}
-              <div className="space-y-4">
-                {positions.map((position, index) => (
-                  <div key={position.id} className="relative">
-                    <PositionCard
-                      position={position}
-                      index={index + 1}
-                      onUpdate={updatePosition}
-                      onRemove={removePosition}
-                      onDuplicate={duplicatePosition}
-                      canMoveUp={index > 0}
-                      canMoveDown={index < positions.length - 1}
-                      onMove={movePosition}
-                    />
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={positions.map(p => p.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="space-y-4">
+                    {positions.map((position, index) => (
+                      <PositionCard
+                        key={position.id}
+                        position={position}
+                        index={index + 1}
+                        onUpdate={updatePosition}
+                        onRemove={removePosition}
+                        onDuplicate={duplicatePosition}
+                        canMoveUp={index > 0}
+                        canMoveDown={index < positions.length - 1}
+                        onMove={movePosition}
+                      />
+                    ))}
                   </div>
-                ))}
-              </div>
+                </SortableContext>
+              </DndContext>
 
               {positions.length === 0 && (
                 <Card className="text-center py-12">
@@ -513,8 +604,10 @@ Mit freundlichen Grüßen`);
                   positions={positions}
                   documentFee={documentFee}
                   includeVAT={includeVAT}
+                  discount={discount}
                   onDocumentFeeChange={setDocumentFee}
                   onVATChange={setIncludeVAT}
+                  onDiscountChange={setDiscount}
                 />
 
                 {/* Invoice Metadata */}
@@ -595,6 +688,15 @@ Mit freundlichen Grüßen`);
                     >
                       <Download className="w-4 h-4 mr-2" />
                       {documentType === 'quote' ? 'Angebot' : 'Rechnung'} als PDF herunterladen
+                    </Button>
+
+                    <Button
+                      onClick={handleExportExcel}
+                      variant="outline"
+                      className="w-full border-blue-600 text-blue-600 hover:bg-blue-50 py-3 rounded-lg font-medium transition-all duration-200"
+                    >
+                      <FileSpreadsheet className="w-4 h-4 mr-2" />
+                      Als Excel exportieren
                     </Button>
 
                     {clientData.email && (
