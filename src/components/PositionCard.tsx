@@ -208,6 +208,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
           <CardTitle className="text-lg font-semibold text-gray-800 flex items-center">
             <button
               className="cursor-grab active:cursor-grabbing mr-2 text-gray-400 hover:text-gray-600"
+              aria-label="Position per Drag & Drop verschieben"
               {...attributes}
               {...listeners}
             >
@@ -224,6 +225,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
               onClick={() => onDuplicate(position.id)}
               className="text-blue-500 hover:text-blue-700 hover:bg-blue-50"
               title="Position duplizieren"
+              aria-label="Position duplizieren"
             >
               <Copy className="w-4 h-4" />
             </Button>
@@ -234,6 +236,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
               onClick={() => onMove(position.id, 'up')}
               disabled={!canMoveUp}
               className="text-gray-500 hover:text-gray-700 disabled:opacity-30"
+              aria-label="Position nach oben verschieben"
             >
               <ArrowUp className="w-4 h-4" />
             </Button>
@@ -243,6 +246,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
               onClick={() => onMove(position.id, 'down')}
               disabled={!canMoveDown}
               className="text-gray-500 hover:text-gray-700 disabled:opacity-30"
+              aria-label="Position nach unten verschieben"
             >
               <ArrowDown className="w-4 h-4" />
             </Button>
@@ -251,6 +255,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
               size="sm"
               onClick={() => onRemove(position.id)}
               className="text-red-500 hover:text-red-700 hover:bg-red-50"
+              aria-label="Position löschen"
             >
               <Trash2 className="w-4 h-4" />
             </Button>
@@ -303,7 +308,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
               <Input
                 type="number"
                 value={localObjectValue === 0 ? '' : localObjectValue}
-                onChange={(e) => setLocalObjectValue(parseFloat(e.target.value) || 0)}
+                onChange={(e) => setLocalObjectValue(Math.max(0, parseFloat(e.target.value) || 0))}
                 placeholder="0"
                 min="0"
                 step="0.01"
@@ -316,7 +321,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
               <Input
                 type="number"
                 value={localHourlyRate === 0 ? '' : localHourlyRate}
-                onChange={(e) => setLocalHourlyRate(parseFloat(e.target.value) || 0)}
+                onChange={(e) => setLocalHourlyRate(Math.max(0, parseFloat(e.target.value) || 0))}
                 placeholder="0"
                 min="0"
                 step="0.01"
@@ -329,7 +334,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
               <Input
                 type="number"
                 value={localFlatRate === 0 ? '' : localFlatRate}
-                onChange={(e) => setLocalFlatRate(parseFloat(e.target.value) || 0)}
+                onChange={(e) => setLocalFlatRate(Math.max(0, parseFloat(e.target.value) || 0))}
                 placeholder="0"
                 min="0"
                 step="0.01"
@@ -446,7 +451,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
                 <Input
                   type="number"
                   value={localHours === 0 ? '' : localHours}
-                  onChange={(e) => setLocalHours(parseFloat(e.target.value) || 0)}
+                  onChange={(e) => setLocalHours(Math.max(0, parseFloat(e.target.value) || 0))}
                   placeholder="0"
                   min="0"
                   step="0.25"

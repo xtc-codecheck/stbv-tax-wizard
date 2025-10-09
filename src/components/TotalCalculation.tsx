@@ -70,7 +70,7 @@ const TotalCalculation: React.FC<TotalCalculationProps> = ({
             id="documentFee"
             type="number"
             value={documentFee === 0 ? '' : documentFee}
-            onChange={(e) => onDocumentFeeChange(parseFloat(e.target.value) || 0)}
+            onChange={(e) => onDocumentFeeChange(Math.max(0, parseFloat(e.target.value) || 0))}
             min="0"
             step="0.01"
             placeholder="12.00"
@@ -137,10 +137,11 @@ const TotalCalculation: React.FC<TotalCalculationProps> = ({
               <Input
                 type="number"
                 value={discount?.value || 0}
-                onChange={(e) => handleDiscountValueChange(parseFloat(e.target.value) || 0)}
+                onChange={(e) => handleDiscountValueChange(Math.max(0, parseFloat(e.target.value) || 0))}
                 placeholder={discount?.type === 'percentage' ? "z.B. 10" : "z.B. 50.00"}
                 min="0"
                 step={discount?.type === 'percentage' ? "1" : "0.01"}
+                max={discount?.type === 'percentage' ? "100" : undefined}
               />
             </div>
           </div>

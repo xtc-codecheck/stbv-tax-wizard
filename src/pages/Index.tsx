@@ -36,6 +36,8 @@ import { Position, ClientData, Template, Discount } from "@/types/stbvv";
 import { calculateTotal } from "@/utils/stbvvCalculator";
 import { saveCustomTemplate } from "@/utils/templateManager";
 import { loadBrandingSettings } from "@/utils/brandingStorage";
+import { generateUniqueId } from "@/utils/idGenerator";
+import { TIMING, VALIDATION } from "@/utils/constants";
 
 // Email validation schema
 const emailSchema = z.string().email();
@@ -59,7 +61,7 @@ const STORAGE_KEYS = {
 // Helper function to generate next document number
 const getNextDocumentNumber = (type: 'quote' | 'invoice', increment = false): string => {
   const counter = parseInt(localStorage.getItem(STORAGE_KEYS.invoiceCounter) || '1000');
-  const nextCounter = increment ? counter + 1 : counter + 1;
+  const nextCounter = increment ? counter + 1 : counter;
   const prefix = type === 'invoice' ? 'RE' : 'AG';
   
   if (increment) {
@@ -103,6 +105,10 @@ const Index = () => {
   
   // State to force re-render after template load
   const [renderKey, setRenderKey] = useState<number>(0);
+  
+  // Loading states
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [isExportingExcel, setIsExportingExcel] = useState(false);
 
   // DnD sensors
   const sensors = useSensors(
@@ -146,7 +152,7 @@ const Index = () => {
     const interval = setInterval(() => {
       // Don't auto-save if template was just loaded
       const timeSinceLoad = Date.now() - lastTemplateLoadTime;
-      if (timeSinceLoad < 2000) {
+      if (timeSinceLoad < TIMING.TEMPLATE_LOAD_GRACE) {
         return;
       }
 
@@ -185,9 +191,15 @@ const Index = () => {
           }
         } catch (error) {
           console.error('[Auto-Save] Failed:', error);
+          // Show user-friendly error toast
+          if (error instanceof Error && error.name === 'QuotaExceededError') {
+            toast.error('Speicherplatz voll. Auto-Speichern deaktiviert.');
+          } else {
+            toast.error('Auto-Speichern fehlgeschlagen. Daten könnten verloren gehen.');
+          }
         }
       }
-    }, 10000);
+    }, TIMING.AUTOSAVE_INTERVAL);
 
     return () => clearInterval(interval);
   }, [positions, clientData, documentFee, includeVAT, documentType, invoiceNumber, invoiceDate, servicePeriod, discount, lastTemplateLoadTime]);
@@ -229,7 +241,7 @@ const Index = () => {
 
   const addPosition = () => {
     const newPosition: Position = {
-      id: Date.now().toString(),
+      id: generateUniqueId('pos'),
       activity: '',
       description: '',
       objectValue: 0,
@@ -254,7 +266,7 @@ const Index = () => {
 
     const duplicatedPosition: Position = {
       ...positionToDuplicate,
-      id: Date.now().toString(),
+      id: generateUniqueId('pos'),
       activity: positionToDuplicate.activity + ' (Kopie)'
     };
 
@@ -312,11 +324,10 @@ const Index = () => {
       localStorage.removeItem(key);
     });
     
-    // Create new positions with unique IDs (time offset prevents collisions)
-    const baseTime = Date.now();
+    // Create new positions with unique IDs
     const newPositions = template.positions.map((pos, index) => ({
       ...pos,
-      id: `${baseTime + index * 100}-${Math.random().toString(36).substr(2, 9)}`
+      id: generateUniqueId(`pos-tpl-${index}`)
     }));
     
     // Set timestamp to prevent immediate auto-save
@@ -328,7 +339,7 @@ const Index = () => {
     // Force re-render to ensure DnD properly registers all items
     setTimeout(() => {
       setRenderKey(prev => prev + 1);
-    }, 100);
+    }, TIMING.RERENDER_DELAY);
     
     toast.success(`Vorlage "${template.name}" mit ${newPositions.length} Positionen geladen`);
   };
@@ -376,7 +387,7 @@ const Index = () => {
 
     // Check total amount
     const totals = calculateTotal(positions, documentFee, includeVAT, discount);
-    if (totals.totalGross < 50) {
+    if (totals.totalGross < VALIDATION.MIN_TOTAL_WARNING) {
       warnings.push(`Gesamtsumme (${totals.totalGross.toFixed(2)} €) ist sehr niedrig`);
     }
 
@@ -427,28 +438,37 @@ const Index = () => {
   const handleGeneratePDF = async () => {
     if (!validateBeforeGenerate()) return;
 
-    // Increment invoice counter
-    getNextDocumentNumber(documentType, true);
-
-    const branding = loadBrandingSettings();
-
-    // Lazy-load PDF generator for better bundle size
-    const { generatePDF } = await import("@/utils/pdfGenerator");
+    setIsGeneratingPDF(true);
     
-    generatePDF(
-      positions, 
-      documentFee, 
-      includeVAT,
-      discount,
-      documentType, 
-      clientData,
-      invoiceNumber,
-      invoiceDate,
-      servicePeriod,
-      branding
-    );
-    
-    toast.success(`${documentType === 'quote' ? 'Angebot' : 'Rechnung'} erfolgreich erstellt`);
+    try {
+      // Increment invoice counter
+      getNextDocumentNumber(documentType, true);
+
+      const branding = loadBrandingSettings();
+
+      // Lazy-load PDF generator for better bundle size
+      const { generatePDF } = await import("@/utils/pdfGenerator");
+      
+      generatePDF(
+        positions, 
+        documentFee, 
+        includeVAT,
+        discount,
+        documentType, 
+        clientData,
+        invoiceNumber,
+        invoiceDate,
+        servicePeriod,
+        branding
+      );
+      
+      toast.success(`${documentType === 'quote' ? 'Angebot' : 'Rechnung'} erfolgreich erstellt`);
+    } catch (error) {
+      console.error('PDF generation failed:', error);
+      toast.error('Fehler beim Erstellen der PDF');
+    } finally {
+      setIsGeneratingPDF(false);
+    }
   };
 
   const handleExportExcel = async () => {
@@ -457,27 +477,44 @@ const Index = () => {
       return;
     }
 
-    // Lazy-load Excel exporter for better bundle size
-    const { exportToExcel } = await import("@/utils/excelExporter");
+    setIsExportingExcel(true);
     
-    exportToExcel(
-      positions,
-      documentFee,
-      includeVAT,
-      discount,
-      documentType,
-      clientData,
-      invoiceNumber,
-      invoiceDate,
-      servicePeriod
-    );
+    try {
+      // Lazy-load Excel exporter for better bundle size
+      const { exportToExcel } = await import("@/utils/excelExporter");
+      
+      exportToExcel(
+        positions,
+        documentFee,
+        includeVAT,
+        discount,
+        documentType,
+        clientData,
+        invoiceNumber,
+        invoiceDate,
+        servicePeriod
+      );
 
-    toast.success('Excel-Datei erfolgreich erstellt');
+      toast.success('Excel-Datei erfolgreich erstellt');
+    } catch (error) {
+      console.error('Excel export failed:', error);
+      toast.error('Fehler beim Exportieren der Excel-Datei');
+    } finally {
+      setIsExportingExcel(false);
+    }
   };
 
   const handleSendEmail = () => {
     if (!clientData.email) {
       toast.error('Bitte geben Sie eine E-Mail-Adresse ein');
+      return;
+    }
+
+    // Validate email before creating mailto link
+    try {
+      emailSchema.parse(clientData.email);
+    } catch {
+      toast.error('E-Mail-Adresse ist ungültig');
       return;
     }
 
@@ -532,6 +569,7 @@ Mit freundlichen Grüßen`);
                 onClick={() => navigate('/settings')}
                 className="ml-4 text-gray-600 hover:text-blue-600"
                 title="Kanzlei-Einstellungen"
+                aria-label="Kanzlei-Einstellungen öffnen"
               >
                 <SettingsIcon className="w-6 h-6" />
               </Button>
@@ -757,19 +795,23 @@ Mit freundlichen Grüßen`);
                   <div className="space-y-2">
                     <Button
                       onClick={handleGeneratePDF}
-                      className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
+                      disabled={isGeneratingPDF}
+                      className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                      aria-label={`${documentType === 'quote' ? 'Angebot' : 'Rechnung'} als PDF herunterladen`}
                     >
-                      <Download className="w-4 h-4 mr-2" />
-                      {documentType === 'quote' ? 'Angebot' : 'Rechnung'} als PDF herunterladen
+                      <Download className={`w-4 h-4 mr-2 ${isGeneratingPDF ? 'animate-pulse' : ''}`} />
+                      {isGeneratingPDF ? 'Wird erstellt...' : `${documentType === 'quote' ? 'Angebot' : 'Rechnung'} als PDF herunterladen`}
                     </Button>
 
                     <Button
                       onClick={handleExportExcel}
+                      disabled={isExportingExcel}
                       variant="outline"
-                      className="w-full border-blue-600 text-blue-600 hover:bg-blue-50 py-3 rounded-lg font-medium transition-all duration-200"
+                      className="w-full border-blue-600 text-blue-600 hover:bg-blue-50 py-3 rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                      aria-label="Als Excel exportieren"
                     >
-                      <FileSpreadsheet className="w-4 h-4 mr-2" />
-                      Als Excel exportieren
+                      <FileSpreadsheet className={`w-4 h-4 mr-2 ${isExportingExcel ? 'animate-pulse' : ''}`} />
+                      {isExportingExcel ? 'Wird exportiert...' : 'Als Excel exportieren'}
                     </Button>
 
                     {clientData.email && (
@@ -777,6 +819,7 @@ Mit freundlichen Grüßen`);
                         onClick={handleSendEmail}
                         variant="outline"
                         className="w-full border-green-600 text-green-600 hover:bg-green-50 py-3 rounded-lg font-medium transition-all duration-200"
+                        aria-label={`E-Mail senden an ${clientData.email}`}
                       >
                         <Mail className="w-4 h-4 mr-2" />
                         E-Mail senden an {clientData.email}
