@@ -216,18 +216,8 @@ All colors MUST be HSL.
 
   /* Print styles */
   @media print {
-    .no-print,
-    header,
-    nav,
-    footer,
-    button,
-    .fixed,
-    .sticky {
-      @apply hidden;
-    }
-
-    body {
-      @apply text-black bg-white;
-    }
+    .no-print, header, nav, footer, button, [role="button"], .fixed, .sticky { display: none !important; }
+    body { background: white !important; color: black !important; }
+    .position-card { page-break-inside: avoid; border: 1px solid #ddd !important; margin-bottom: 1rem; }
   }
 }

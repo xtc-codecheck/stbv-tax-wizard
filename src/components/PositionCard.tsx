@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Combobox } from "@/components/ui/combobox";
-import { Trash2, Calculator, AlertTriangle, AlertCircle, CheckCircle2, Scale, ArrowUp, ArrowDown, ChevronDown, Copy, GripVertical } from "lucide-react";
+import { Trash2, Calculator, AlertTriangle, AlertCircle, CheckCircle2, Scale, ArrowUp, ArrowDown, ChevronDown, Copy, GripVertical, Info } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { Position } from "@/types/stbvv";
 import { calculatePosition } from "@/utils/stbvvCalculator";
@@ -543,7 +544,17 @@ const PositionCard: React.FC<PositionCardProps> = ({
             {position.billingType === 'objectValue' && (
               <>
                 <div className="space-y-2">
-                  <Label>Gebührentabelle</Label>
+                  <div className="flex items-center gap-2">
+                    <Label>Gebührentabelle</Label>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="w-4 h-4 text-muted-foreground cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        <p>Wählen Sie die Gebührentabelle nach § 24-35 StBVV je nach Tätigkeit</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
                   <Select
                     value={position.feeTable}
                     onValueChange={(value) => handleChange('feeTable', value)}
@@ -562,9 +573,19 @@ const PositionCard: React.FC<PositionCardProps> = ({
 
                 {preset && (
                   <div className="space-y-2">
-                    <Label>
-                      {preset.rateType === 'twentieth' ? 'Zwanzigstel' : 'Zehntelsatz'}
-                    </Label>
+                    <div className="flex items-center gap-2">
+                      <Label>
+                        {preset.rateType === 'twentieth' ? 'Zwanzigstel' : 'Zehntelsatz'}
+                      </Label>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="w-4 h-4 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs">
+                          <p>Reduziert die Gebühr für wiederkehrende Tätigkeiten gemäß § 24 StBVV (Wert zwischen {preset.minRate} und {preset.maxRate})</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
                     <div className="flex items-center space-x-2">
                       <Input
                         type="number"
@@ -626,8 +647,16 @@ const PositionCard: React.FC<PositionCardProps> = ({
                 checked={position.applyExpenseFee}
                 onCheckedChange={(checked) => handleChange('applyExpenseFee', checked)}
               />
-              <Label className="text-sm">
+              <Label className="text-sm flex items-center gap-2">
                 Auslagenpauschale anwenden (20% der Nettogebühr, max. 20€)
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info className="w-4 h-4 text-muted-foreground cursor-help" />
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs">
+                    <p>Dokumentenpauschale gemäß § 16 StBVV für Post-, Telekommunikations- und Schreibauslagen</p>
+                  </TooltipContent>
+                </Tooltip>
               </Label>
             </div>
 

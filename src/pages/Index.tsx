@@ -7,7 +7,28 @@ import { Input } from "@/components/ui/input";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { Calculator, Plus, FileText, Download, User, Mail, Calendar as CalendarIcon, Settings as SettingsIcon, FileSpreadsheet, Keyboard, Loader2, Undo2, Redo2, X, CheckSquare, Square, Trash2, Copy } from "lucide-react";
+import {
+  Calculator,
+  Plus,
+  FileText,
+  Download,
+  User,
+  Mail,
+  Calendar as CalendarIcon,
+  Settings as SettingsIcon,
+  FileSpreadsheet,
+  Keyboard,
+  Loader2,
+  Undo2,
+  Redo2,
+  X,
+  CheckSquare,
+  Square,
+  Trash2,
+  Copy,
+  Table2,
+  Printer
+} from "lucide-react";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 import { z } from "zod";
@@ -631,21 +652,8 @@ const Index = () => {
     setIsExportingExcel(true);
     
     try {
-      // Lazy-load Excel exporter for better bundle size
       const { exportToExcel } = await import("@/utils/excelExporter");
-      
-      exportToExcel(
-        positions,
-        documentFee,
-        includeVAT,
-        discount,
-        documentType,
-        clientData,
-        invoiceNumber,
-        invoiceDate,
-        servicePeriod
-      );
-
+      exportToExcel(positions, documentFee, includeVAT, discount, documentType, clientData, invoiceNumber, invoiceDate, servicePeriod);
       toast.success('Excel-Datei erfolgreich erstellt');
     } catch (error) {
       console.error('Excel export failed:', error);
@@ -653,6 +661,17 @@ const Index = () => {
     } finally {
       setIsExportingExcel(false);
     }
+  };
+
+  const handleExportCSV = () => {
+    const brandingSettings = loadBrandingSettings();
+    exportToCSV({ positions, totals, clientData, invoiceNumber, brandingSettings });
+    toast.success('CSV-Export erfolgreich');
+  };
+
+  const handlePrint = () => {
+    window.print();
+    toast.success('Druckansicht geöffnet');
   };
 
   const handleSendEmail = () => {
@@ -1089,15 +1108,17 @@ Mit freundlichen Grüßen`);
                       {isGeneratingPDF ? 'Wird erstellt...' : `${documentType === 'quote' ? 'Angebot' : 'Rechnung'} als PDF herunterladen`}
                     </Button>
 
-                    <Button
-                      onClick={handleExportExcel}
-                      disabled={isExportingExcel}
-                      variant="outline"
-                      className="w-full border-blue-600 text-blue-600 hover:bg-blue-50 py-3 rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                      aria-label="Als Excel exportieren"
-                    >
+                    <Button onClick={handleExportExcel} disabled={isExportingExcel} variant="outline" className="w-full border-blue-600 text-blue-600 hover:bg-blue-50 py-3 rounded-lg font-medium transition-all no-print" aria-label="Als Excel exportieren">
                       <FileSpreadsheet className={`w-4 h-4 mr-2 ${isExportingExcel ? 'animate-pulse' : ''}`} />
                       {isExportingExcel ? 'Wird exportiert...' : 'Als Excel exportieren'}
+                    </Button>
+                    <Button onClick={handleExportCSV} variant="outline" className="w-full border-green-600 text-green-600 hover:bg-green-50 py-3 rounded-lg no-print" aria-label="Als CSV exportieren">
+                      <FileText className="w-4 h-4 mr-2" />
+                      Als CSV exportieren
+                    </Button>
+                    <Button onClick={handlePrint} variant="outline" className="w-full border-gray-600 text-gray-600 hover:bg-gray-50 py-3 rounded-lg no-print" aria-label="Drucken">
+                      <Printer className="w-4 h-4 mr-2" />
+                      Drucken
                     </Button>
 
                     {clientData.email && (
