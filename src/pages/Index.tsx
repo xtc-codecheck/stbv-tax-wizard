@@ -913,6 +913,39 @@ Mit freundlichen Grüßen`);
         <Button onClick={addPosition} className="md:hidden fixed bottom-20 right-6 w-14 h-14 rounded-full bg-blue-600 hover:bg-blue-700 shadow-2xl z-40" size="icon" aria-label="Position hinzufügen">
           <Plus className="w-6 h-6" />
         </Button>
+
+        {/* Footer */}
+        <footer className="mt-16 py-8 border-t border-border bg-muted/30">
+          <div className="container mx-auto px-4">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
+              <div>
+                © 2025 Finanzgeflüster GmbH. Alle Rechte vorbehalten.
+              </div>
+              <div className="flex gap-6">
+                <a 
+                  href="/impressum" 
+                  className="hover:text-foreground transition-colors"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate('/impressum');
+                  }}
+                >
+                  Impressum
+                </a>
+                <a 
+                  href="/datenschutz" 
+                  className="hover:text-foreground transition-colors"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate('/datenschutz');
+                  }}
+                >
+                  Datenschutz
+                </a>
+              </div>
+            </div>
+          </div>
+        </footer>
       </div>
     </>;
 };
