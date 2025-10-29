@@ -4,8 +4,11 @@ import { calculatePosition } from "@/utils/stbvvCalculator";
 interface ExportData {
   positions: Position[];
   totals: {
-    totalNet: number;
-    totalVat: number;
+    positionsTotal: number;
+    documentFee: number;
+    discountAmount: number;
+    subtotalNet: number;
+    vatAmount: number;
     totalGross: number;
   };
   clientData?: {
@@ -60,8 +63,13 @@ export const exportToCSV = (data: ExportData): void => {
   
   // Totals
   csvContent += "\n";
-  csvContent += `,,,,,,,,Gesamt netto,${totals.totalNet.toFixed(2)}\n`;
-  csvContent += `,,,,,,,,MwSt. (19%),${totals.totalVat.toFixed(2)}\n`;
+  csvContent += `,,,,,,,,Positionen gesamt,${totals.positionsTotal.toFixed(2)}\n`;
+  csvContent += `,,,,,,,,Dokumentenpauschale,${totals.documentFee.toFixed(2)}\n`;
+  if (totals.discountAmount > 0) {
+    csvContent += `,,,,,,,,Rabatt,-${totals.discountAmount.toFixed(2)}\n`;
+  }
+  csvContent += `,,,,,,,,Gesamt netto,${totals.subtotalNet.toFixed(2)}\n`;
+  csvContent += `,,,,,,,,MwSt. (19%),${totals.vatAmount.toFixed(2)}\n`;
   csvContent += `,,,,,,,,Gesamt brutto,${totals.totalGross.toFixed(2)}\n`;
   
   // Create download link
