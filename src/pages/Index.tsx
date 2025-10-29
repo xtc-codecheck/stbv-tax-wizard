@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { Calculator, Plus, FileText, Download, User, Mail, Calendar as CalendarIcon, Settings as SettingsIcon, FileSpreadsheet } from "lucide-react";
+import { Calculator, Plus, FileText, Download, User, Mail, Calendar as CalendarIcon, Settings as SettingsIcon, FileSpreadsheet, Keyboard, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 import { z } from "zod";
@@ -38,6 +38,9 @@ import { saveCustomTemplate } from "@/utils/templateManager";
 import { loadBrandingSettings } from "@/utils/brandingStorage";
 import { generateUniqueId } from "@/utils/idGenerator";
 import { TIMING, VALIDATION } from "@/utils/constants";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { KeyboardShortcutsDialog } from "@/components/KeyboardShortcutsDialog";
+import { getDefaultHourlyRate } from "@/utils/smartDefaults";
 
 // Email validation schema
 const emailSchema = z.string().email();
@@ -109,6 +112,30 @@ const Index = () => {
   // Loading states
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [isExportingExcel, setIsExportingExcel] = useState(false);
+  
+  // Keyboard shortcuts state
+  const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false);
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts([
+    {
+      key: 'n',
+      ctrl: true,
+      description: 'Neue Position hinzufügen',
+      action: () => addPosition()
+    },
+    {
+      key: 'p',
+      ctrl: true,
+      description: 'PDF generieren',
+      action: () => !isGeneratingPDF && handleGeneratePDF()
+    },
+    {
+      key: '?',
+      description: 'Tastenkombinationen anzeigen',
+      action: () => setShowKeyboardShortcuts(true)
+    }
+  ], !showRestoreDialog && !showKeyboardShortcuts);
 
   // DnD sensors
   const sensors = useSensors(
@@ -556,6 +583,11 @@ Mit freundlichen Grüßen`);
         </AlertDialogContent>
       </AlertDialog>
 
+      <KeyboardShortcutsDialog 
+        open={showKeyboardShortcuts} 
+        onOpenChange={setShowKeyboardShortcuts}
+      />
+
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
         <div className="container mx-auto px-4 py-8 max-w-6xl">
           {/* Header */}
@@ -799,7 +831,11 @@ Mit freundlichen Grüßen`);
                       className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                       aria-label={`${documentType === 'quote' ? 'Angebot' : 'Rechnung'} als PDF herunterladen`}
                     >
-                      <Download className={`w-4 h-4 mr-2 ${isGeneratingPDF ? 'animate-pulse' : ''}`} />
+                      {isGeneratingPDF ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <Download className="w-4 h-4 mr-2" />
+                      )}
                       {isGeneratingPDF ? 'Wird erstellt...' : `${documentType === 'quote' ? 'Angebot' : 'Rechnung'} als PDF herunterladen`}
                     </Button>
 

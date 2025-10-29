@@ -92,6 +92,44 @@ All colors MUST be HSL.
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+
+  /* Custom animations for UX improvements */
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideOutDown {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4);
+    }
+    50% {
+      box-shadow: 0 0 0 8px hsl(var(--primary) / 0);
+    }
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
 }
 
 @layer base {
@@ -101,5 +139,41 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  .animate-slide-in-up {
+    animation: slideInUp 0.3s ease-out;
+  }
+
+  .animate-slide-out-down {
+    animation: slideOutDown 0.3s ease-out;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  .animate-shake {
+    animation: shake 0.3s ease-in-out;
+  }
+
+  .drag-ghost {
+    opacity: 0.5;
+    transform: rotate(2deg);
+    transition: all 0.2s ease;
+  }
+
+  .drag-over {
+    border-color: hsl(var(--primary));
+    background-color: hsl(var(--primary) / 0.05);
+    animation: pulse-glow 1s ease-in-out infinite;
+  }
+
+  .validation-error {
+    @apply border-destructive animate-shake;
+  }
+
+  .validation-success {
+    @apply border-green-500;
   }
 }
