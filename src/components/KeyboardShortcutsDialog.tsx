@@ -18,6 +18,8 @@ export function KeyboardShortcutsDialog({ open, onOpenChange }: KeyboardShortcut
     { keys: ['Ctrl', 'S'], description: 'Als Vorlage speichern' },
     { keys: ['Ctrl', 'P'], description: 'PDF generieren' },
     { keys: ['Ctrl', 'D'], description: 'Position duplizieren (wenn fokussiert)' },
+    { keys: ['Ctrl', 'Z'], description: 'Rückgängig machen' },
+    { keys: ['Ctrl', 'Y'], description: 'Wiederherstellen' },
     { keys: ['?'], description: 'Diese Hilfe anzeigen' },
     { keys: ['Esc'], description: 'Dialog schließen' },
   ];

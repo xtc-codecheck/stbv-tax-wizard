@@ -28,6 +28,9 @@ interface PositionCardProps {
   canMoveUp: boolean;
   canMoveDown: boolean;
   onMove: (id: string, direction: 'up' | 'down') => void;
+  isSelectable?: boolean;
+  isSelected?: boolean;
+  onSelectionChange?: (id: string, selected: boolean) => void;
 }
 
 const PositionCard: React.FC<PositionCardProps> = ({
@@ -38,7 +41,10 @@ const PositionCard: React.FC<PositionCardProps> = ({
   onDuplicate,
   canMoveUp,
   canMoveDown,
-  onMove
+  onMove,
+  isSelectable = false,
+  isSelected = false,
+  onSelectionChange
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   
@@ -270,16 +276,32 @@ const PositionCard: React.FC<PositionCardProps> = ({
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+            {isSelectable && (
+              <Checkbox
+                checked={isSelected}
+                onCheckedChange={(checked) => onSelectionChange?.(position.id, checked as boolean)}
+                className="mr-2"
+                aria-label="Position auswählen"
+              />
+            )}
             <button
-              className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 touch-none"
+              className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 touch-none min-h-[44px] min-w-[44px] flex items-center justify-center"
               aria-label="Position per Drag & Drop verschieben"
               {...attributes}
               {...listeners}
             >
-              <GripVertical className="w-5 h-5" />
+              <GripVertical className="w-6 h-6" />
             </button>
             <Calculator className="w-5 h-5 text-blue-600" />
             <span>Position {index}</span>
+            {canCalculate() && (
+              <Badge 
+                variant="outline" 
+                className="ml-2 animate-pop-number bg-gradient-to-r from-blue-50 to-green-50 border-blue-200 text-blue-700 font-semibold"
+              >
+                {calculation.totalNet.toFixed(2)} €
+              </Badge>
+            )}
             {isComplete && !hasErrors && (
               <Badge variant="default" className="bg-green-600 flex items-center gap-1 ml-2">
                 <CheckCircle2 className="w-3 h-3" />
@@ -299,11 +321,11 @@ const PositionCard: React.FC<PositionCardProps> = ({
               variant="ghost"
               size="sm"
               onClick={() => onDuplicate(position.id)}
-              className="text-blue-500 hover:text-blue-700 hover:bg-blue-50"
+              className="text-blue-500 hover:text-blue-700 hover:bg-blue-50 min-h-[44px] min-w-[44px]"
               title="Position duplizieren"
               aria-label="Position duplizieren"
             >
-              <Copy className="w-4 h-4" />
+              <Copy className="w-5 h-5" />
             </Button>
             {/* Move Buttons */}
             <Button
@@ -311,29 +333,29 @@ const PositionCard: React.FC<PositionCardProps> = ({
               size="sm"
               onClick={() => onMove(position.id, 'up')}
               disabled={!canMoveUp}
-              className="text-gray-500 hover:text-gray-700 disabled:opacity-30"
+              className="text-gray-500 hover:text-gray-700 disabled:opacity-30 min-h-[44px] min-w-[44px]"
               aria-label="Position nach oben verschieben"
             >
-              <ArrowUp className="w-4 h-4" />
+              <ArrowUp className="w-5 h-5" />
             </Button>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => onMove(position.id, 'down')}
               disabled={!canMoveDown}
-              className="text-gray-500 hover:text-gray-700 disabled:opacity-30"
+              className="text-gray-500 hover:text-gray-700 disabled:opacity-30 min-h-[44px] min-w-[44px]"
               aria-label="Position nach unten verschieben"
             >
-              <ArrowDown className="w-4 h-4" />
+              <ArrowDown className="w-5 h-5" />
             </Button>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => onRemove(position.id)}
-              className="text-red-500 hover:text-red-700 hover:bg-red-50"
+              className="text-red-500 hover:text-red-700 hover:bg-red-50 min-h-[44px] min-w-[44px]"
               aria-label="Position löschen"
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 className="w-5 h-5" />
             </Button>
           </div>
         </div>
@@ -477,7 +499,11 @@ const PositionCard: React.FC<PositionCardProps> = ({
         </div>
 
         {/* Collapsible Section for Details */}
-        <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+        <Collapsible 
+          open={isOpen} 
+          onOpenChange={setIsOpen}
+          defaultOpen={typeof window !== 'undefined' && window.innerWidth >= 768}
+        >
           <CollapsibleTrigger asChild>
             <Button 
               variant="outline" 

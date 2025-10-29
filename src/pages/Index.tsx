@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { Calculator, Plus, FileText, Download, User, Mail, Calendar as CalendarIcon, Settings as SettingsIcon, FileSpreadsheet, Keyboard, Loader2 } from "lucide-react";
+import { Calculator, Plus, FileText, Download, User, Mail, Calendar as CalendarIcon, Settings as SettingsIcon, FileSpreadsheet, Keyboard, Loader2, Undo2, Redo2, X, CheckSquare, Square, Trash2, Copy } from "lucide-react";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 import { z } from "zod";
@@ -41,6 +41,7 @@ import { TIMING, VALIDATION } from "@/utils/constants";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { KeyboardShortcutsDialog } from "@/components/KeyboardShortcutsDialog";
 import { getDefaultHourlyRate } from "@/utils/smartDefaults";
+import { useHistory } from "@/hooks/useHistory";
 
 // Email validation schema
 const emailSchema = z.string().email();
@@ -116,6 +117,110 @@ const Index = () => {
   // Keyboard shortcuts state
   const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false);
 
+  // Bulk selection state
+  const [selectedPositionIds, setSelectedPositionIds] = useState<string[]>([]);
+  const [isBulkMode, setIsBulkMode] = useState(false);
+  
+  // History for Undo/Redo
+  const {
+    currentState: historyState,
+    pushHistory,
+    undo: historyUndo,
+    redo: historyRedo,
+    canUndo,
+    canRedo
+  } = useHistory({ positions, clientData, documentFee, includeVAT, discount }, 10);
+
+  // Update history when relevant state changes
+  useEffect(() => {
+    const debounceTimer = setTimeout(() => {
+      pushHistory({ positions, clientData, documentFee, includeVAT, discount });
+    }, 500);
+    return () => clearTimeout(debounceTimer);
+  }, [positions, clientData, documentFee, includeVAT, discount]);
+  
+  // Undo/Redo handlers
+  const handleUndo = () => {
+    const previousState = historyUndo();
+    if (previousState) {
+      setPositions(previousState.positions);
+      setClientData(previousState.clientData);
+      setDocumentFee(previousState.documentFee);
+      setIncludeVAT(previousState.includeVAT);
+      setDiscount(previousState.discount);
+      toast.success('Rückgängig gemacht');
+    }
+  };
+
+  const handleRedo = () => {
+    const nextState = historyRedo();
+    if (nextState) {
+      setPositions(nextState.positions);
+      setClientData(nextState.clientData);
+      setDocumentFee(nextState.documentFee);
+      setIncludeVAT(nextState.includeVAT);
+      setDiscount(nextState.discount);
+      toast.success('Wiederhergestellt');
+    }
+  };
+
+  // Bulk operations
+  const handleSelectAll = () => {
+    setSelectedPositionIds(positions.map(p => p.id));
+  };
+
+  const handleDeselectAll = () => {
+    setSelectedPositionIds([]);
+  };
+
+  const handleToggleSelection = (id: string, selected: boolean) => {
+    if (selected) {
+      setSelectedPositionIds(prev => [...prev, id]);
+    } else {
+      setSelectedPositionIds(prev => prev.filter(pId => pId !== id));
+    }
+  };
+
+  const handleBulkDelete = () => {
+    const deletedCount = selectedPositionIds.length;
+    setPositions(positions.filter(pos => !selectedPositionIds.includes(pos.id)));
+    setSelectedPositionIds([]);
+    toast.success(`${deletedCount} Positionen gelöscht`, {
+      action: {
+        label: 'Rückgängig',
+        onClick: handleUndo
+      }
+    });
+  };
+
+  const handleBulkDuplicate = () => {
+    const selectedPositions = positions.filter(pos => selectedPositionIds.includes(pos.id));
+    const duplicated = selectedPositions.map(pos => ({
+      ...pos,
+      id: generateUniqueId('pos'),
+      activity: pos.activity + ' (Kopie)'
+    }));
+    setPositions([...positions, ...duplicated]);
+    setSelectedPositionIds([]);
+    toast.success(`${duplicated.length} Positionen dupliziert`);
+  };
+
+  const handleBulkChangeFeeTable = (feeTable: 'A' | 'B' | 'C' | 'D') => {
+    setPositions(positions.map(pos => 
+      selectedPositionIds.includes(pos.id) ? { ...pos, feeTable } : pos
+    ));
+    toast.success(`Gebührentabelle für ${selectedPositionIds.length} Positionen geändert`);
+  };
+
+  // Floating summary bar visibility
+  const [showFloatingSummary, setShowFloatingSummary] = useState(true);
+
+  // Calculate totals for floating summary
+  const totals = useMemo(
+    () => calculateTotal(positions, documentFee, includeVAT, discount),
+    [positions, documentFee, includeVAT, discount]
+  );
+
   // Keyboard shortcuts
   useKeyboardShortcuts([
     {
@@ -129,6 +234,18 @@ const Index = () => {
       ctrl: true,
       description: 'PDF generieren',
       action: () => !isGeneratingPDF && handleGeneratePDF()
+    },
+    {
+      key: 'z',
+      ctrl: true,
+      description: 'Rückgängig machen',
+      action: () => canUndo && handleUndo()
+    },
+    {
+      key: 'y',
+      ctrl: true,
+      description: 'Wiederherstellen',
+      action: () => canRedo && handleRedo()
     },
     {
       key: '?',
@@ -310,7 +427,14 @@ const Index = () => {
   };
 
   const removePosition = (id: string) => {
+    const positionName = positions.find(pos => pos.id === id)?.activity || 'Position';
     setPositions(positions.filter(pos => pos.id !== id));
+    toast.success(`${positionName} gelöscht`, {
+      action: {
+        label: 'Rückgängig',
+        onClick: handleUndo
+      }
+    });
   };
 
   const movePosition = (id: string, direction: 'up' | 'down') => {
@@ -592,19 +716,31 @@ Mit freundlichen Grüßen`);
         <div className="container mx-auto px-4 py-8 max-w-6xl">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="flex items-center justify-center mb-4">
-              <Calculator className="w-8 h-8 text-blue-600 mr-3" />
+            <div className="flex items-center justify-center mb-4 gap-2 flex-wrap">
+              <Calculator className="w-8 h-8 text-blue-600" />
               <h1 className="text-4xl font-bold text-gray-900">STBVV-Rechner by Steuern mit Kopf</h1>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => navigate('/settings')}
-                className="ml-4 text-gray-600 hover:text-blue-600"
-                title="Kanzlei-Einstellungen"
-                aria-label="Kanzlei-Einstellungen öffnen"
-              >
-                <SettingsIcon className="w-6 h-6" />
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowKeyboardShortcuts(true)}
+                  className="text-gray-600 hover:text-blue-600"
+                  title="Tastenkombinationen"
+                  aria-label="Tastenkombinationen anzeigen"
+                >
+                  <Keyboard className="w-6 h-6" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => navigate('/settings')}
+                  className="text-gray-600 hover:text-blue-600"
+                  title="Kanzlei-Einstellungen"
+                  aria-label="Kanzlei-Einstellungen öffnen"
+                >
+                  <SettingsIcon className="w-6 h-6" />
+                </Button>
+              </div>
             </div>
             <p className="text-gray-600 max-w-2xl mx-auto text-xl">
               Gesetzeskonforme Steuerberatervergütung nach StBVV 2025 mit automatischer PDF-Erstellung.
@@ -683,6 +819,85 @@ Mit freundlichen Grüßen`);
                 </CardContent>
               </Card>
 
+              {/* Bulk Operations Toolbar */}
+              {isBulkMode && positions.length > 0 && (
+                <Card className="border-2 border-blue-500 bg-blue-50 sticky top-4 z-10 animate-slide-in-up">
+                  <CardContent className="py-4">
+                    <div className="flex items-center justify-between flex-wrap gap-4">
+                      <div className="flex items-center gap-4">
+                        <span className="text-sm font-semibold text-blue-700">
+                          {selectedPositionIds.length} von {positions.length} ausgewählt
+                        </span>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={handleSelectAll}
+                            className="text-blue-600"
+                          >
+                            <CheckSquare className="w-4 h-4 mr-1" />
+                            Alle auswählen
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={handleDeselectAll}
+                            className="text-blue-600"
+                          >
+                            <Square className="w-4 h-4 mr-1" />
+                            Auswahl aufheben
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        {selectedPositionIds.length > 0 && (
+                          <>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={handleBulkDuplicate}
+                              className="text-blue-600"
+                            >
+                              <Copy className="w-4 h-4 mr-1" />
+                              Duplizieren
+                            </Button>
+                            <Select onValueChange={(value) => handleBulkChangeFeeTable(value as any)}>
+                              <SelectTrigger className="w-[180px] h-9">
+                                <SelectValue placeholder="Gebührentabelle" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="A">Tabelle A</SelectItem>
+                                <SelectItem value="B">Tabelle B</SelectItem>
+                                <SelectItem value="C">Tabelle C</SelectItem>
+                                <SelectItem value="D">Tabelle D</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={handleBulkDelete}
+                            >
+                              <Trash2 className="w-4 h-4 mr-1" />
+                              Löschen
+                            </Button>
+                          </>
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setIsBulkMode(false);
+                            setSelectedPositionIds([]);
+                          }}
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
               {/* Positions List */}
               <DndContext
                 key={renderKey}
@@ -706,6 +921,9 @@ Mit freundlichen Grüßen`);
                         canMoveUp={index > 0}
                         canMoveDown={index < positions.length - 1}
                         onMove={movePosition}
+                        isSelectable={isBulkMode}
+                        isSelected={selectedPositionIds.includes(position.id)}
+                        onSelectionChange={handleToggleSelection}
                       />
                     ))}
                   </div>
@@ -728,7 +946,7 @@ Mit freundlichen Grüßen`);
 
               {/* Add Position Button */}
               <Card className="border-2 border-dashed border-blue-200 bg-blue-50/30">
-                <CardContent className="text-center py-6">
+                <CardContent className="text-center py-6 flex gap-4 justify-center flex-wrap">
                   <Button
                     onClick={addPosition}
                     className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
@@ -736,6 +954,38 @@ Mit freundlichen Grüßen`);
                     <Plus className="w-4 h-4 mr-2" />
                     Position hinzufügen
                   </Button>
+                  {positions.length > 1 && (
+                    <Button
+                      onClick={() => setIsBulkMode(!isBulkMode)}
+                      variant={isBulkMode ? "default" : "outline"}
+                      className="px-6 py-3 rounded-lg font-medium"
+                    >
+                      <CheckSquare className="w-4 h-4 mr-2" />
+                      {isBulkMode ? 'Bulk-Modus beenden' : 'Bulk-Bearbeitung'}
+                    </Button>
+                  )}
+                  {positions.length > 0 && (
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={handleUndo}
+                        disabled={!canUndo}
+                        variant="outline"
+                        size="sm"
+                        title="Rückgängig (Ctrl+Z)"
+                      >
+                        <Undo2 className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        onClick={handleRedo}
+                        disabled={!canRedo}
+                        variant="outline"
+                        size="sm"
+                        title="Wiederherstellen (Ctrl+Y)"
+                      >
+                        <Redo2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
@@ -867,6 +1117,59 @@ Mit freundlichen Grüßen`);
             </div>
           </div>
         </div>
+
+        {/* Floating Summary Bar (Mobile & Desktop) */}
+        {positions.length > 0 && showFloatingSummary && (
+          <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-blue-600 to-green-600 text-white shadow-2xl z-50 animate-slide-in-up">
+            <div className="container mx-auto px-4 py-4">
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <div className="flex items-center gap-6">
+                  <div className="text-sm opacity-90">Gesamt-Summe:</div>
+                  <div className="text-3xl font-bold animate-pop-number">
+                    {totals.totalGross.toFixed(2)} €
+                  </div>
+                  {includeVAT && (
+                    <div className="text-sm opacity-75">
+                      (inkl. {totals.vatAmount.toFixed(2)} € MwSt.)
+                    </div>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    onClick={handleGeneratePDF}
+                    disabled={isGeneratingPDF}
+                    className="bg-white text-blue-600 hover:bg-blue-50"
+                  >
+                    {isGeneratingPDF ? (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
+                      <Download className="w-4 h-4 mr-2" />
+                    )}
+                    PDF
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowFloatingSummary(false)}
+                    className="text-white hover:bg-white/20"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Mobile FAB */}
+        <Button
+          onClick={addPosition}
+          className="md:hidden fixed bottom-20 right-6 w-14 h-14 rounded-full bg-blue-600 hover:bg-blue-700 shadow-2xl z-40"
+          size="icon"
+          aria-label="Position hinzufügen"
+        >
+          <Plus className="w-6 h-6" />
+        </Button>
       </div>
     </>
   );

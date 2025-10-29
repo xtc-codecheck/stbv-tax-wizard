@@ -51,6 +51,8 @@ export const SHORTCUTS = {
   SAVE_TEMPLATE: { key: 's', ctrl: true, description: 'Als Vorlage speichern' },
   GENERATE_PDF: { key: 'p', ctrl: true, description: 'PDF generieren' },
   DUPLICATE: { key: 'd', ctrl: true, description: 'Position duplizieren (wenn fokussiert)' },
+  UNDO: { key: 'z', ctrl: true, description: 'Rückgängig machen' },
+  REDO: { key: 'y', ctrl: true, description: 'Wiederherstellen' },
   HELP: { key: '?', description: 'Tastenkombinationen anzeigen' },
   ESCAPE: { key: 'Escape', description: 'Dialog schließen' },
 };

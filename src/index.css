@@ -130,6 +130,21 @@ All colors MUST be HSL.
     25% { transform: translateX(-5px); }
     75% { transform: translateX(5px); }
   }
+
+  @keyframes pop-number {
+    0% { 
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% { 
+      transform: scale(1.15);
+      opacity: 0.9;
+    }
+    100% { 
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
 }
 
 @layer base {
@@ -157,6 +172,10 @@ All colors MUST be HSL.
     animation: shake 0.3s ease-in-out;
   }
 
+  .animate-pop-number {
+    animation: pop-number 0.4s ease-out;
+  }
+
   .drag-ghost {
     opacity: 0.5;
     transform: rotate(2deg);
@@ -175,5 +194,40 @@ All colors MUST be HSL.
 
   .validation-success {
     @apply border-green-500;
+  }
+
+  /* Mobile optimizations */
+  @media (max-width: 768px) {
+    /* Larger touch targets */
+    button, a, input, select, textarea {
+      min-height: 44px;
+    }
+
+    /* Better spacing on mobile */
+    .container {
+      @apply px-3;
+    }
+
+    /* Floating summary bar responsive */
+    .fixed.bottom-0 {
+      @apply text-sm;
+    }
+  }
+
+  /* Print styles */
+  @media print {
+    .no-print,
+    header,
+    nav,
+    footer,
+    button,
+    .fixed,
+    .sticky {
+      @apply hidden;
+    }
+
+    body {
+      @apply text-black bg-white;
+    }
   }
 }
