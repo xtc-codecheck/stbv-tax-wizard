@@ -3,17 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "@/hooks/use-toast";
-import { ArrowLeft, Building2, Save, Moon, Sun, Monitor } from "lucide-react";
+import { ArrowLeft, Building2, Save } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useTheme } from "next-themes";
 import { BrandingSettings } from "@/types/stbvv";
 import { saveBrandingSettings, loadBrandingSettings } from "@/utils/brandingStorage";
 
 const Settings: React.FC = () => {
   const navigate = useNavigate();
-  const { theme, setTheme } = useTheme();
   const [settings, setSettings] = useState<BrandingSettings>({
     companyName: '',
     street: '',
@@ -182,47 +179,6 @@ const Settings: React.FC = () => {
                 <Save className="w-4 h-4 mr-2" />
                 Einstellungen speichern
               </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Theme Settings */}
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle>Design-Einstellungen</CardTitle>
-            <CardDescription>
-              Passen Sie das Erscheinungsbild der Anwendung an. (Hinweis: Theme-Auswahl wird nicht gespeichert und setzt sich bei jedem Besuch zurück)
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <Label>Farbschema</Label>
-              <RadioGroup value={theme} onValueChange={setTheme}>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="light" id="light" />
-                  <Label htmlFor="light" className="flex items-center gap-2 cursor-pointer">
-                    <Sun className="w-4 h-4" />
-                    Hell
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="dark" id="dark" />
-                  <Label htmlFor="dark" className="flex items-center gap-2 cursor-pointer">
-                    <Moon className="w-4 h-4" />
-                    Dunkel
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="system" id="system" />
-                  <Label htmlFor="system" className="flex items-center gap-2 cursor-pointer">
-                    <Monitor className="w-4 h-4" />
-                    System (Automatisch)
-                  </Label>
-                </div>
-              </RadioGroup>
-              <p className="text-xs text-muted-foreground mt-2">
-                💡 Die Theme-Einstellung ist datenschutzkonform und wird nur für die aktuelle Sitzung verwendet.
-              </p>
             </div>
           </CardContent>
         </Card>
