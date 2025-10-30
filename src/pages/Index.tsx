@@ -970,6 +970,16 @@ Mit freundlichen Grüßen`);
                 >
                   Anleitungen
                 </a>
+                <a 
+                  href="/blog" 
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate('/blog');
+                  }}
+                >
+                  Blog
+                </a>
               </div>
               
               {/* Legal Links & Copyright */}

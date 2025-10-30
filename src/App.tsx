@@ -13,6 +13,7 @@ import Gebuhrenordnung from "./pages/Gebuhrenordnung";
 import FAQ from "./pages/FAQ";
 import RechtlicheGrundlagen from "./pages/RechtlicheGrundlagen";
 import Anleitungen from "./pages/Anleitungen";
+import Blog from "./pages/Blog";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/faq" element={<FAQ />} />
             <Route path="/rechtliche-grundlagen" element={<RechtlicheGrundlagen />} />
             <Route path="/anleitungen" element={<Anleitungen />} />
+            <Route path="/blog" element={<Blog />} />
             <Route path="/impressum" element={<Impressum />} />
             <Route path="/datenschutz" element={<Datenschutz />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

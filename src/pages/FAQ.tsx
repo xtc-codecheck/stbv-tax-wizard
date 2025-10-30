@@ -373,6 +373,271 @@ const FAQ = () => {
 
           <Card>
             <CardHeader>
+              <CardTitle>Fragen zu besonderen Situationen</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="special-1">
+                  <AccordionTrigger>Wie rechne ich bei internationalen Mandaten ab?</AccordionTrigger>
+                  <AccordionContent className="space-y-2">
+                    <p>
+                      Bei internationalen Sachverhalten gelten besondere Regelungen:
+                    </p>
+                    <ul className="list-disc list-inside space-y-1 ml-4">
+                      <li><strong>Reverse-Charge-Verfahren:</strong> Bei Leistungen an Unternehmer in anderen EU-Ländern entfällt die deutsche Umsatzsteuer</li>
+                      <li><strong>Erhöhter Aufwand:</strong> Internationale Mandate rechtfertigen oft höhere Zehntelsätze (4/10 bis 6/10)</li>
+                      <li><strong>Doppelbesteuerungsabkommen:</strong> Kenntnisse im internationalen Steuerrecht berechtigen zu höheren Gebühren</li>
+                      <li><strong>Fremdsprachige Korrespondenz:</strong> Zusätzlicher Zeitaufwand sollte berücksichtigt werden</li>
+                    </ul>
+                    <p>
+                      Tipp: Dokumentieren Sie den Mehraufwand bei internationalen Mandaten besonders sorgfältig.
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="special-2">
+                  <AccordionTrigger>Kann ich nachträglich eine höhere Gebühr verlangen?</AccordionTrigger>
+                  <AccordionContent className="space-y-2">
+                    <p>
+                      Eine nachträgliche Erhöhung der Gebühr ist grundsätzlich nicht möglich, wenn die Rechnung bereits erteilt wurde. Ausnahmen:
+                    </p>
+                    <ul className="list-disc list-inside space-y-1 ml-4">
+                      <li><strong>Offensichtlicher Rechenfehler:</strong> Kann korrigiert werden</li>
+                      <li><strong>Zusätzliche Tätigkeiten:</strong> Können separat abgerechnet werden</li>
+                      <li><strong>Einvernehmliche Korrektur:</strong> Mit schriftlicher Zustimmung des Mandanten möglich</li>
+                    </ul>
+                    <p>
+                      Wichtig: Kalkulieren Sie Ihre Gebühren vor Rechnungsstellung sorgfältig. Eine spätere Anpassung nach oben ist rechtlich problematisch und belastet das Mandantenverhältnis.
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="special-3">
+                  <AccordionTrigger>Was gilt bei Vertretung von Angehörigen oder Freunden?</AccordionTrigger>
+                  <AccordionContent className="space-y-2">
+                    <p>
+                      Auch bei Angehörigen und Freunden gilt grundsätzlich die StBVV. Jedoch:
+                    </p>
+                    <ul className="list-disc list-inside space-y-1 ml-4">
+                      <li><strong>Gebührenverzicht:</strong> Ist möglich, sollte aber schriftlich festgehalten werden</li>
+                      <li><strong>Reduzierte Gebühren:</strong> Können vereinbart werden (z.B. nur 1/10 bis 2/10)</li>
+                      <li><strong>Steuerliche Folgen:</strong> Kostenlose Leistungen können als private Entnahme gelten</li>
+                      <li><strong>Haftungsrisiko:</strong> Bleibt gleich, auch bei kostenloser Beratung</li>
+                    </ul>
+                    <p>
+                      Empfehlung: Auch bei Freundschaftsdiensten zumindest eine symbolische Gebühr vereinbaren oder schriftlich auf Gebühren verzichten.
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="special-4">
+                  <AccordionTrigger>Wie gehe ich mit Notfällen und Eilaufträgen um?</AccordionTrigger>
+                  <AccordionContent className="space-y-2">
+                    <p>
+                      Bei besonders eilbedürftigen Aufträgen können Sie höhere Gebühren ansetzen:
+                    </p>
+                    <ul className="list-disc list-inside space-y-1 ml-4">
+                      <li><strong>Zehntelsatz:</strong> Eilaufträge rechtfertigen höhere Sätze (5/10 bis 6/10)</li>
+                      <li><strong>Zeitzuschläge:</strong> Bei Zeitgebühr können Zuschläge für Nacht-, Wochenend- oder Feiertagsarbeit berechnet werden</li>
+                      <li><strong>Vorherige Vereinbarung:</strong> Informieren Sie den Mandanten vorab über die höheren Kosten</li>
+                      <li><strong>Dokumentation:</strong> Halten Sie die Eilbedürftigkeit schriftlich fest</li>
+                    </ul>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="special-5">
+                  <AccordionTrigger>Was tue ich bei Meinungsverschiedenheiten über die Gebührenhöhe?</AccordionTrigger>
+                  <AccordionContent className="space-y-2">
+                    <p>
+                      Bei Streitigkeiten über die Gebührenhöhe gibt es mehrere Lösungsansätze:
+                    </p>
+                    <ul className="list-disc list-inside space-y-1 ml-4">
+                      <li><strong>Mediation:</strong> Persönliches Gespräch zur gütlichen Einigung</li>
+                      <li><strong>Gebühreneinigung:</strong> Angebot eines Kompromisses (z.B. Reduzierung auf 3/10 statt 5/10)</li>
+                      <li><strong>Schlichtungsstelle:</strong> Steuerberaterkammern bieten Schlichtungsverfahren an</li>
+                      <li><strong>Gerichtliche Durchsetzung:</strong> Als letztes Mittel über Mahnverfahren</li>
+                    </ul>
+                    <p>
+                      Tipp: Eine transparente Gebührenkalkulation von Anfang an vermeidet die meisten Streitigkeiten.
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Fragen zur Kanzleiorganisation</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="org-1">
+                  <AccordionTrigger>Wie kalkuliere ich meine Stundensätze richtig?</AccordionTrigger>
+                  <AccordionContent className="space-y-2">
+                    <p>
+                      Die Kalkulation des richtigen Stundensatzes basiert auf mehreren Faktoren:
+                    </p>
+                    <ul className="list-disc list-inside space-y-1 ml-4">
+                      <li><strong>Fixkosten:</strong> Miete, Gehälter, Versicherungen, Software</li>
+                      <li><strong>Variable Kosten:</strong> Fortbildung, Fachliteratur, Marketing</li>
+                      <li><strong>Gewinnmarge:</strong> Angemessener Unternehmerlohn plus Gewinn</li>
+                      <li><strong>Auslastung:</strong> Realistische fakturierbare Stunden pro Jahr (ca. 1.200-1.600h)</li>
+                    </ul>
+                    <p>
+                      Formel: (Gesamtkosten + Gewinnziel) / fakturierbare Stunden = Mindeststundensatz
+                    </p>
+                    <p>
+                      Die StBVV sieht Zeitgebühren von 30-80 € pro halbe Stunde (60-160 €/Stunde) vor, je nach Schwierigkeit.
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="org-2">
+                  <AccordionTrigger>Sollte ich Pauschalpreise oder StBVV-Gebühren anbieten?</AccordionTrigger>
+                  <AccordionContent className="space-y-2">
+                    <p>
+                      Beide Modelle haben Vor- und Nachteile:
+                    </p>
+                    <p><strong>Pauschalpreise (Vergütungsvereinbarung):</strong></p>
+                    <ul className="list-disc list-inside space-y-1 ml-4">
+                      <li>Vorteile: Planbarkeit für Mandanten, einfachere Abrechnung, Wettbewerbsvorteil</li>
+                      <li>Nachteile: Risiko bei Mehraufwand, erfordert genaue Kalkulation</li>
+                      <li>Geeignet für: Standardleistungen, Dauermandate, regelmäßige Tätigkeiten</li>
+                    </ul>
+                    <p><strong>StBVV-Gebühren:</strong></p>
+                    <ul className="list-disc list-inside space-y-1 ml-4">
+                      <li>Vorteile: Faire Abrechnung nach Aufwand, rechtlich abgesichert</li>
+                      <li>Nachteile: Weniger Planbarkeit für Mandanten, kann zu Diskussionen führen</li>
+                      <li>Geeignet für: Einmalaufträge, komplexe Fälle, unklarer Aufwand</li>
+                    </ul>
+                    <p>
+                      Empfehlung: Kombinieren Sie beide Modelle je nach Leistungsart.
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="org-3">
+                  <AccordionTrigger>Wie optimiere ich meine Abrechnungsprozesse?</AccordionTrigger>
+                  <AccordionContent className="space-y-2">
+                    <p>
+                      Effiziente Abrechnung spart Zeit und verbessert den Cashflow:
+                    </p>
+                    <ul className="list-disc list-inside space-y-1 ml-4">
+                      <li><strong>Digitale Tools:</strong> Nutzen Sie moderne Abrechnungssoftware und Online-Rechner</li>
+                      <li><strong>Vorlagen:</strong> Erstellen Sie Rechnungsvorlagen für Standardleistungen</li>
+                      <li><strong>Zeiterfassung:</strong> Erfassen Sie alle Tätigkeiten sofort, nicht erst am Monatsende</li>
+                      <li><strong>Regelmäßigkeit:</strong> Rechnen Sie monatlich ab, nicht quartalsweise</li>
+                      <li><strong>Automatisierung:</strong> Nutzen Sie Lastschriftverfahren für Dauermandate</li>
+                      <li><strong>Klare Kommunikation:</strong> Informieren Sie Mandanten vorab über voraussichtliche Kosten</li>
+                    </ul>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="org-4">
+                  <AccordionTrigger>Wie gehe ich mit Preisverhandlungen um?</AccordionTrigger>
+                  <AccordionContent className="space-y-2">
+                    <p>
+                      Professioneller Umgang mit Preisverhandlungen:
+                    </p>
+                    <ul className="list-disc list-inside space-y-1 ml-4">
+                      <li><strong>Selbstbewusstsein:</strong> Kennen Sie Ihren Wert und stehen Sie zu Ihren Preisen</li>
+                      <li><strong>Transparenz:</strong> Erklären Sie, wie sich die Gebühr zusammensetzt</li>
+                      <li><strong>Alternativen:</strong> Bieten Sie verschiedene Service-Level an (Basic, Standard, Premium)</li>
+                      <li><strong>Kompromisse:</strong> Reduzieren Sie bei Bedarf den Leistungsumfang statt den Preis</li>
+                      <li><strong>Jahresvertrag:</strong> Gewähren Sie Rabatte nur bei langfristiger Bindung</li>
+                      <li><strong>Grenzen:</strong> Lehnen Sie Mandate ab, die nicht kostendeckend sind</li>
+                    </ul>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="org-5">
+                  <AccordionTrigger>Welche Software-Tools unterstützen bei der StBVV-Abrechnung?</AccordionTrigger>
+                  <AccordionContent className="space-y-2">
+                    <p>
+                      Moderne Software erleichtert die korrekte Abrechnung erheblich:
+                    </p>
+                    <ul className="list-disc list-inside space-y-1 ml-4">
+                      <li><strong>Kanzleisoftware:</strong> DATEV, Addison, Agenda bieten StBVV-Module</li>
+                      <li><strong>Online-Rechner:</strong> Wie unser STBVV Rechner für schnelle Kalkulationen</li>
+                      <li><strong>Zeiterfassungs-Tools:</strong> clockodo, Toggl für genaue Leistungserfassung</li>
+                      <li><strong>Rechnungsprogramme:</strong> lexoffice, sevDesk mit StBVV-Integration</li>
+                      <li><strong>Apps:</strong> Mobile Lösungen für unterwegs</li>
+                    </ul>
+                    <p>
+                      Unser STBVV Rechner ist kostenlos nutzbar, datenschutzkonform und erfordert keine Installation.
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Fragen zu aktuellen Entwicklungen</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="dev-1">
+                  <AccordionTrigger>Was ändert sich mit der StBVV 2025?</AccordionTrigger>
+                  <AccordionContent className="space-y-2">
+                    <p>
+                      Die StBVV 2025 brachte mehrere wichtige Anpassungen:
+                    </p>
+                    <ul className="list-disc list-inside space-y-1 ml-4">
+                      <li><strong>Gebührenerhöhung:</strong> Anpassung der Tabellenwerte an die Inflation (ca. 10-15%)</li>
+                      <li><strong>Neue Tatbestände:</strong> Zusätzliche Gebührentatbestände für digitale Leistungen</li>
+                      <li><strong>E-Bilanz:</strong> Klarstellungen zur Abrechnung elektronischer Übermittlungen</li>
+                      <li><strong>Beratungsleistungen:</strong> Erweiterte Regelungen für pauschale Beratung</li>
+                    </ul>
+                    <p>
+                      Wichtig: Prüfen Sie alle bestehenden Pauschalvereinbarungen und passen Sie diese gegebenenfalls an die neue Rechtslage an.
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="dev-2">
+                  <AccordionTrigger>Wie wirkt sich die Digitalisierung auf die Gebühren aus?</AccordionTrigger>
+                  <AccordionContent className="space-y-2">
+                    <p>
+                      Die Digitalisierung hat verschiedene Auswirkungen auf die Gebührengestaltung:
+                    </p>
+                    <ul className="list-disc list-inside space-y-1 ml-4">
+                      <li><strong>Effizienzgewinne:</strong> Automatisierung reduziert Zeitaufwand bei Routinearbeiten</li>
+                      <li><strong>Neue Leistungen:</strong> Digitale Beratung, Cloud-Services, Online-Meetings</li>
+                      <li><strong>Wettbewerb:</strong> Online-Anbieter üben Preisdruck aus</li>
+                      <li><strong>Mehrwert:</strong> Fokus auf Beratungsqualität statt auf Massenabwicklung</li>
+                    </ul>
+                    <p>
+                      Strategie: Nutzen Sie Digitalisierung für Effizienz bei Routineaufgaben und investieren Sie gesparte Zeit in hochwertige Beratung.
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="dev-3">
+                  <AccordionTrigger>Wie kalkuliere ich bei KI-unterstützter Arbeit?</AccordionTrigger>
+                  <AccordionContent className="space-y-2">
+                    <p>
+                      Der Einsatz von KI-Tools in der Steuerberatung wirft neue Fragen auf:
+                    </p>
+                    <ul className="list-disc list-inside space-y-1 ml-4">
+                      <li><strong>Zeitersparnis:</strong> KI kann Arbeitszeit reduzieren, aber erhöht nicht automatisch den Wert</li>
+                      <li><strong>Gebührengrundlage:</strong> Bleibt der Gegenstandswert, nicht die reine Arbeitszeit</li>
+                      <li><strong>Qualitätssteigerung:</strong> Bessere Ergebnisse können höhere Zehntelsätze rechtfertigen</li>
+                      <li><strong>Transparenz:</strong> Mandanten müssen KI-Einsatz nicht zwingend mitgeteilt werden</li>
+                    </ul>
+                    <p>
+                      Empfehlung: Bewerten Sie Ihre Leistung nach Ergebnis und Mehrwert, nicht nach reiner Arbeitszeit.
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
               <CardTitle>Weitere Fragen?</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
