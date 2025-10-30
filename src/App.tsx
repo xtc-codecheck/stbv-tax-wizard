@@ -8,6 +8,11 @@ import Index from "./pages/Index";
 import Settings from "./pages/Settings";
 import Impressum from "./pages/Impressum";
 import Datenschutz from "./pages/Datenschutz";
+import UeberDenRechner from "./pages/UeberDenRechner";
+import Gebuhrenordnung from "./pages/Gebuhrenordnung";
+import FAQ from "./pages/FAQ";
+import RechtlicheGrundlagen from "./pages/RechtlicheGrundlagen";
+import Anleitungen from "./pages/Anleitungen";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +27,11 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/ueber-den-rechner" element={<UeberDenRechner />} />
+            <Route path="/gebuhrenordnung" element={<Gebuhrenordnung />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/rechtliche-grundlagen" element={<RechtlicheGrundlagen />} />
+            <Route path="/anleitungen" element={<Anleitungen />} />
             <Route path="/impressum" element={<Impressum />} />
             <Route path="/datenschutz" element={<Datenschutz />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
