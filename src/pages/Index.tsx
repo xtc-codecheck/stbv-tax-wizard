@@ -917,31 +917,88 @@ Mit freundlichen Grüßen`);
         {/* Footer */}
         <footer className="mt-16 py-8 border-t border-border bg-muted/30">
           <div className="container mx-auto px-4">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-              <div>
-                © 2025 Finanzgeflüster GmbH. Alle Rechte vorbehalten.
+            <div className="flex flex-col gap-6">
+              {/* Navigation Links */}
+              <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm">
+                <a 
+                  href="/ueber-den-rechner" 
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate('/ueber-den-rechner');
+                  }}
+                >
+                  Über den Rechner
+                </a>
+                <a 
+                  href="/gebuhrenordnung" 
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate('/gebuhrenordnung');
+                  }}
+                >
+                  Gebührenordnung
+                </a>
+                <a 
+                  href="/faq" 
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate('/faq');
+                  }}
+                >
+                  FAQ
+                </a>
+                <a 
+                  href="/rechtliche-grundlagen" 
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate('/rechtliche-grundlagen');
+                  }}
+                >
+                  Rechtliche Grundlagen
+                </a>
+                <a 
+                  href="/anleitungen" 
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate('/anleitungen');
+                  }}
+                >
+                  Anleitungen
+                </a>
               </div>
-              <div className="flex gap-6">
-                <a 
-                  href="/impressum" 
-                  className="hover:text-foreground transition-colors"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    navigate('/impressum');
-                  }}
-                >
-                  Impressum
-                </a>
-                <a 
-                  href="/datenschutz" 
-                  className="hover:text-foreground transition-colors"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    navigate('/datenschutz');
-                  }}
-                >
-                  Datenschutz
-                </a>
+              
+              {/* Legal Links & Copyright */}
+              <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground border-t border-border/50 pt-6">
+                <div>
+                  © 2025 Finanzgeflüster GmbH. Alle Rechte vorbehalten.
+                </div>
+                <div className="flex gap-6">
+                  <a 
+                    href="/impressum" 
+                    className="hover:text-foreground transition-colors"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate('/impressum');
+                    }}
+                  >
+                    Impressum
+                  </a>
+                  <a 
+                    href="/datenschutz" 
+                    className="hover:text-foreground transition-colors"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate('/datenschutz');
+                    }}
+                  >
+                    Datenschutz
+                  </a>
+                </div>
               </div>
             </div>
           </div>
