@@ -13,7 +13,7 @@ export const activityPresets: ActivityPreset[] = [
     maxRate: 6,
     category: 'Einkommensteuererklärung',
     searchKeywords: ['EST', 'Einkommensteuer', 'Steuererklärung', 'Mantelbogen'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+    minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER  // 8.000 € gemäß § 24 Abs. 1 Nr. 1
   },
   { 
     activity: 'Einkommensteuer Mantelbogen', 
@@ -25,7 +25,7 @@ export const activityPresets: ActivityPreset[] = [
     maxRate: 6,
     category: 'Einkommensteuererklärung',
     searchKeywords: ['EST', 'Mantelbogen', 'Hauptformular', 'Hauptvordruck'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+    minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER
   },
   { 
     activity: 'Anlage N (Einkünfte aus nichtselbständiger Arbeit)', 
@@ -37,7 +37,7 @@ export const activityPresets: ActivityPreset[] = [
     maxRate: 12,
     category: 'Einkommensteuererklärung',
     searchKeywords: ['Anlage N', 'Arbeitnehmer', 'Lohn', 'Gehalt', 'nichtselbständig'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+    minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER
   },
   { 
     activity: 'Anlage V (Vermietung und Verpachtung)', 
@@ -49,7 +49,7 @@ export const activityPresets: ActivityPreset[] = [
     maxRate: 12,
     category: 'Einkommensteuererklärung',
     searchKeywords: ['Anlage V', 'Vermietung', 'Verpachtung', 'Miete', 'Immobilien'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+    minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER
   },
   { 
     activity: 'Anlage G (Gewerbebetrieb)', 
@@ -61,7 +61,7 @@ export const activityPresets: ActivityPreset[] = [
     maxRate: 12,
     category: 'Einkommensteuererklärung',
     searchKeywords: ['Anlage G', 'Gewerbebetrieb', 'Gewerbe', 'Einzelunternehmen'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+    minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER
   },
   { 
     activity: 'Anlage S (Einkünfte aus selbständiger Arbeit)', 
@@ -73,7 +73,7 @@ export const activityPresets: ActivityPreset[] = [
     maxRate: 12,
     category: 'Einkommensteuererklärung',
     searchKeywords: ['Anlage S', 'Selbständig', 'Freiberufler', 'Freiberuflich'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+    minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER
   },
   { 
     activity: 'Anlage KAP (Kapitalerträge)', 
@@ -85,7 +85,7 @@ export const activityPresets: ActivityPreset[] = [
     maxRate: 6,
     category: 'Einkommensteuererklärung',
     searchKeywords: ['Anlage KAP', 'Kapitalerträge', 'Zinsen', 'Dividenden', 'Aktien'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+    minObjectValue: MIN_OBJECT_VALUES.KAPITALERTRAGSTEUER  // 4.000 € gemäß § 24 Abs. 1 Nr. 14
   },
   { 
     activity: 'Anlage SO (Sonstige Einkünfte)', 
@@ -97,7 +97,7 @@ export const activityPresets: ActivityPreset[] = [
     maxRate: 12,
     category: 'Einkommensteuererklärung',
     searchKeywords: ['Anlage SO', 'Sonstige Einkünfte', 'Spekulationsgeschäfte'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+    minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER
   },
   { 
     activity: 'Anlage R (Renten)', 
@@ -109,7 +109,7 @@ export const activityPresets: ActivityPreset[] = [
     maxRate: 12,
     category: 'Einkommensteuererklärung',
     searchKeywords: ['Anlage R', 'Renten', 'Altersrente', 'Pension'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+    minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER
   },
   { 
     activity: 'Anlage L (Land- und Forstwirtschaft)', 
@@ -121,7 +121,7 @@ export const activityPresets: ActivityPreset[] = [
     maxRate: 12,
     category: 'Einkommensteuererklärung',
     searchKeywords: ['Anlage L', 'Landwirtschaft', 'Forstwirtschaft', 'Landwirt'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_D
+    minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER
   },
   { 
     activity: 'Anlage EÜR (Einnahmen-Überschuss-Rechnung)', 
@@ -145,7 +145,7 @@ export const activityPresets: ActivityPreset[] = [
     maxRate: 5,
     category: 'Einkommensteuererklärung',
     searchKeywords: ['Anlage Kind', 'Kindergeld', 'Kinderfreibetrag', 'Kinder'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+    minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER
   },
   { 
     activity: 'Anlage AV (Altersvorsorge)', 
@@ -157,7 +157,7 @@ export const activityPresets: ActivityPreset[] = [
     maxRate: 5,
     category: 'Einkommensteuererklärung',
     searchKeywords: ['Anlage AV', 'Altersvorsorge', 'Riester', 'Rürup'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+    minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER
   },
   { 
     activity: 'Anlage Unterhalt', 
@@ -169,7 +169,7 @@ export const activityPresets: ActivityPreset[] = [
     maxRate: 7,
     category: 'Einkommensteuererklärung',
     searchKeywords: ['Anlage Unterhalt', 'Unterhaltszahlungen', 'Kindesunterhalt'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+    minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER
   },
   { 
     activity: 'Anlage Vorsorgeaufwand', 
@@ -181,7 +181,7 @@ export const activityPresets: ActivityPreset[] = [
     maxRate: 5,
     category: 'Einkommensteuererklärung',
     searchKeywords: ['Anlage Vorsorge', 'Versicherungen', 'Krankenversicherung'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+    minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER
   },
   { 
     activity: 'Anlage Sonderausgaben', 
@@ -193,7 +193,7 @@ export const activityPresets: ActivityPreset[] = [
     maxRate: 5,
     category: 'Einkommensteuererklärung',
     searchKeywords: ['Anlage Sonderausgaben', 'Spenden', 'Kirchensteuer'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+    minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER
   },
   { 
     activity: 'Anlage Außergewöhnliche Belastungen', 
@@ -205,7 +205,7 @@ export const activityPresets: ActivityPreset[] = [
     maxRate: 5,
     category: 'Einkommensteuererklärung',
     searchKeywords: ['Außergewöhnliche Belastungen', 'Krankheitskosten', 'Pflegekosten'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+    minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER
   },
   { 
     activity: 'Anlage Haushaltsnahe Aufwendungen', 
@@ -217,7 +217,7 @@ export const activityPresets: ActivityPreset[] = [
     maxRate: 4,
     category: 'Einkommensteuererklärung',
     searchKeywords: ['Haushaltsnahe Dienstleistungen', 'Handwerker', 'Putzhilfe'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+    minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER
   },
   { 
     activity: 'Jahresabschluss GmbH', 
@@ -241,7 +241,7 @@ export const activityPresets: ActivityPreset[] = [
     maxRate: 40,
     category: 'Jahresabschluss & Buchführung',
     searchKeywords: ['Jahresabschluss', 'Einzelunternehmen', 'Bilanz'],
-    minObjectValue: MIN_OBJECT_VALUES.JAHRESABSCHLUSS  // 8.000 € gemäß § 35 StBVV
+    minObjectValue: MIN_OBJECT_VALUES.JAHRESABSCHLUSS
   },
   { 
     activity: 'Jahresabschluss Übermittlung an Bundesanzeiger', 
@@ -319,13 +319,13 @@ export const activityPresets: ActivityPreset[] = [
     activity: 'Umsatzsteuer-Voranmeldung', 
     defaultTenthRate: 4.5,
     suggestedFeeTable: 'A', 
-    legalBasis: '§ 24 Abs. 1 Nr. 8', 
+    legalBasis: '§ 24 Abs. 1 Nr. 7', 
     rateType: 'tenth', 
     minRate: 1, 
-    maxRate: 8,
+    maxRate: 6,
     category: 'Umsatzsteuer',
     searchKeywords: ['UVA', 'Umsatzsteuer', 'Voranmeldung', 'USt-VA', 'Mehrwertsteuer'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+    minObjectValue: MIN_OBJECT_VALUES.UST_VORANMELDUNG  // 650 € gemäß § 24 Abs. 1 Nr. 7
   },
   { 
     activity: 'Umsatzsteuererklärung', 
@@ -337,7 +337,7 @@ export const activityPresets: ActivityPreset[] = [
     maxRate: 8,
     category: 'Umsatzsteuer',
     searchKeywords: ['USt', 'Umsatzsteuer', 'Jahreserklärung', 'Mehrwertsteuer'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+    minObjectValue: MIN_OBJECT_VALUES.UST_JAHRESERKLAERUNG  // 8.000 € gemäß § 24 Abs. 1 Nr. 8
   },
   { 
     activity: 'Zusammenfassende Meldung (ZM)', 
@@ -349,7 +349,7 @@ export const activityPresets: ActivityPreset[] = [
     maxRate: 3,
     category: 'Umsatzsteuer',
     searchKeywords: ['ZM', 'Zusammenfassende Meldung', 'Innergemeinschaftlich', 'EU'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+    minObjectValue: MIN_OBJECT_VALUES.UST_JAHRESERKLAERUNG
   },
   { 
     activity: 'Gewerbesteuererklärung', 
@@ -361,7 +361,19 @@ export const activityPresets: ActivityPreset[] = [
     maxRate: 6,
     category: 'Gewerbe- & Körperschaftsteuer',
     searchKeywords: ['GewSt', 'Gewerbesteuer', 'Gemeinde'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+    minObjectValue: MIN_OBJECT_VALUES.GEWERBESTEUER  // 8.000 € gemäß § 24 Abs. 1 Nr. 5
+  },
+  { 
+    activity: 'Gewerbesteuerzerlegungserklärung', 
+    defaultTenthRate: 3.5,
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 24 Abs. 1 Nr. 6', 
+    rateType: 'tenth', 
+    minRate: 1, 
+    maxRate: 6,
+    category: 'Gewerbe- & Körperschaftsteuer',
+    searchKeywords: ['Zerlegung', 'Gewerbesteuer', 'Arbeitslöhne'],
+    minObjectValue: MIN_OBJECT_VALUES.GEWERBESTEUER_ZERLEGUNG  // 4.000 € gemäß § 24 Abs. 1 Nr. 6
   },
   { 
     activity: 'Körperschaftsteuererklärung', 
@@ -373,7 +385,7 @@ export const activityPresets: ActivityPreset[] = [
     maxRate: 8,
     category: 'Gewerbe- & Körperschaftsteuer',
     searchKeywords: ['KSt', 'Körperschaftsteuer', 'GmbH', 'Kapitalgesellschaft'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+    minObjectValue: MIN_OBJECT_VALUES.KOERPERSCHAFTSTEUER  // 16.000 € gemäß § 24 Abs. 1 Nr. 3
   },
   { 
     activity: 'Beratung allgemein', 
@@ -469,7 +481,7 @@ export const activityPresets: ActivityPreset[] = [
     maxRate: 8,
     category: 'Rechtsbehelfsverfahren',
     searchKeywords: ['Einspruch', 'Widerspruch', 'Rechtsbehelf'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+    minObjectValue: MIN_OBJECT_VALUES.SONSTIGE
   },
   { 
     activity: 'Aussetzung der Vollziehung (AdV)', 
@@ -481,7 +493,7 @@ export const activityPresets: ActivityPreset[] = [
     maxRate: 8,
     category: 'Rechtsbehelfsverfahren',
     searchKeywords: ['AdV', 'Aussetzung', 'Vollziehung', 'Stundung'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+    minObjectValue: MIN_OBJECT_VALUES.SONSTIGE
   },
   { 
     activity: 'Prüfung Steuerbescheid', 
@@ -497,63 +509,87 @@ export const activityPresets: ActivityPreset[] = [
   },
   { 
     activity: 'Erbschaftsteuererklärung', 
-    defaultTenthRate: 5,
+    defaultTenthRate: 6,
     suggestedFeeTable: 'A', 
-    legalBasis: '§ 24 Abs. 1 Nr. 2', 
+    legalBasis: '§ 24 Abs. 1 Nr. 12', 
     rateType: 'tenth', 
     minRate: 2, 
-    maxRate: 8,
+    maxRate: 10,
     category: 'Erbschaft- & Schenkungsteuer',
     searchKeywords: ['ErbSt', 'Erbschaftsteuer', 'Erbe', 'Nachlass'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+    minObjectValue: MIN_OBJECT_VALUES.ERBSCHAFTSTEUER  // 16.000 € gemäß § 24 Abs. 1 Nr. 12
   },
   { 
     activity: 'Schenkungsteuererklärung', 
-    defaultTenthRate: 5,
+    defaultTenthRate: 6,
     suggestedFeeTable: 'A', 
-    legalBasis: '§ 24 Abs. 1 Nr. 2', 
+    legalBasis: '§ 24 Abs. 1 Nr. 13', 
     rateType: 'tenth', 
     minRate: 2, 
-    maxRate: 8,
+    maxRate: 10,
     category: 'Erbschaft- & Schenkungsteuer',
     searchKeywords: ['SchenkSt', 'Schenkungsteuer', 'Schenkung'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+    minObjectValue: MIN_OBJECT_VALUES.SCHENKUNGSTEUER  // 16.000 € gemäß § 24 Abs. 1 Nr. 13
+  },
+  { 
+    activity: 'Feststellung nach Bewertungsgesetz', 
+    defaultTenthRate: 9,
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 24 Abs. 1 Nr. 11', 
+    rateType: 'twentieth', 
+    minRate: 1, 
+    maxRate: 18,
+    category: 'Erbschaft- & Schenkungsteuer',
+    searchKeywords: ['Bewertung', 'Feststellung', 'Grundbesitzwert'],
+    minObjectValue: MIN_OBJECT_VALUES.FESTSTELLUNG_BEWERTUNG  // 25.000 € gemäß § 24 Abs. 1 Nr. 11
+  },
+  { 
+    activity: 'Grundsteuererklärung', 
+    defaultTenthRate: 5,
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 24 Abs. 1 Nr. 11a', 
+    rateType: 'twentieth', 
+    minRate: 1, 
+    maxRate: 9,
+    category: 'Sonstige Steuererklärungen',
+    searchKeywords: ['Grundsteuer', 'Grundsteuerwert', 'Grundsteuermessbetrag'],
+    minObjectValue: MIN_OBJECT_VALUES.GRUNDSTEUER  // 25.000 € gemäß § 24 Abs. 1 Nr. 11a
   },
   { 
     activity: 'Grunderwerbsteuererklärung', 
     defaultTenthRate: 3.5,
     suggestedFeeTable: 'A', 
-    legalBasis: '§ 24 Abs. 1 Nr. 4', 
+    legalBasis: '§ 24 Abs. 1 Nr. 26', 
     rateType: 'tenth', 
     minRate: 1, 
     maxRate: 6,
     category: 'Sonstige Steuererklärungen',
     searchKeywords: ['GrESt', 'Grunderwerbsteuer', 'Immobilienkauf', 'Grundstück'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+    minObjectValue: MIN_OBJECT_VALUES.SONSTIGE  // 8.000 € gemäß § 24 Abs. 1 Nr. 26
   },
   { 
     activity: 'Antrag auf Feststellung des verbleibenden Verlustvortrags', 
     defaultTenthRate: 3.5,
     suggestedFeeTable: 'A', 
-    legalBasis: '§ 24 Abs. 1 Nr. 10', 
+    legalBasis: '§ 24 Abs. 1 Nr. 26', 
     rateType: 'tenth', 
     minRate: 1, 
     maxRate: 6,
     category: 'Sonstige Steuererklärungen',
     searchKeywords: ['Verlustvortrag', 'Feststellungserklärung', 'Verlust'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+    minObjectValue: MIN_OBJECT_VALUES.SONSTIGE
   },
   { 
     activity: 'Gesonderte und einheitliche Feststellung', 
     defaultTenthRate: 5.5,
     suggestedFeeTable: 'A', 
-    legalBasis: '§ 24 Abs. 1 Nr. 10', 
+    legalBasis: '§ 24 Abs. 1 Nr. 2', 
     rateType: 'tenth', 
-    minRate: 2, 
-    maxRate: 9,
+    minRate: 1, 
+    maxRate: 5,
     category: 'Sonstige Steuererklärungen',
     searchKeywords: ['Feststellungserklärung', 'GuE', 'Personengesellschaft', 'Mitunternehmerschaft'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+    minObjectValue: MIN_OBJECT_VALUES.GESONDERTE_FESTSTELLUNG  // 8.000 € gemäß § 24 Abs. 1 Nr. 2
   },
   { 
     activity: 'Betriebsprüfung begleiten', 
@@ -613,7 +649,7 @@ export const activityPresets: ActivityPreset[] = [
     maxRate: 40,
     category: 'Jahresabschluss & Buchführung',
     searchKeywords: ['Jahresabschluss', 'GmbH', 'AG', 'Kapitalgesellschaft', 'Bilanz'],
-    minObjectValue: MIN_OBJECT_VALUES.JAHRESABSCHLUSS  // 8.000 € gemäß § 35 StBVV
+    minObjectValue: MIN_OBJECT_VALUES.JAHRESABSCHLUSS
   },
   { 
     activity: 'Lohnbuchhaltung', 
@@ -643,13 +679,49 @@ export const activityPresets: ActivityPreset[] = [
     activity: 'Anmeldung Lohnsteuer', 
     defaultTenthRate: 2.5,
     suggestedFeeTable: 'A', 
-    legalBasis: '§ 34 Abs. 2', 
-    rateType: 'tenth', 
+    legalBasis: '§ 24 Abs. 1 Nr. 15', 
+    rateType: 'twentieth', 
+    minRate: 1, 
+    maxRate: 6,
+    category: 'Lohnbuchhaltung',
+    searchKeywords: ['Lohnsteueranmeldung', 'Lohnsteuer', 'LSt'],
+    minObjectValue: MIN_OBJECT_VALUES.LOHNSTEUER_ANMELDUNG  // 1.000 € gemäß § 24 Abs. 1 Nr. 15
+  },
+  { 
+    activity: 'Lohnsteuer-Ermäßigung', 
+    defaultTenthRate: 2.5,
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 24 Abs. 4', 
+    rateType: 'twentieth', 
     minRate: 1, 
     maxRate: 4,
     category: 'Lohnbuchhaltung',
-    searchKeywords: ['Lohnsteueranmeldung', 'Lohnsteuer', 'LSt'],
-    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+    searchKeywords: ['Lohnsteuer-Ermäßigung', 'Freibetrag', 'Eintragung'],
+    minObjectValue: MIN_OBJECT_VALUES.LOHNSTEUER_ERMAESSIGUNG  // 4.500 € gemäß § 24 Abs. 4
+  },
+  { 
+    activity: 'Kapitalertragsteueranmeldung', 
+    defaultTenthRate: 3.5,
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 24 Abs. 1 Nr. 14', 
+    rateType: 'twentieth', 
+    minRate: 1, 
+    maxRate: 6,
+    category: 'Sonstige Steuererklärungen',
+    searchKeywords: ['Kapitalertragsteuer', 'KapESt', 'Dividenden'],
+    minObjectValue: MIN_OBJECT_VALUES.KAPITALERTRAGSTEUER  // 4.000 € gemäß § 24 Abs. 1 Nr. 14
+  },
+  { 
+    activity: 'Antrag auf Vorsteuer-Vergütung', 
+    defaultTenthRate: 3.5,
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 24 Abs. 1 Nr. 21', 
+    rateType: 'tenth', 
+    minRate: 1, 
+    maxRate: 6,
+    category: 'Umsatzsteuer',
+    searchKeywords: ['Vorsteuer', 'Vergütung', 'Erstattung'],
+    minObjectValue: MIN_OBJECT_VALUES.VORSTEUER_VERGUETUNG  // 1.300 € gemäß § 24 Abs. 1 Nr. 21
   },
   { 
     activity: 'Fristverlängerung beantragen', 
