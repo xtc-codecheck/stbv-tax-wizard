@@ -420,6 +420,143 @@ export const DEFAULT_TEMPLATES: Template[] = [
         billingType: 'objectValue'
       }
     ]
+  },
+  {
+    id: 'template-8',
+    name: 'Freiberufler (Arzt, Anwalt, etc.)',
+    isCustom: false,
+    createdAt: new Date().toISOString(),
+    positions: [
+      {
+        id: '1',
+        activity: 'Einkommensteuer Mantelbogen',
+        description: '',
+        objectValue: 8000,
+        tenthRate: { numerator: 3.5, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '2',
+        activity: 'Anlage S (Einkünfte aus selbständiger Arbeit)',
+        description: '',
+        objectValue: 8000,
+        tenthRate: { numerator: 6.5, denominator: 20 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '3',
+        activity: 'Anlage EÜR (Einnahmen-Überschuss-Rechnung)',
+        description: '',
+        objectValue: 17500,
+        tenthRate: { numerator: 17.5, denominator: 10 },
+        quantity: 1,
+        feeTable: 'B',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '4',
+        activity: 'Umsatzsteuererklärung',
+        description: '',
+        objectValue: 8000,
+        tenthRate: { numerator: 4.5, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '5',
+        activity: 'Prüfung Steuerbescheid',
+        description: '',
+        objectValue: 8000,
+        tenthRate: { numerator: 3.5, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      }
+    ]
+  },
+  {
+    id: 'template-9',
+    name: 'GmbH & Co. KG mit Bilanz',
+    isCustom: false,
+    createdAt: new Date().toISOString(),
+    positions: [
+      {
+        id: '1',
+        activity: 'Jahresabschluss (Personengesellschaften)',
+        description: '',
+        objectValue: 0,
+        tenthRate: { numerator: 17.5, denominator: 10 },
+        quantity: 1,
+        feeTable: 'B',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '2',
+        activity: 'Gesonderte Feststellung der Einkünfte',
+        description: '',
+        objectValue: 8000,
+        tenthRate: { numerator: 3, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '3',
+        activity: 'Gewerbesteuererklärung',
+        description: '',
+        objectValue: 8000,
+        tenthRate: { numerator: 3.5, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '4',
+        activity: 'Umsatzsteuererklärung',
+        description: '',
+        objectValue: 8000,
+        tenthRate: { numerator: 4.5, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '5',
+        activity: 'Körperschaftsteuererklärung (Komplementär-GmbH)',
+        description: '',
+        objectValue: 16000,
+        tenthRate: { numerator: 5, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '6',
+        activity: 'Prüfung Steuerbescheid',
+        description: '',
+        objectValue: 8000,
+        tenthRate: { numerator: 3.5, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      }
+    ]
   }
 ];
 
