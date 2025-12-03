@@ -610,11 +610,12 @@ export const DEFAULT_TEMPLATES: Template[] = [
         activity: 'Lohnabrechnung pro Arbeitnehmer (monatlich)',
         description: 'je Arbeitnehmer, monatlich',
         objectValue: 0,
-        tenthRate: { numerator: 9.5, denominator: 10 },
+        tenthRate: { numerator: 0, denominator: 10 },
         quantity: 1,
         feeTable: 'C',
         applyExpenseFee: true,
-        billingType: 'objectValue'
+        billingType: 'flatRate',
+        flatRate: 12
       },
       {
         id: '2',
