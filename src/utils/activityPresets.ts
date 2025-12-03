@@ -1,5 +1,6 @@
 
 import { ActivityPreset } from "@/types/stbvv";
+import { MIN_OBJECT_VALUES } from "@/utils/constants";
 
 export const activityPresets: ActivityPreset[] = [
   { 
@@ -11,7 +12,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 6,
     category: 'Einkommensteuererklärung',
-    searchKeywords: ['EST', 'Einkommensteuer', 'Steuererklärung', 'Mantelbogen']
+    searchKeywords: ['EST', 'Einkommensteuer', 'Steuererklärung', 'Mantelbogen'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
   },
   { 
     activity: 'Einkommensteuer Mantelbogen', 
@@ -22,7 +24,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 6,
     category: 'Einkommensteuererklärung',
-    searchKeywords: ['EST', 'Mantelbogen', 'Hauptformular', 'Hauptvordruck']
+    searchKeywords: ['EST', 'Mantelbogen', 'Hauptformular', 'Hauptvordruck'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
   },
   { 
     activity: 'Anlage N (Einkünfte aus nichtselbständiger Arbeit)', 
@@ -33,7 +36,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 12,
     category: 'Einkommensteuererklärung',
-    searchKeywords: ['Anlage N', 'Arbeitnehmer', 'Lohn', 'Gehalt', 'nichtselbständig']
+    searchKeywords: ['Anlage N', 'Arbeitnehmer', 'Lohn', 'Gehalt', 'nichtselbständig'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
   },
   { 
     activity: 'Anlage V (Vermietung und Verpachtung)', 
@@ -44,7 +48,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 12,
     category: 'Einkommensteuererklärung',
-    searchKeywords: ['Anlage V', 'Vermietung', 'Verpachtung', 'Miete', 'Immobilien']
+    searchKeywords: ['Anlage V', 'Vermietung', 'Verpachtung', 'Miete', 'Immobilien'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
   },
   { 
     activity: 'Anlage G (Gewerbebetrieb)', 
@@ -55,7 +60,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 12,
     category: 'Einkommensteuererklärung',
-    searchKeywords: ['Anlage G', 'Gewerbebetrieb', 'Gewerbe', 'Einzelunternehmen']
+    searchKeywords: ['Anlage G', 'Gewerbebetrieb', 'Gewerbe', 'Einzelunternehmen'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
   },
   { 
     activity: 'Anlage S (Einkünfte aus selbständiger Arbeit)', 
@@ -66,7 +72,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 12,
     category: 'Einkommensteuererklärung',
-    searchKeywords: ['Anlage S', 'Selbständig', 'Freiberufler', 'Freiberuflich']
+    searchKeywords: ['Anlage S', 'Selbständig', 'Freiberufler', 'Freiberuflich'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
   },
   { 
     activity: 'Anlage KAP (Kapitalerträge)', 
@@ -77,7 +84,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 6,
     category: 'Einkommensteuererklärung',
-    searchKeywords: ['Anlage KAP', 'Kapitalerträge', 'Zinsen', 'Dividenden', 'Aktien']
+    searchKeywords: ['Anlage KAP', 'Kapitalerträge', 'Zinsen', 'Dividenden', 'Aktien'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
   },
   { 
     activity: 'Anlage SO (Sonstige Einkünfte)', 
@@ -88,7 +96,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 12,
     category: 'Einkommensteuererklärung',
-    searchKeywords: ['Anlage SO', 'Sonstige Einkünfte', 'Spekulationsgeschäfte']
+    searchKeywords: ['Anlage SO', 'Sonstige Einkünfte', 'Spekulationsgeschäfte'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
   },
   { 
     activity: 'Anlage R (Renten)', 
@@ -99,7 +108,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 12,
     category: 'Einkommensteuererklärung',
-    searchKeywords: ['Anlage R', 'Renten', 'Altersrente', 'Pension']
+    searchKeywords: ['Anlage R', 'Renten', 'Altersrente', 'Pension'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
   },
   { 
     activity: 'Anlage L (Land- und Forstwirtschaft)', 
@@ -110,7 +120,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 12,
     category: 'Einkommensteuererklärung',
-    searchKeywords: ['Anlage L', 'Landwirtschaft', 'Forstwirtschaft', 'Landwirt']
+    searchKeywords: ['Anlage L', 'Landwirtschaft', 'Forstwirtschaft', 'Landwirt'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_D
   },
   { 
     activity: 'Anlage EÜR (Einnahmen-Überschuss-Rechnung)', 
@@ -121,7 +132,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 5, 
     maxRate: 30,
     category: 'Einkommensteuererklärung',
-    searchKeywords: ['EÜR', 'Einnahmen-Überschuss', 'Anlage EÜR', '4/3-Rechnung']
+    searchKeywords: ['EÜR', 'Einnahmen-Überschuss', 'Anlage EÜR', '4/3-Rechnung'],
+    minObjectValue: MIN_OBJECT_VALUES.EÜR  // 17.500 € gemäß § 25 StBVV
   },
   { 
     activity: 'Anlage Kind', 
@@ -132,7 +144,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 5,
     category: 'Einkommensteuererklärung',
-    searchKeywords: ['Anlage Kind', 'Kindergeld', 'Kinderfreibetrag', 'Kinder']
+    searchKeywords: ['Anlage Kind', 'Kindergeld', 'Kinderfreibetrag', 'Kinder'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
   },
   { 
     activity: 'Anlage AV (Altersvorsorge)', 
@@ -143,7 +156,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 5,
     category: 'Einkommensteuererklärung',
-    searchKeywords: ['Anlage AV', 'Altersvorsorge', 'Riester', 'Rürup']
+    searchKeywords: ['Anlage AV', 'Altersvorsorge', 'Riester', 'Rürup'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
   },
   { 
     activity: 'Anlage Unterhalt', 
@@ -154,7 +168,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 7,
     category: 'Einkommensteuererklärung',
-    searchKeywords: ['Anlage Unterhalt', 'Unterhaltszahlungen', 'Kindesunterhalt']
+    searchKeywords: ['Anlage Unterhalt', 'Unterhaltszahlungen', 'Kindesunterhalt'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
   },
   { 
     activity: 'Anlage Vorsorgeaufwand', 
@@ -165,7 +180,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 5,
     category: 'Einkommensteuererklärung',
-    searchKeywords: ['Anlage Vorsorge', 'Versicherungen', 'Krankenversicherung']
+    searchKeywords: ['Anlage Vorsorge', 'Versicherungen', 'Krankenversicherung'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
   },
   { 
     activity: 'Anlage Sonderausgaben', 
@@ -176,7 +192,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 5,
     category: 'Einkommensteuererklärung',
-    searchKeywords: ['Anlage Sonderausgaben', 'Spenden', 'Kirchensteuer']
+    searchKeywords: ['Anlage Sonderausgaben', 'Spenden', 'Kirchensteuer'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
   },
   { 
     activity: 'Anlage Außergewöhnliche Belastungen', 
@@ -187,7 +204,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 5,
     category: 'Einkommensteuererklärung',
-    searchKeywords: ['Außergewöhnliche Belastungen', 'Krankheitskosten', 'Pflegekosten']
+    searchKeywords: ['Außergewöhnliche Belastungen', 'Krankheitskosten', 'Pflegekosten'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
   },
   { 
     activity: 'Anlage Haushaltsnahe Aufwendungen', 
@@ -198,7 +216,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 4,
     category: 'Einkommensteuererklärung',
-    searchKeywords: ['Haushaltsnahe Dienstleistungen', 'Handwerker', 'Putzhilfe']
+    searchKeywords: ['Haushaltsnahe Dienstleistungen', 'Handwerker', 'Putzhilfe'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
   },
   { 
     activity: 'Jahresabschluss GmbH', 
@@ -209,7 +228,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 10, 
     maxRate: 40,
     category: 'Jahresabschluss & Buchführung',
-    searchKeywords: ['Jahresabschluss', 'GmbH', 'Bilanz', 'GuV']
+    searchKeywords: ['Jahresabschluss', 'GmbH', 'Bilanz', 'GuV'],
+    minObjectValue: MIN_OBJECT_VALUES.JAHRESABSCHLUSS  // 8.000 € gemäß § 35 StBVV
   },
   { 
     activity: 'Jahresabschluss Einzelunternehmen', 
@@ -220,7 +240,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 10, 
     maxRate: 40,
     category: 'Jahresabschluss & Buchführung',
-    searchKeywords: ['Jahresabschluss', 'Einzelunternehmen', 'Bilanz']
+    searchKeywords: ['Jahresabschluss', 'Einzelunternehmen', 'Bilanz'],
+    minObjectValue: MIN_OBJECT_VALUES.JAHRESABSCHLUSS  // 8.000 € gemäß § 35 StBVV
   },
   { 
     activity: 'Jahresabschluss Übermittlung an Bundesanzeiger', 
@@ -231,7 +252,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 10, 
     maxRate: 40,
     category: 'Jahresabschluss & Buchführung',
-    searchKeywords: ['Bundesanzeiger', 'Offenlegung', 'Veröffentlichung']
+    searchKeywords: ['Bundesanzeiger', 'Offenlegung', 'Veröffentlichung'],
+    minObjectValue: MIN_OBJECT_VALUES.JAHRESABSCHLUSS
   },
   { 
     activity: 'Jahresabschluss Übermittlung an das Finanzamt', 
@@ -242,7 +264,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 10, 
     maxRate: 40,
     category: 'Jahresabschluss & Buchführung',
-    searchKeywords: ['Finanzamt', 'E-Bilanz', 'Übermittlung']
+    searchKeywords: ['Finanzamt', 'E-Bilanz', 'Übermittlung'],
+    minObjectValue: MIN_OBJECT_VALUES.JAHRESABSCHLUSS
   },
   { 
     activity: 'Überleitung Handelsbilanz nach Steuerbilanz', 
@@ -253,7 +276,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 5, 
     maxRate: 12,
     category: 'Jahresabschluss & Buchführung',
-    searchKeywords: ['Überleitung', 'Handelsbilanz', 'Steuerbilanz', 'Mehr-Weniger-Rechnung']
+    searchKeywords: ['Überleitung', 'Handelsbilanz', 'Steuerbilanz', 'Mehr-Weniger-Rechnung'],
+    minObjectValue: MIN_OBJECT_VALUES.JAHRESABSCHLUSS
   },
   { 
     activity: 'Buchführung (monatlich)', 
@@ -264,7 +288,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 12,
     category: 'Jahresabschluss & Buchführung',
-    searchKeywords: ['Buchführung', 'Fibu', 'Buchhaltung', 'Belege']
+    searchKeywords: ['Buchführung', 'Fibu', 'Buchhaltung', 'Belege'],
+    minObjectValue: MIN_OBJECT_VALUES.BUCHFÜHRUNG  // 15.000 € gemäß § 33 StBVV
   },
   { 
     activity: 'E-Bilanz Übermittlung', 
@@ -275,7 +300,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 3,
     category: 'Jahresabschluss & Buchführung',
-    searchKeywords: ['E-Bilanz', 'Elektronische Bilanz', 'XBRL', 'Taxonomie']
+    searchKeywords: ['E-Bilanz', 'Elektronische Bilanz', 'XBRL', 'Taxonomie'],
+    minObjectValue: MIN_OBJECT_VALUES.JAHRESABSCHLUSS
   },
   { 
     activity: 'Liquidationsbilanz', 
@@ -286,7 +312,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 10, 
     maxRate: 40,
     category: 'Jahresabschluss & Buchführung',
-    searchKeywords: ['Liquidation', 'Liquidationsbilanz', 'Auflösung', 'Schlussbilanz']
+    searchKeywords: ['Liquidation', 'Liquidationsbilanz', 'Auflösung', 'Schlussbilanz'],
+    minObjectValue: MIN_OBJECT_VALUES.JAHRESABSCHLUSS
   },
   { 
     activity: 'Umsatzsteuer-Voranmeldung', 
@@ -297,7 +324,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 8,
     category: 'Umsatzsteuer',
-    searchKeywords: ['UVA', 'Umsatzsteuer', 'Voranmeldung', 'USt-VA', 'Mehrwertsteuer']
+    searchKeywords: ['UVA', 'Umsatzsteuer', 'Voranmeldung', 'USt-VA', 'Mehrwertsteuer'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
   },
   { 
     activity: 'Umsatzsteuererklärung', 
@@ -308,7 +336,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 8,
     category: 'Umsatzsteuer',
-    searchKeywords: ['USt', 'Umsatzsteuer', 'Jahreserklärung', 'Mehrwertsteuer']
+    searchKeywords: ['USt', 'Umsatzsteuer', 'Jahreserklärung', 'Mehrwertsteuer'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
   },
   { 
     activity: 'Zusammenfassende Meldung (ZM)', 
@@ -319,7 +348,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 3,
     category: 'Umsatzsteuer',
-    searchKeywords: ['ZM', 'Zusammenfassende Meldung', 'Innergemeinschaftlich', 'EU']
+    searchKeywords: ['ZM', 'Zusammenfassende Meldung', 'Innergemeinschaftlich', 'EU'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
   },
   { 
     activity: 'Gewerbesteuererklärung', 
@@ -330,7 +360,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 6,
     category: 'Gewerbe- & Körperschaftsteuer',
-    searchKeywords: ['GewSt', 'Gewerbesteuer', 'Gemeinde']
+    searchKeywords: ['GewSt', 'Gewerbesteuer', 'Gemeinde'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
   },
   { 
     activity: 'Körperschaftsteuererklärung', 
@@ -341,7 +372,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 2, 
     maxRate: 8,
     category: 'Gewerbe- & Körperschaftsteuer',
-    searchKeywords: ['KSt', 'Körperschaftsteuer', 'GmbH', 'Kapitalgesellschaft']
+    searchKeywords: ['KSt', 'Körperschaftsteuer', 'GmbH', 'Kapitalgesellschaft'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
   },
   { 
     activity: 'Beratung allgemein', 
@@ -352,7 +384,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 50, 
     maxRate: 200,
     category: 'Beratungsleistungen',
-    searchKeywords: ['Beratung', 'Consulting', 'Gespräch', 'Besprechung']
+    searchKeywords: ['Beratung', 'Consulting', 'Gespräch', 'Besprechung'],
+    minObjectValue: 0  // Stundenbasiert, kein Mindestgegenstandswert
   },
   { 
     activity: 'Beratung bei Betriebseröffnung/-übernahme', 
@@ -363,7 +396,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 80, 
     maxRate: 200,
     category: 'Beratungsleistungen',
-    searchKeywords: ['Betriebseröffnung', 'Existenzgründung', 'Betriebsübernahme', 'Gründung']
+    searchKeywords: ['Betriebseröffnung', 'Existenzgründung', 'Betriebsübernahme', 'Gründung'],
+    minObjectValue: 0
   },
   { 
     activity: 'Beratung bei Umstrukturierung', 
@@ -374,7 +408,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 80, 
     maxRate: 200,
     category: 'Beratungsleistungen',
-    searchKeywords: ['Umstrukturierung', 'Umwandlung', 'Rechtsformwechsel']
+    searchKeywords: ['Umstrukturierung', 'Umwandlung', 'Rechtsformwechsel'],
+    minObjectValue: 0
   },
   { 
     activity: 'Schriftliche Gutachten', 
@@ -385,7 +420,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 100, 
     maxRate: 250,
     category: 'Beratungsleistungen',
-    searchKeywords: ['Gutachten', 'Stellungnahme', 'Expertise']
+    searchKeywords: ['Gutachten', 'Stellungnahme', 'Expertise'],
+    minObjectValue: 0
   },
   { 
     activity: 'Betriebswirtschaftliche Beratung', 
@@ -396,7 +432,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 80, 
     maxRate: 200,
     category: 'Beratungsleistungen',
-    searchKeywords: ['BWA', 'Betriebswirtschaft', 'Controlling', 'Kennzahlen']
+    searchKeywords: ['BWA', 'Betriebswirtschaft', 'Controlling', 'Kennzahlen'],
+    minObjectValue: 0
   },
   { 
     activity: 'Finanzplanung und Liquiditätsplanung', 
@@ -407,7 +444,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 60, 
     maxRate: 180,
     category: 'Beratungsleistungen',
-    searchKeywords: ['Finanzplanung', 'Liquidität', 'Cashflow', 'Planung']
+    searchKeywords: ['Finanzplanung', 'Liquidität', 'Cashflow', 'Planung'],
+    minObjectValue: 0
   },
   { 
     activity: 'Steuerschätzung', 
@@ -418,7 +456,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 60, 
     maxRate: 180,
     category: 'Beratungsleistungen',
-    searchKeywords: ['Schätzung', 'Steuerberechnung', 'Prognose']
+    searchKeywords: ['Schätzung', 'Steuerberechnung', 'Prognose'],
+    minObjectValue: 0
   },
   { 
     activity: 'Einspruch beim Finanzamt', 
@@ -429,7 +468,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 8,
     category: 'Rechtsbehelfsverfahren',
-    searchKeywords: ['Einspruch', 'Widerspruch', 'Rechtsbehelf']
+    searchKeywords: ['Einspruch', 'Widerspruch', 'Rechtsbehelf'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
   },
   { 
     activity: 'Aussetzung der Vollziehung (AdV)', 
@@ -440,7 +480,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 8,
     category: 'Rechtsbehelfsverfahren',
-    searchKeywords: ['AdV', 'Aussetzung', 'Vollziehung', 'Stundung']
+    searchKeywords: ['AdV', 'Aussetzung', 'Vollziehung', 'Stundung'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
   },
   { 
     activity: 'Prüfung Steuerbescheid', 
@@ -451,7 +492,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 6,
     category: 'Rechtsbehelfsverfahren',
-    searchKeywords: ['Steuerbescheid', 'Prüfung', 'Bescheidprüfung', 'Kontrolle']
+    searchKeywords: ['Steuerbescheid', 'Prüfung', 'Bescheidprüfung', 'Kontrolle'],
+    minObjectValue: 0  // Stundenbasiert
   },
   { 
     activity: 'Erbschaftsteuererklärung', 
@@ -462,7 +504,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 2, 
     maxRate: 8,
     category: 'Erbschaft- & Schenkungsteuer',
-    searchKeywords: ['ErbSt', 'Erbschaftsteuer', 'Erbe', 'Nachlass']
+    searchKeywords: ['ErbSt', 'Erbschaftsteuer', 'Erbe', 'Nachlass'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
   },
   { 
     activity: 'Schenkungsteuererklärung', 
@@ -473,7 +516,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 2, 
     maxRate: 8,
     category: 'Erbschaft- & Schenkungsteuer',
-    searchKeywords: ['SchenkSt', 'Schenkungsteuer', 'Schenkung']
+    searchKeywords: ['SchenkSt', 'Schenkungsteuer', 'Schenkung'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
   },
   { 
     activity: 'Grunderwerbsteuererklärung', 
@@ -484,7 +528,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 6,
     category: 'Sonstige Steuererklärungen',
-    searchKeywords: ['GrESt', 'Grunderwerbsteuer', 'Immobilienkauf', 'Grundstück']
+    searchKeywords: ['GrESt', 'Grunderwerbsteuer', 'Immobilienkauf', 'Grundstück'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
   },
   { 
     activity: 'Antrag auf Feststellung des verbleibenden Verlustvortrags', 
@@ -495,7 +540,80 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 6,
     category: 'Sonstige Steuererklärungen',
-    searchKeywords: ['Verlustvortrag', 'Feststellungserklärung', 'Verlust']
+    searchKeywords: ['Verlustvortrag', 'Feststellungserklärung', 'Verlust'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+  },
+  { 
+    activity: 'Gesonderte und einheitliche Feststellung', 
+    defaultTenthRate: 5.5,
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 24 Abs. 1 Nr. 10', 
+    rateType: 'tenth', 
+    minRate: 2, 
+    maxRate: 9,
+    category: 'Sonstige Steuererklärungen',
+    searchKeywords: ['Feststellungserklärung', 'GuE', 'Personengesellschaft', 'Mitunternehmerschaft'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
+  },
+  { 
+    activity: 'Betriebsprüfung begleiten', 
+    defaultTenthRate: 100,
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 29', 
+    rateType: 'tenth', 
+    minRate: 50, 
+    maxRate: 180,
+    category: 'Rechtsbehelfsverfahren',
+    searchKeywords: ['Betriebsprüfung', 'Außenprüfung', 'Prüfer', 'Finanzamt'],
+    minObjectValue: 0  // Stundenbasiert
+  },
+  { 
+    activity: 'Überleitungsrechnung (§ 60 Abs. 3 EStG)', 
+    defaultTenthRate: 8.5,
+    suggestedFeeTable: 'B', 
+    legalBasis: '§ 35 Abs. 1 Nr. 4b', 
+    rateType: 'tenth', 
+    minRate: 2, 
+    maxRate: 15,
+    category: 'Jahresabschluss & Buchführung',
+    searchKeywords: ['Überleitungsrechnung', 'Anlageverzeichnis', 'Steuerbilanz'],
+    minObjectValue: MIN_OBJECT_VALUES.JAHRESABSCHLUSS
+  },
+  { 
+    activity: 'Elektronische Übermittlung Bundesanzeiger', 
+    defaultTenthRate: 2,
+    suggestedFeeTable: 'B', 
+    legalBasis: '§ 35 Abs. 1 Nr. 6', 
+    rateType: 'tenth', 
+    minRate: 1, 
+    maxRate: 3,
+    category: 'Jahresabschluss & Buchführung',
+    searchKeywords: ['E-Bilanz', 'Bundesanzeiger', 'Elektronische Übermittlung', 'Offenlegung'],
+    minObjectValue: MIN_OBJECT_VALUES.JAHRESABSCHLUSS
+  },
+  { 
+    activity: 'Elektronische Übermittlung Finanzamt', 
+    defaultTenthRate: 2,
+    suggestedFeeTable: 'B', 
+    legalBasis: '§ 35 Abs. 1 Nr. 6', 
+    rateType: 'tenth', 
+    minRate: 1, 
+    maxRate: 3,
+    category: 'Jahresabschluss & Buchführung',
+    searchKeywords: ['E-Bilanz', 'Finanzamt', 'Elektronische Übermittlung', 'ELSTER'],
+    minObjectValue: MIN_OBJECT_VALUES.JAHRESABSCHLUSS
+  },
+  { 
+    activity: 'Jahresabschluss (Kapitalgesellschaften)', 
+    defaultTenthRate: 25,
+    suggestedFeeTable: 'B', 
+    legalBasis: '§ 35 Abs. 1 Nr. 1a', 
+    rateType: 'tenth', 
+    minRate: 10, 
+    maxRate: 40,
+    category: 'Jahresabschluss & Buchführung',
+    searchKeywords: ['Jahresabschluss', 'GmbH', 'AG', 'Kapitalgesellschaft', 'Bilanz'],
+    minObjectValue: MIN_OBJECT_VALUES.JAHRESABSCHLUSS  // 8.000 € gemäß § 35 StBVV
   },
   { 
     activity: 'Lohnbuchhaltung', 
@@ -506,7 +624,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 12,
     category: 'Lohnbuchhaltung',
-    searchKeywords: ['Lohnbuchhaltung', 'Lohn', 'Gehalt', 'Personalabrechnung']
+    searchKeywords: ['Lohnbuchhaltung', 'Lohn', 'Gehalt', 'Personalabrechnung'],
+    minObjectValue: MIN_OBJECT_VALUES.LOHNBUCHHALTUNG
   },
   { 
     activity: 'Lohnabrechnung pro Arbeitnehmer (monatlich)', 
@@ -517,7 +636,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 10, 
     maxRate: 25,
     category: 'Lohnbuchhaltung',
-    searchKeywords: ['Lohnabrechnung', 'Gehaltsabrechnung', 'Mitarbeiter']
+    searchKeywords: ['Lohnabrechnung', 'Gehaltsabrechnung', 'Mitarbeiter'],
+    minObjectValue: MIN_OBJECT_VALUES.LOHNBUCHHALTUNG
   },
   { 
     activity: 'Anmeldung Lohnsteuer', 
@@ -528,7 +648,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 4,
     category: 'Lohnbuchhaltung',
-    searchKeywords: ['Lohnsteueranmeldung', 'Lohnsteuer', 'LSt']
+    searchKeywords: ['Lohnsteueranmeldung', 'Lohnsteuer', 'LSt'],
+    minObjectValue: MIN_OBJECT_VALUES.TABLE_A
   },
   { 
     activity: 'Fristverlängerung beantragen', 
@@ -539,7 +660,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 50, 
     maxRate: 150,
     category: 'Sonstige Tätigkeiten',
-    searchKeywords: ['Fristverlängerung', 'Frist', 'Verlängerung', 'Antrag']
+    searchKeywords: ['Fristverlängerung', 'Frist', 'Verlängerung', 'Antrag'],
+    minObjectValue: 0  // Stundenbasiert
   },
   { 
     activity: 'Bescheinigungen ausstellen', 
@@ -550,7 +672,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 50, 
     maxRate: 150,
     category: 'Sonstige Tätigkeiten',
-    searchKeywords: ['Bescheinigung', 'Bestätigung', 'Nachweis']
+    searchKeywords: ['Bescheinigung', 'Bestätigung', 'Nachweis'],
+    minObjectValue: 0  // Stundenbasiert
   },
   { 
     activity: 'Auslagen für externe Kosten', 
@@ -561,7 +684,8 @@ export const activityPresets: ActivityPreset[] = [
     minRate: 1, 
     maxRate: 10,
     category: 'Sonstige Tätigkeiten',
-    searchKeywords: ['Auslagen', 'Kosten', 'Spesen', 'Porto']
+    searchKeywords: ['Auslagen', 'Kosten', 'Spesen', 'Porto'],
+    minObjectValue: 0
   }
 ];
 
