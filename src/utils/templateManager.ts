@@ -73,7 +73,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
       },
       {
         id: '3',
-        activity: 'Elektronische Übermittlung an Bundesanzeiger',
+        activity: 'Elektronische Übermittlung Bundesanzeiger',
         description: '',
         objectValue: 0,
         tenthRate: { numerator: 2, denominator: 10 }, // 2/10 (feste Gebühr)
@@ -84,7 +84,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
       },
       {
         id: '4',
-        activity: 'Elektronische Übermittlung an Finanzamt',
+        activity: 'Elektronische Übermittlung Finanzamt',
         description: '',
         objectValue: 0,
         tenthRate: { numerator: 2, denominator: 10 }, // 2/10 (feste Gebühr)
@@ -232,7 +232,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
       },
       {
         id: '3',
-        activity: 'Anlage V (Einkünfte aus Vermietung und Verpachtung)',
+        activity: 'Anlage V (Vermietung und Verpachtung)',
         description: 'je Objekt',
         objectValue: 8000,
         tenthRate: { numerator: 6.5, denominator: 20 },
@@ -284,7 +284,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
       },
       {
         id: '2',
-        activity: 'Anlage R (Renten und andere Leistungen)',
+        activity: 'Anlage R (Renten)',
         description: '',
         objectValue: 8000,
         tenthRate: { numerator: 6.5, denominator: 20 },
@@ -325,7 +325,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
     positions: [
       {
         id: '1',
-        activity: 'Gesonderte Feststellung der Einkünfte',
+        activity: 'Gesonderte und einheitliche Feststellung',
         description: '',
         objectValue: 8000,
         tenthRate: { numerator: 3, denominator: 10 },
@@ -399,7 +399,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
       },
       {
         id: '2',
-        activity: 'Feststellungserklärung nach Bewertungsgesetz',
+        activity: 'Feststellung nach Bewertungsgesetz',
         description: 'je wirtschaftliche Einheit',
         objectValue: 25000,
         tenthRate: { numerator: 9.5, denominator: 20 },
@@ -503,7 +503,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
       },
       {
         id: '2',
-        activity: 'Gesonderte Feststellung der Einkünfte',
+        activity: 'Gesonderte und einheitliche Feststellung',
         description: '',
         objectValue: 8000,
         tenthRate: { numerator: 3, denominator: 10 },
@@ -536,7 +536,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
       },
       {
         id: '5',
-        activity: 'Körperschaftsteuererklärung (Komplementär-GmbH)',
+        activity: 'Körperschaftsteuererklärung',
         description: '',
         objectValue: 16000,
         tenthRate: { numerator: 5, denominator: 10 },
@@ -566,7 +566,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
     positions: [
       {
         id: '1',
-        activity: 'Buchführung (§ 33 Abs. 1 StBVV)',
+        activity: 'Buchführung (monatlich)',
         description: 'monatlich',
         objectValue: 0,
         tenthRate: { numerator: 7, denominator: 10 },
@@ -577,7 +577,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
       },
       {
         id: '2',
-        activity: 'Kontieren der Belege (§ 33 Abs. 2 StBVV)',
+        activity: 'Kontieren der Belege',
         description: 'monatlich',
         objectValue: 0,
         tenthRate: { numerator: 3.5, denominator: 10 },
@@ -607,7 +607,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
     positions: [
       {
         id: '1',
-        activity: 'Lohnbuchhaltung (§ 34 Abs. 1 StBVV)',
+        activity: 'Lohnabrechnung pro Arbeitnehmer (monatlich)',
         description: 'je Arbeitnehmer, monatlich',
         objectValue: 0,
         tenthRate: { numerator: 9.5, denominator: 10 },
@@ -618,7 +618,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
       },
       {
         id: '2',
-        activity: 'Lohnsteuer-Anmeldung',
+        activity: 'Anmeldung Lohnsteuer',
         description: 'monatlich',
         objectValue: 1000,
         tenthRate: { numerator: 3.5, denominator: 20 },
@@ -629,7 +629,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
       },
       {
         id: '3',
-        activity: 'Lohnkonto (§ 34 Abs. 2 StBVV)',
+        activity: 'Lohnkonto',
         description: 'je Arbeitnehmer, jährlich',
         objectValue: 0,
         tenthRate: { numerator: 7.5, denominator: 10 },
