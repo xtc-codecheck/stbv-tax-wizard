@@ -13,7 +13,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         activity: 'Einkommensteuer Mantelbogen',
         description: '',
         objectValue: 0,
-        tenthRate: { numerator: 35, denominator: 100 }, // 3.5/10 Mittelwert (1-6/10)
+        tenthRate: { numerator: 3.5, denominator: 10 }, // 3.5/10 Mittelwert (1-6/10)
         quantity: 1,
         feeTable: 'A',
         applyExpenseFee: true,
@@ -24,7 +24,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         activity: 'Anlage N (Einkünfte aus nichtselbständiger Arbeit)',
         description: '',
         objectValue: 0,
-        tenthRate: { numerator: 65, denominator: 200 }, // 6.5/20 Zwanzigtelsatz Mittelwert (1-12/20)
+        tenthRate: { numerator: 6.5, denominator: 20 }, // 6.5/20 Zwanzigtelsatz Mittelwert (1-12/20)
         quantity: 1,
         feeTable: 'A',
         applyExpenseFee: true,
@@ -35,7 +35,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         activity: 'Prüfung Steuerbescheid',
         description: '',
         objectValue: 0,
-        tenthRate: { numerator: 35, denominator: 100 }, // 3.5/10 Mittelwert (1-6/10)
+        tenthRate: { numerator: 3.5, denominator: 10 }, // 3.5/10 Mittelwert (1-6/10)
         quantity: 1,
         feeTable: 'A',
         applyExpenseFee: true,
@@ -65,7 +65,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         activity: 'Überleitungsrechnung (§ 60 Abs. 3 EStG)',
         description: '',
         objectValue: 0,
-        tenthRate: { numerator: 85, denominator: 100 }, // 8.5/10 Mittelwert (2-15/10)
+        tenthRate: { numerator: 8.5, denominator: 10 }, // 8.5/10 Mittelwert (2-15/10)
         quantity: 1,
         feeTable: 'B',
         applyExpenseFee: true,
@@ -109,7 +109,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         activity: 'Gewerbesteuererklärung',
         description: '',
         objectValue: 0,
-        tenthRate: { numerator: 35, denominator: 100 }, // 3.5/10 Mittelwert (1-6/10)
+        tenthRate: { numerator: 3.5, denominator: 10 }, // 3.5/10 Mittelwert (1-6/10)
         quantity: 1,
         feeTable: 'A',
         applyExpenseFee: true,
@@ -120,7 +120,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         activity: 'Umsatzsteuererklärung',
         description: '',
         objectValue: 0,
-        tenthRate: { numerator: 45, denominator: 100 }, // 4.5/10 Mittelwert (1-8/10)
+        tenthRate: { numerator: 4.5, denominator: 10 }, // 4.5/10 Mittelwert (1-8/10)
         quantity: 1,
         feeTable: 'A',
         applyExpenseFee: true,
@@ -131,7 +131,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         activity: 'Prüfung Steuerbescheid',
         description: '',
         objectValue: 0,
-        tenthRate: { numerator: 35, denominator: 100 }, // 3.5/10 Mittelwert (1-6/10)
+        tenthRate: { numerator: 3.5, denominator: 10 }, // 3.5/10 Mittelwert (1-6/10)
         quantity: 1,
         feeTable: 'A',
         applyExpenseFee: true,
@@ -150,7 +150,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         activity: 'Einkommensteuer Mantelbogen',
         description: '',
         objectValue: 0,
-        tenthRate: { numerator: 35, denominator: 100 }, // 3.5/10 Mittelwert (1-6/10)
+        tenthRate: { numerator: 3.5, denominator: 10 }, // 3.5/10 Mittelwert (1-6/10)
         quantity: 1,
         feeTable: 'A',
         applyExpenseFee: true,
@@ -161,7 +161,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         activity: 'Anlage EÜR (Einnahmen-Überschuss-Rechnung)',
         description: '',
         objectValue: 0,
-        tenthRate: { numerator: 175, denominator: 100 }, // 17.5/10 Mittelwert (5-30/10) nach § 25 StBVV
+        tenthRate: { numerator: 17.5, denominator: 10 }, // 17.5/10 Mittelwert (5-30/10) nach § 25 StBVV
         quantity: 1,
         feeTable: 'B',
         applyExpenseFee: true,
@@ -172,7 +172,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         activity: 'Gewerbesteuererklärung',
         description: '',
         objectValue: 0,
-        tenthRate: { numerator: 35, denominator: 100 }, // 3.5/10 Mittelwert (1-6/10)
+        tenthRate: { numerator: 3.5, denominator: 10 }, // 3.5/10 Mittelwert (1-6/10)
         quantity: 1,
         feeTable: 'A',
         applyExpenseFee: true,
@@ -183,7 +183,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         activity: 'Umsatzsteuererklärung',
         description: '',
         objectValue: 0,
-        tenthRate: { numerator: 45, denominator: 100 }, // 4.5/10 Mittelwert (1-8/10)
+        tenthRate: { numerator: 4.5, denominator: 10 }, // 4.5/10 Mittelwert (1-8/10)
         quantity: 1,
         feeTable: 'A',
         applyExpenseFee: true,
@@ -194,7 +194,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         activity: 'Prüfung Steuerbescheid',
         description: '',
         objectValue: 0,
-        tenthRate: { numerator: 35, denominator: 100 }, // 3.5/10 Mittelwert (1-6/10)
+        tenthRate: { numerator: 3.5, denominator: 10 }, // 3.5/10 Mittelwert (1-6/10)
         quantity: 1,
         feeTable: 'A',
         applyExpenseFee: true,
