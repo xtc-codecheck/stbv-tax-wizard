@@ -201,6 +201,225 @@ export const DEFAULT_TEMPLATES: Template[] = [
         billingType: 'objectValue'
       }
     ]
+  },
+  {
+    id: 'template-4',
+    name: 'Arbeitnehmer mit Vermietung',
+    isCustom: false,
+    createdAt: new Date().toISOString(),
+    positions: [
+      {
+        id: '1',
+        activity: 'Einkommensteuer Mantelbogen',
+        description: '',
+        objectValue: 8000,
+        tenthRate: { numerator: 3.5, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '2',
+        activity: 'Anlage N (Einkünfte aus nichtselbständiger Arbeit)',
+        description: '',
+        objectValue: 8000,
+        tenthRate: { numerator: 6.5, denominator: 20 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '3',
+        activity: 'Anlage V (Einkünfte aus Vermietung und Verpachtung)',
+        description: 'je Objekt',
+        objectValue: 8000,
+        tenthRate: { numerator: 6.5, denominator: 20 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '4',
+        activity: 'Anlage Vorsorgeaufwand',
+        description: '',
+        objectValue: 8000,
+        tenthRate: { numerator: 3, denominator: 20 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '5',
+        activity: 'Prüfung Steuerbescheid',
+        description: '',
+        objectValue: 8000,
+        tenthRate: { numerator: 3.5, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      }
+    ]
+  },
+  {
+    id: 'template-5',
+    name: 'Rentner (einfach)',
+    isCustom: false,
+    createdAt: new Date().toISOString(),
+    positions: [
+      {
+        id: '1',
+        activity: 'Einkommensteuer Mantelbogen',
+        description: '',
+        objectValue: 8000,
+        tenthRate: { numerator: 3.5, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '2',
+        activity: 'Anlage R (Renten und andere Leistungen)',
+        description: '',
+        objectValue: 8000,
+        tenthRate: { numerator: 6.5, denominator: 20 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '3',
+        activity: 'Anlage Vorsorgeaufwand',
+        description: '',
+        objectValue: 8000,
+        tenthRate: { numerator: 3, denominator: 20 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '4',
+        activity: 'Prüfung Steuerbescheid',
+        description: '',
+        objectValue: 8000,
+        tenthRate: { numerator: 3.5, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      }
+    ]
+  },
+  {
+    id: 'template-6',
+    name: 'Personengesellschaft (GbR/OHG/KG) mit EÜR',
+    isCustom: false,
+    createdAt: new Date().toISOString(),
+    positions: [
+      {
+        id: '1',
+        activity: 'Gesonderte Feststellung der Einkünfte',
+        description: '',
+        objectValue: 8000,
+        tenthRate: { numerator: 3, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '2',
+        activity: 'Anlage EÜR (Einnahmen-Überschuss-Rechnung)',
+        description: '',
+        objectValue: 17500,
+        tenthRate: { numerator: 17.5, denominator: 10 },
+        quantity: 1,
+        feeTable: 'B',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '3',
+        activity: 'Gewerbesteuererklärung',
+        description: '',
+        objectValue: 8000,
+        tenthRate: { numerator: 3.5, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '4',
+        activity: 'Umsatzsteuererklärung',
+        description: '',
+        objectValue: 8000,
+        tenthRate: { numerator: 4.5, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '5',
+        activity: 'Prüfung Steuerbescheid',
+        description: '',
+        objectValue: 8000,
+        tenthRate: { numerator: 3.5, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      }
+    ]
+  },
+  {
+    id: 'template-7',
+    name: 'Erbschaftsteuererklärung',
+    isCustom: false,
+    createdAt: new Date().toISOString(),
+    positions: [
+      {
+        id: '1',
+        activity: 'Erbschaftsteuererklärung',
+        description: '',
+        objectValue: 16000,
+        tenthRate: { numerator: 6, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '2',
+        activity: 'Feststellungserklärung nach Bewertungsgesetz',
+        description: 'je wirtschaftliche Einheit',
+        objectValue: 25000,
+        tenthRate: { numerator: 9.5, denominator: 20 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '3',
+        activity: 'Ermittlung Zugewinnausgleichsforderung (§ 5 ErbStG)',
+        description: 'optional',
+        objectValue: 12500,
+        tenthRate: { numerator: 10, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      }
+    ]
   }
 ];
 
