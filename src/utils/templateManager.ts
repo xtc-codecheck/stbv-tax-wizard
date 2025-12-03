@@ -557,6 +557,88 @@ export const DEFAULT_TEMPLATES: Template[] = [
         billingType: 'objectValue'
       }
     ]
+  },
+  {
+    id: 'template-10',
+    name: 'Finanzbuchhaltung (monatlich)',
+    isCustom: false,
+    createdAt: new Date().toISOString(),
+    positions: [
+      {
+        id: '1',
+        activity: 'Buchführung (§ 33 Abs. 1 StBVV)',
+        description: 'monatlich',
+        objectValue: 0,
+        tenthRate: { numerator: 7, denominator: 10 },
+        quantity: 1,
+        feeTable: 'C',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '2',
+        activity: 'Kontieren der Belege (§ 33 Abs. 2 StBVV)',
+        description: 'monatlich',
+        objectValue: 0,
+        tenthRate: { numerator: 3.5, denominator: 10 },
+        quantity: 1,
+        feeTable: 'C',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '3',
+        activity: 'Umsatzsteuer-Voranmeldung',
+        description: 'monatlich',
+        objectValue: 650,
+        tenthRate: { numerator: 3.5, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      }
+    ]
+  },
+  {
+    id: 'template-11',
+    name: 'Lohnbuchhaltung (monatlich)',
+    isCustom: false,
+    createdAt: new Date().toISOString(),
+    positions: [
+      {
+        id: '1',
+        activity: 'Lohnbuchhaltung (§ 34 Abs. 1 StBVV)',
+        description: 'je Arbeitnehmer, monatlich',
+        objectValue: 0,
+        tenthRate: { numerator: 9.5, denominator: 10 },
+        quantity: 1,
+        feeTable: 'C',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '2',
+        activity: 'Lohnsteuer-Anmeldung',
+        description: 'monatlich',
+        objectValue: 1000,
+        tenthRate: { numerator: 3.5, denominator: 20 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '3',
+        activity: 'Lohnkonto (§ 34 Abs. 2 StBVV)',
+        description: 'je Arbeitnehmer, jährlich',
+        objectValue: 0,
+        tenthRate: { numerator: 7.5, denominator: 10 },
+        quantity: 1,
+        feeTable: 'C',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      }
+    ]
   }
 ];
 
