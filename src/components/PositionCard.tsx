@@ -409,7 +409,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 
         {/* Value and Quantity side by side */}
         <div className="grid grid-cols-2 gap-4">
-          {position.billingType === 'objectValue' && (
+        {position.billingType === 'objectValue' && (
             <div className="space-y-2">
               <Label>Gegenstandswert (€) *</Label>
               <div className="relative">
@@ -421,7 +421,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
                     setLocalObjectValue(value);
                     handleFieldChange('objectValue', value);
                   }}
-                  placeholder="0"
+                  placeholder={preset?.minObjectValue ? `Mind. ${preset.minObjectValue.toLocaleString('de-DE')} €` : "0"}
                   min="0"
                   step="0.01"
                   className={cn(validationErrors.objectValue && "validation-error")}
@@ -431,6 +431,23 @@ const PositionCard: React.FC<PositionCardProps> = ({
                     <AlertCircle className="w-3 h-3" />
                     {validationErrors.objectValue}
                   </p>
+                )}
+                {/* Warnung bei Unterschreitung des Mindestgegenstandswerts */}
+                {preset?.minObjectValue && preset.minObjectValue > 0 && localObjectValue > 0 && localObjectValue < preset.minObjectValue && (
+                  <div className="mt-2 p-2 bg-amber-50 border border-amber-200 rounded-md flex items-start gap-2">
+                    <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                    <div className="text-xs text-amber-800">
+                      <span className="font-semibold">Mindestgegenstandswert unterschritten:</span>{' '}
+                      Der Gegenstandswert für "{position.activity}" beträgt gemäß StBVV mindestens{' '}
+                      <span className="font-semibold">{preset.minObjectValue.toLocaleString('de-DE')} €</span>.
+                      <button 
+                        onClick={() => setLocalObjectValue(preset.minObjectValue!)}
+                        className="block mt-1 text-amber-700 hover:text-amber-900 underline font-medium"
+                      >
+                        Mindestgegenstandswert übernehmen
+                      </button>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>

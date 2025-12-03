@@ -48,6 +48,7 @@ export interface ActivityPreset {
   maxRate: number;
   searchKeywords?: string[];
   category?: string;
+  minObjectValue?: number;  // Mindestgegenstandswert gemäß StBVV
 }
 
 export interface Template {
