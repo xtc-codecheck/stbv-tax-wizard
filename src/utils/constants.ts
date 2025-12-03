@@ -53,8 +53,8 @@ export const MIN_OBJECT_VALUES = {
   JAHRESABSCHLUSS: 8000,
   // § 33 StBVV - Buchführung
   BUCHFÜHRUNG: 15000,
-  // Lohnbuchhaltung - kein Mindestgegenstandswert
-  LOHNBUCHHALTUNG: 0,
+  // § 34 StBVV - Lohnbuchhaltung (Bruttolohnsumme je Arbeitnehmer)
+  LOHNBUCHHALTUNG: 1000,
 };
 
 // Timing constants

@@ -499,13 +499,13 @@ export const activityPresets: ActivityPreset[] = [
     activity: 'Prüfung Steuerbescheid', 
     defaultTenthRate: 3.5,
     suggestedFeeTable: 'A', 
-    legalBasis: '§ 24 Abs. 1 Nr. 1', 
+    legalBasis: '§ 28 StBVV', 
     rateType: 'tenth', 
     minRate: 1, 
     maxRate: 6,
     category: 'Rechtsbehelfsverfahren',
     searchKeywords: ['Steuerbescheid', 'Prüfung', 'Bescheidprüfung', 'Kontrolle'],
-    minObjectValue: 0  // Stundenbasiert
+    minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER  // 8.000 € gemäß § 28 StBVV
   },
   { 
     activity: 'Erbschaftsteuererklärung', 
@@ -758,6 +758,54 @@ export const activityPresets: ActivityPreset[] = [
     category: 'Sonstige Tätigkeiten',
     searchKeywords: ['Auslagen', 'Kosten', 'Spesen', 'Porto'],
     minObjectValue: 0
+  },
+  { 
+    activity: 'Ermittlung Zugewinnausgleichsforderung (§ 5 ErbStG)', 
+    defaultTenthRate: 10,
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 24 Abs. 3', 
+    rateType: 'tenth', 
+    minRate: 5, 
+    maxRate: 15,
+    category: 'Erbschaft- & Schenkungsteuer',
+    searchKeywords: ['Zugewinn', 'Zugewinnausgleich', 'ErbStG'],
+    minObjectValue: MIN_OBJECT_VALUES.ZUGEWINNAUSGLEICH  // 12.500 €
+  },
+  { 
+    activity: 'Jahresabschluss (Personengesellschaften)', 
+    defaultTenthRate: 17.5,
+    suggestedFeeTable: 'B', 
+    legalBasis: '§ 35 Abs. 1 Nr. 1a', 
+    rateType: 'tenth', 
+    minRate: 5, 
+    maxRate: 30,
+    category: 'Jahresabschluss & Buchführung',
+    searchKeywords: ['Jahresabschluss', 'GbR', 'OHG', 'KG', 'Personengesellschaft'],
+    minObjectValue: MIN_OBJECT_VALUES.JAHRESABSCHLUSS  // 17.500 €
+  },
+  { 
+    activity: 'Kontieren der Belege', 
+    defaultTenthRate: 3.5,
+    suggestedFeeTable: 'C', 
+    legalBasis: '§ 33 Abs. 2', 
+    rateType: 'tenth', 
+    minRate: 1, 
+    maxRate: 6,
+    category: 'Jahresabschluss & Buchführung',
+    searchKeywords: ['Kontieren', 'Belege', 'Vorkontierung'],
+    minObjectValue: MIN_OBJECT_VALUES.BUCHFÜHRUNG  // 15.000 €
+  },
+  { 
+    activity: 'Lohnkonto', 
+    defaultTenthRate: 7.5,
+    suggestedFeeTable: 'C', 
+    legalBasis: '§ 34 Abs. 2', 
+    rateType: 'tenth', 
+    minRate: 5, 
+    maxRate: 10,
+    category: 'Lohnbuchhaltung',
+    searchKeywords: ['Lohnkonto', 'Jahreslohnkonto', 'Arbeitnehmer'],
+    minObjectValue: MIN_OBJECT_VALUES.LOHNBUCHHALTUNG  // 1.000 €
   }
 ];
 
