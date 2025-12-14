@@ -41,9 +41,10 @@ export interface ClientData {
 export interface ActivityPreset {
   activity: string;
   defaultTenthRate: number;
+  defaultHourlyRate?: number;  // Standard-Stundensatz für Zeitgebühren
   suggestedFeeTable: 'A' | 'B' | 'C' | 'D';
   legalBasis: string;
-  rateType: 'tenth' | 'twentieth';
+  rateType: 'tenth' | 'twentieth' | 'hourly';
   minRate: number;
   maxRate: number;
   searchKeywords?: string[];

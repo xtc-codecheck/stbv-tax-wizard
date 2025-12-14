@@ -497,15 +497,16 @@ export const activityPresets: ActivityPreset[] = [
   },
   { 
     activity: 'Prüfung Steuerbescheid', 
-    defaultTenthRate: 3.5,
+    defaultTenthRate: 0,
+    defaultHourlyRate: 105,
     suggestedFeeTable: 'A', 
-    legalBasis: '§ 28 StBVV', 
-    rateType: 'tenth', 
-    minRate: 1, 
-    maxRate: 6,
+    legalBasis: '§ 13 StBVV (Zeitgebühr)', 
+    rateType: 'hourly', 
+    minRate: 0, 
+    maxRate: 0,
     category: 'Rechtsbehelfsverfahren',
     searchKeywords: ['Steuerbescheid', 'Prüfung', 'Bescheidprüfung', 'Kontrolle'],
-    minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER  // 8.000 € gemäß § 28 StBVV
+    minObjectValue: 0  // Zeitgebühr, kein Gegenstandswert
   },
   { 
     activity: 'Erbschaftsteuererklärung', 
