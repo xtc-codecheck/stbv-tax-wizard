@@ -823,7 +823,7 @@ export const activityPresets: ActivityPreset[] = [
   { 
     activity: 'Erstberatung', 
     defaultTenthRate: 0,
-    defaultHourlyRate: 115,  // Stand: 01.07.2025, max 190 €/h
+    defaultHourlyRate: 190,  // Pauschalhonorar max. 190 € gemäß § 21 StBVV
     suggestedFeeTable: 'A', 
     legalBasis: '§ 21 StBVV', 
     rateType: 'hourly', 

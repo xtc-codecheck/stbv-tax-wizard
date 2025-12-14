@@ -903,14 +903,14 @@ export const DEFAULT_TEMPLATES: Template[] = [
       {
         id: '1',
         activity: 'Erstberatung',
-        description: 'Stundensatz',
+        description: 'Pauschalhonorar gemäß § 21 StBVV',
         objectValue: 0,
         tenthRate: { numerator: 0, denominator: 10 },
         quantity: 1,
         feeTable: 'A',
         applyExpenseFee: false,
         billingType: 'hourly',
-        hourlyRate: 115,
+        hourlyRate: 190,
         hours: 1
       }
     ]
