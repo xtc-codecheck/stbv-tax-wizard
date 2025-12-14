@@ -807,6 +807,43 @@ export const activityPresets: ActivityPreset[] = [
     category: 'Lohnbuchhaltung',
     searchKeywords: ['Lohnkonto', 'Jahreslohnkonto', 'Arbeitnehmer'],
     minObjectValue: MIN_OBJECT_VALUES.LOHNBUCHHALTUNG  // 1.000 €
+  },
+  { 
+    activity: 'Anpassungsantrag', 
+    defaultTenthRate: 4.5,
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 40 Abs. 1 StBVV', 
+    rateType: 'tenth', 
+    minRate: 1, 
+    maxRate: 8,
+    category: 'Rechtsbehelfsverfahren',
+    searchKeywords: ['Anpassungsantrag', 'Änderungsantrag', '§ 164 AO', '§ 172 AO', 'Änderung'],
+    minObjectValue: MIN_OBJECT_VALUES.SONSTIGE
+  },
+  { 
+    activity: 'Erstberatung', 
+    defaultTenthRate: 0,
+    defaultHourlyRate: 115,  // Stand: 01.07.2025, max 190 €/h
+    suggestedFeeTable: 'A', 
+    legalBasis: '§ 21 StBVV', 
+    rateType: 'hourly', 
+    minRate: 0, 
+    maxRate: 0,
+    category: 'Beratungsleistungen',
+    searchKeywords: ['Erstberatung', 'Erstgespräch', 'Erstberatungsgespräch', 'Kennenlern'],
+    minObjectValue: 0  // Zeitgebühr
+  },
+  { 
+    activity: 'Buchführung (quartal)', 
+    defaultTenthRate: 6.5,
+    suggestedFeeTable: 'C', 
+    legalBasis: '§ 33', 
+    rateType: 'tenth', 
+    minRate: 1, 
+    maxRate: 12,
+    category: 'Jahresabschluss & Buchführung',
+    searchKeywords: ['Buchführung', 'Fibu', 'Buchhaltung', 'quartal', 'vierteljährlich'],
+    minObjectValue: MIN_OBJECT_VALUES.BUCHFÜHRUNG
   }
 ];
 
