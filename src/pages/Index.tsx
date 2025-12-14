@@ -12,7 +12,7 @@ import { format } from "date-fns";
 import { de } from "date-fns/locale";
 import { z } from "zod";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { exportToCSV } from "@/utils/csvExporter";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
@@ -664,9 +664,12 @@ Mit freundlichen Grüßen`);
               (Hinweis: Berechnung erfolgt nach gesetzlichen Mittelwerten)
             </p>
             <div className="mt-3 flex justify-center">
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+              <Link 
+                to="/gebuhrenordnung"
+                className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200 hover:bg-blue-200 transition-colors cursor-pointer"
+              >
                 StBVV Stand: 01.07.2025
-              </span>
+              </Link>
             </div>
           </div>
 
