@@ -1,9 +1,18 @@
-// Constants for STBVV calculations
+// Constants for STBVV calculations (Stand: 01.07.2025)
 
 export const VAT_RATE = 0.19; // 19% MwSt.
 export const EXPENSE_FEE_RATE = 0.2; // 20% der Nettogebühr
 export const EXPENSE_FEE_MAX = 20; // Max. 20€
 export const DEFAULT_DOCUMENT_FEE = 12; // Standardmäßige Dokumentenpauschale
+
+// § 13 StBVV - Zeitgebühren (ab 01.07.2025)
+export const TIME_FEE = {
+  MIN_PER_15MIN: 16.50,     // Mindestgebühr je angefangene 15 Minuten
+  MAX_PER_15MIN: 41.00,     // Höchstgebühr je angefangene 15 Minuten
+  DEFAULT_HOURLY: 115,       // Mittlerer Stundensatz (4 × 28,75€)
+  MIN_HOURLY: 66,            // Mindeststundensatz (4 × 16,50€)
+  MAX_HOURLY: 164,           // Höchststundensatz (4 × 41,00€)
+};
 
 // Mindestgegenstandswerte gemäß StBVV § 24
 export const MIN_OBJECT_VALUES = {
