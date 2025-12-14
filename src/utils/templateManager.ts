@@ -47,7 +47,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
   },
   {
     id: 'template-2',
-    name: 'Jahresabschluss GmbH',
+    name: 'Jahresabschluss Kapitalgesellschaften',
     isCustom: false,
     createdAt: new Date().toISOString(),
     positions: [
@@ -145,7 +145,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
   },
   {
     id: 'template-3',
-    name: 'Einzelunternehmen mit EÜR',
+    name: 'Einkommensteuererklärung Gewerbetreibender EÜR',
     isCustom: false,
     createdAt: new Date().toISOString(),
     positions: [
@@ -264,7 +264,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
   },
   {
     id: 'template-5',
-    name: 'Rentner (einfach)',
+    name: 'Steuererklärung Rentner',
     isCustom: false,
     createdAt: new Date().toISOString(),
     positions: [
@@ -307,7 +307,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
   },
   {
     id: 'template-6',
-    name: 'Personengesellschaft (GbR/OHG/KG) mit EÜR',
+    name: 'EÜR Personengesellschaft mit Steuererklärung',
     isCustom: false,
     createdAt: new Date().toISOString(),
     positions: [
@@ -413,7 +413,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
   },
   {
     id: 'template-8',
-    name: 'Freiberufler (Arzt, Anwalt, etc.)',
+    name: 'Einkommensteuererklärung Selbstständige EÜR',
     isCustom: false,
     createdAt: new Date().toISOString(),
     positions: [
@@ -478,7 +478,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
   },
   {
     id: 'template-9',
-    name: 'GmbH & Co. KG mit Bilanz',
+    name: 'Jahresabschluss GmbH & Co. KG',
     isCustom: false,
     createdAt: new Date().toISOString(),
     positions: [
@@ -637,7 +637,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
   },
   {
     id: 'template-12',
-    name: 'Einzelunternehmen mit Bilanz',
+    name: 'Jahresabschluss Einzelunternehmen mit Steuererklärung',
     isCustom: false,
     createdAt: new Date().toISOString(),
     positions: [
@@ -713,7 +713,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
   },
   {
     id: 'template-13',
-    name: 'Personengesellschaft (GbR/OHG/KG) mit Bilanz',
+    name: 'Jahresabschluss Personengesellschaften mit Steuererklärung',
     isCustom: false,
     createdAt: new Date().toISOString(),
     positions: [
@@ -784,6 +784,178 @@ export const DEFAULT_TEMPLATES: Template[] = [
         billingType: 'hourly',
         hourlyRate: 115,
         hours: 0.5
+      }
+    ]
+  },
+  {
+    id: 'template-14',
+    name: 'Finanzbuchhaltung quartalsweise',
+    isCustom: false,
+    createdAt: new Date().toISOString(),
+    positions: [
+      {
+        id: '1',
+        activity: 'Buchführung (quartal)',
+        description: 'quartalsweise',
+        objectValue: 0,
+        tenthRate: { numerator: 6.5, denominator: 10 },
+        quantity: 4,
+        feeTable: 'C',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '2',
+        activity: 'Kontieren der Belege',
+        description: 'quartalsweise',
+        objectValue: 0,
+        tenthRate: { numerator: 3.5, denominator: 10 },
+        quantity: 4,
+        feeTable: 'C',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      }
+    ]
+  },
+  {
+    id: 'template-15',
+    name: 'Finanzbuchhaltung jährlich',
+    isCustom: false,
+    createdAt: new Date().toISOString(),
+    positions: [
+      {
+        id: '1',
+        activity: 'Buchführung (monatlich)',
+        description: 'monatlich, 12x im Jahr',
+        objectValue: 0,
+        tenthRate: { numerator: 6.5, denominator: 10 },
+        quantity: 12,
+        feeTable: 'C',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '2',
+        activity: 'Kontieren der Belege',
+        description: 'monatlich, 12x im Jahr',
+        objectValue: 0,
+        tenthRate: { numerator: 3.5, denominator: 10 },
+        quantity: 12,
+        feeTable: 'C',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      },
+      {
+        id: '3',
+        activity: 'Umsatzsteuer-Voranmeldung',
+        description: 'monatlich, 12x im Jahr',
+        objectValue: 0,
+        tenthRate: { numerator: 3.5, denominator: 10 },
+        quantity: 12,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      }
+    ]
+  },
+  {
+    id: 'template-16',
+    name: 'Steuerberatung Allgemein',
+    isCustom: false,
+    createdAt: new Date().toISOString(),
+    positions: [
+      {
+        id: '1',
+        activity: 'Beratung allgemein',
+        description: 'Stundensatz',
+        objectValue: 0,
+        tenthRate: { numerator: 0, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: false,
+        billingType: 'hourly',
+        hourlyRate: 115,
+        hours: 1
+      }
+    ]
+  },
+  {
+    id: 'template-17',
+    name: 'Bescheidprüfung',
+    isCustom: false,
+    createdAt: new Date().toISOString(),
+    positions: [
+      {
+        id: '1',
+        activity: 'Prüfung Steuerbescheid',
+        description: 'Stundensatz',
+        objectValue: 0,
+        tenthRate: { numerator: 0, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: false,
+        billingType: 'hourly',
+        hourlyRate: 115,
+        hours: 0.5
+      }
+    ]
+  },
+  {
+    id: 'template-18',
+    name: 'Einspruch',
+    isCustom: false,
+    createdAt: new Date().toISOString(),
+    positions: [
+      {
+        id: '1',
+        activity: 'Einspruch beim Finanzamt',
+        description: '',
+        objectValue: 0,
+        tenthRate: { numerator: 4.5, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      }
+    ]
+  },
+  {
+    id: 'template-19',
+    name: 'Anpassungsantrag',
+    isCustom: false,
+    createdAt: new Date().toISOString(),
+    positions: [
+      {
+        id: '1',
+        activity: 'Anpassungsantrag',
+        description: '',
+        objectValue: 0,
+        tenthRate: { numerator: 4.5, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: true,
+        billingType: 'objectValue'
+      }
+    ]
+  },
+  {
+    id: 'template-20',
+    name: 'Erstberatung',
+    isCustom: false,
+    createdAt: new Date().toISOString(),
+    positions: [
+      {
+        id: '1',
+        activity: 'Erstberatung',
+        description: 'Stundensatz',
+        objectValue: 0,
+        tenthRate: { numerator: 0, denominator: 10 },
+        quantity: 1,
+        feeTable: 'A',
+        applyExpenseFee: false,
+        billingType: 'hourly',
+        hourlyRate: 115,
+        hours: 1
       }
     ]
   }
