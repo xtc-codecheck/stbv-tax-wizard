@@ -663,6 +663,11 @@ Mit freundlichen Grüßen`);
               Gesetzeskonforme Steuerberatervergütung nach StBVV 2025 mit automatischer PDF-Erstellung.
               (Hinweis: Berechnung erfolgt nach gesetzlichen Mittelwerten)
             </p>
+            <div className="mt-3 flex justify-center">
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+                StBVV Stand: 01.07.2025
+              </span>
+            </div>
           </div>
 
           {/* Main Content */}
