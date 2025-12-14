@@ -498,9 +498,9 @@ export const activityPresets: ActivityPreset[] = [
   { 
     activity: 'Prüfung Steuerbescheid', 
     defaultTenthRate: 0,
-    defaultHourlyRate: 105,
+    defaultHourlyRate: 115,  // Stand: 01.07.2025
     suggestedFeeTable: 'A', 
-    legalBasis: '§ 13 StBVV (Zeitgebühr)', 
+    legalBasis: '§ 13 StBVV (Zeitgebühr ab 01.07.2025)', 
     rateType: 'hourly', 
     minRate: 0, 
     maxRate: 0,

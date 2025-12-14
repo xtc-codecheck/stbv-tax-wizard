@@ -40,7 +40,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         feeTable: 'A',
         applyExpenseFee: false,
         billingType: 'hourly',
-        hourlyRate: 105,
+        hourlyRate: 115,
         hours: 0.5
       }
     ]
@@ -138,7 +138,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         feeTable: 'A',
         applyExpenseFee: false,
         billingType: 'hourly',
-        hourlyRate: 105,
+        hourlyRate: 115,
         hours: 0.5
       }
     ]
@@ -203,7 +203,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         feeTable: 'A',
         applyExpenseFee: false,
         billingType: 'hourly',
-        hourlyRate: 105,
+        hourlyRate: 115,
         hours: 0.5
       }
     ]
@@ -257,7 +257,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         feeTable: 'A',
         applyExpenseFee: false,
         billingType: 'hourly',
-        hourlyRate: 105,
+        hourlyRate: 115,
         hours: 0.5
       }
     ]
@@ -300,7 +300,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         feeTable: 'A',
         applyExpenseFee: false,
         billingType: 'hourly',
-        hourlyRate: 105,
+        hourlyRate: 115,
         hours: 0.5
       }
     ]
@@ -365,7 +365,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         feeTable: 'A',
         applyExpenseFee: false,
         billingType: 'hourly',
-        hourlyRate: 105,
+        hourlyRate: 115,
         hours: 0.5
       }
     ]
@@ -471,7 +471,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         feeTable: 'A',
         applyExpenseFee: false,
         billingType: 'hourly',
-        hourlyRate: 105,
+        hourlyRate: 115,
         hours: 0.5
       }
     ]
@@ -547,7 +547,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         feeTable: 'A',
         applyExpenseFee: false,
         billingType: 'hourly',
-        hourlyRate: 105,
+        hourlyRate: 115,
         hours: 0.5
       }
     ]
@@ -706,7 +706,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         feeTable: 'A',
         applyExpenseFee: false,
         billingType: 'hourly',
-        hourlyRate: 105,
+        hourlyRate: 115,
         hours: 0.5
       }
     ]
@@ -782,7 +782,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         feeTable: 'A',
         applyExpenseFee: false,
         billingType: 'hourly',
-        hourlyRate: 105,
+        hourlyRate: 115,
         hours: 0.5
       }
     ]
