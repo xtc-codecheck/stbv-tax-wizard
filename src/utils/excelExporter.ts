@@ -2,6 +2,7 @@ import * as XLSX from 'xlsx';
 import { Position, ClientData, Discount } from "@/types/stbvv";
 import { calculatePosition, calculateTotal } from "./stbvvCalculator";
 import { formatBillingDetails } from "./formatBillingDetails";
+import { formatCurrency } from "@/lib/utils";
 
 export const exportToExcel = (
   positions: Position[], 
@@ -25,9 +26,9 @@ export const exportToExcel = (
       'Beschreibung': position.description || '-',
       'Details': billingDetails,
       'Anzahl': position.quantity,
-      'Gebühr': `${calc.adjustedFee.toFixed(2)} €`,
-      'Auslagen': `${calc.expenseFee.toFixed(2)} €`,
-      'Gesamt': `${(calc.totalNet * position.quantity).toFixed(2)} €`
+      'Gebühr': formatCurrency(calc.adjustedFee),
+      'Auslagen': formatCurrency(calc.expenseFee),
+      'Gesamt': formatCurrency(calc.totalNet * position.quantity)
     };
   });
 
@@ -37,24 +38,24 @@ export const exportToExcel = (
   // Prepare totals data
   const totalsData = [
     { 'Bezeichnung': '', 'Betrag': '' },
-    { 'Bezeichnung': 'Summe netto aller Positionen', 'Betrag': `${totals.positionsTotal.toFixed(2)} €` },
-    { 'Bezeichnung': 'Dokumentenpauschale', 'Betrag': `${totals.documentFee.toFixed(2)} €` },
+    { 'Bezeichnung': 'Summe netto aller Positionen', 'Betrag': formatCurrency(totals.positionsTotal) },
+    { 'Bezeichnung': 'Dokumentenpauschale', 'Betrag': formatCurrency(totals.documentFee) },
   ];
 
   if (discount && discount.value > 0) {
     const discountLabel = discount.type === 'percentage' 
       ? `Rabatt (-${discount.value}%)` 
-      : `Rabatt (-${discount.value.toFixed(2)} €)`;
-    totalsData.push({ 'Bezeichnung': discountLabel, 'Betrag': `${totals.discountAmount.toFixed(2)} €` });
+      : `Rabatt (-${formatCurrency(discount.value)})`;
+    totalsData.push({ 'Bezeichnung': discountLabel, 'Betrag': formatCurrency(totals.discountAmount) });
   }
 
-  totalsData.push({ 'Bezeichnung': 'Zwischensumme netto', 'Betrag': `${totals.subtotalNet.toFixed(2)} €` });
+  totalsData.push({ 'Bezeichnung': 'Zwischensumme netto', 'Betrag': formatCurrency(totals.subtotalNet) });
 
   if (includeVAT) {
-    totalsData.push({ 'Bezeichnung': 'Umsatzsteuer (19%)', 'Betrag': `${totals.vatAmount.toFixed(2)} €` });
+    totalsData.push({ 'Bezeichnung': 'Umsatzsteuer (19%)', 'Betrag': formatCurrency(totals.vatAmount) });
   }
 
-  totalsData.push({ 'Bezeichnung': 'Gesamtsumme brutto', 'Betrag': `${totals.totalGross.toFixed(2)} €` });
+  totalsData.push({ 'Bezeichnung': 'Gesamtsumme brutto', 'Betrag': formatCurrency(totals.totalGross) });
 
   // Create workbook
   const wb = XLSX.utils.book_new();

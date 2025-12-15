@@ -13,7 +13,7 @@ import { de } from "date-fns/locale";
 import { z } from "zod";
 import { toast } from "sonner";
 import { useNavigate, Link } from "react-router-dom";
-import { cn } from "@/lib/utils";
+import { cn, formatCurrency } from "@/lib/utils";
 import { exportToCSV } from "@/utils/csvExporter";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
@@ -898,10 +898,10 @@ Mit freundlichen Grüßen`);
                 <div className="flex items-center gap-6">
                   <div className="text-sm opacity-90">Gesamt-Summe:</div>
                   <div className="text-3xl font-bold animate-pop-number">
-                    {totals.totalGross.toFixed(2)} €
+                    {formatCurrency(totals.totalGross)}
                   </div>
                   {includeVAT && <div className="text-sm opacity-75">
-                      (inkl. {totals.vatAmount.toFixed(2)} € MwSt.)
+                      (inkl. {formatCurrency(totals.vatAmount)} MwSt.)
                     </div>}
                 </div>
                 <div className="flex gap-2">

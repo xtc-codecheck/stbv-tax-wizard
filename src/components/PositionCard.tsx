@@ -18,7 +18,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useDebounce } from "@/hooks/useDebounce";
 import { updateSmartDefaults, addRecentActivity } from '@/utils/smartDefaults';
-import { cn } from '@/lib/utils';
+import { cn, formatCurrency } from '@/lib/utils';
 
 interface PositionCardProps {
   position: Position;
@@ -300,7 +300,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
                 variant="outline" 
                 className="ml-2 animate-pop-number bg-gradient-to-r from-blue-50 to-green-50 border-blue-200 text-blue-700 font-semibold"
               >
-                {calculation.totalNet.toFixed(2)} €
+                {formatCurrency(calculation.totalNet)}
               </Badge>
             )}
             {isComplete && !hasErrors && (
@@ -684,17 +684,17 @@ const PositionCard: React.FC<PositionCardProps> = ({
                 <div className="space-y-1 text-sm">
                   <div className="flex justify-between">
                     <span>Gebühr:</span>
-                    <span>{calculation.adjustedFee.toFixed(2)} €</span>
+                    <span>{formatCurrency(calculation.adjustedFee)}</span>
                   </div>
                   {calculation.expenseFee > 0 && (
                     <div className="flex justify-between">
                       <span>Auslagenpauschale:</span>
-                      <span>{calculation.expenseFee.toFixed(2)} €</span>
+                      <span>{formatCurrency(calculation.expenseFee)}</span>
                     </div>
                   )}
                   <div className="flex justify-between font-semibold pt-1 border-t">
                     <span>Gesamt (× {position.quantity}):</span>
-                    <span>{calculation.totalNet.toFixed(2)} €</span>
+                    <span>{formatCurrency(calculation.totalNet)}</span>
                   </div>
                 </div>
               </div>
