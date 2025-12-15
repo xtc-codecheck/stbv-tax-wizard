@@ -1,6 +1,10 @@
 import { Position, BrandingSettings } from "@/types/stbvv";
 import { calculatePosition } from "@/utils/stbvvCalculator";
 
+const formatNumber = (value: number): string => {
+  return value.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+};
+
 interface ExportData {
   positions: Position[];
   totals: {
@@ -44,16 +48,16 @@ export const exportToCSV = (data: ExportData): void => {
   
   // Table Rows
   positions.forEach((pos, index) => {
-    const objectValue = pos.objectValue?.toFixed(2) || "";
-    const hours = pos.hours?.toFixed(2) || "";
-    const hourlyRate = pos.hourlyRate?.toFixed(2) || "";
-    const flatRate = pos.flatRate?.toFixed(2) || "";
+    const objectValue = pos.objectValue ? formatNumber(pos.objectValue) : "";
+    const hours = pos.hours ? formatNumber(pos.hours) : "";
+    const hourlyRate = pos.hourlyRate ? formatNumber(pos.hourlyRate) : "";
+    const flatRate = pos.flatRate ? formatNumber(pos.flatRate) : "";
     
     // Calculate totals for this position
     const calculation = calculatePosition(pos);
-    const totalNet = calculation.totalNet.toFixed(2);
-    const totalVat = (calculation.totalNet * 0.19).toFixed(2);
-    const totalGross = (calculation.totalNet * 1.19).toFixed(2);
+    const totalNet = formatNumber(calculation.totalNet);
+    const totalVat = formatNumber(calculation.totalNet * 0.19);
+    const totalGross = formatNumber(calculation.totalNet * 1.19);
     
     const description = pos.description?.replace(/,/g, ";").replace(/\n/g, " ") || "";
     const activity = pos.activity?.replace(/,/g, ";") || "";
@@ -63,14 +67,14 @@ export const exportToCSV = (data: ExportData): void => {
   
   // Totals
   csvContent += "\n";
-  csvContent += `,,,,,,,,Positionen gesamt,${totals.positionsTotal.toFixed(2)}\n`;
-  csvContent += `,,,,,,,,Dokumentenpauschale,${totals.documentFee.toFixed(2)}\n`;
+  csvContent += `,,,,,,,,Positionen gesamt,${formatNumber(totals.positionsTotal)}\n`;
+  csvContent += `,,,,,,,,Dokumentenpauschale,${formatNumber(totals.documentFee)}\n`;
   if (totals.discountAmount > 0) {
-    csvContent += `,,,,,,,,Rabatt,-${totals.discountAmount.toFixed(2)}\n`;
+    csvContent += `,,,,,,,,Rabatt,-${formatNumber(totals.discountAmount)}\n`;
   }
-  csvContent += `,,,,,,,,Gesamt netto,${totals.subtotalNet.toFixed(2)}\n`;
-  csvContent += `,,,,,,,,MwSt. (19%),${totals.vatAmount.toFixed(2)}\n`;
-  csvContent += `,,,,,,,,Gesamt brutto,${totals.totalGross.toFixed(2)}\n`;
+  csvContent += `,,,,,,,,Gesamt netto,${formatNumber(totals.subtotalNet)}\n`;
+  csvContent += `,,,,,,,,MwSt. (19%),${formatNumber(totals.vatAmount)}\n`;
+  csvContent += `,,,,,,,,Gesamt brutto,${formatNumber(totals.totalGross)}\n`;
   
   // Create download link
   const encodedUri = encodeURI(csvContent);

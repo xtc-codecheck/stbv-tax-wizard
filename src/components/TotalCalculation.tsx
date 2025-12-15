@@ -1,4 +1,5 @@
 
+
 import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Receipt, Percent, Euro, Minus } from "lucide-react";
 import { Position, Discount } from "@/types/stbvv";
 import { calculateTotal } from "@/utils/stbvvCalculator";
+import { formatCurrency } from "@/lib/utils";
 
 interface TotalCalculationProps {
   positions: Position[];
@@ -153,20 +155,20 @@ const TotalCalculation: React.FC<TotalCalculationProps> = ({
         <div className="space-y-3">
           <div className="flex justify-between text-sm">
             <span>Summe Positionen:</span>
-            <span>{positionsTotal.toFixed(2)} €</span>
+            <span>{formatCurrency(positionsTotal)}</span>
           </div>
           
           <div className="flex justify-between text-sm">
             <span>Dokumentenpauschale:</span>
-            <span>{documentFee.toFixed(2)} €</span>
+            <span>{formatCurrency(documentFee)}</span>
           </div>
 
           {discount && discount.value > 0 && (
             <div className="flex justify-between text-sm text-orange-600">
               <span>
-                Rabatt ({discount.type === 'percentage' ? `${discount.value}%` : `${discount.value.toFixed(2)} €`}):
+                Rabatt ({discount.type === 'percentage' ? `${discount.value}%` : formatCurrency(discount.value)}):
               </span>
-              <span>-{discountAmount.toFixed(2)} €</span>
+              <span>-{formatCurrency(discountAmount)}</span>
             </div>
           )}
 
@@ -174,13 +176,13 @@ const TotalCalculation: React.FC<TotalCalculationProps> = ({
 
           <div className="flex justify-between font-medium">
             <span>Zwischensumme netto:</span>
-            <span>{subtotalNet.toFixed(2)} €</span>
+            <span>{formatCurrency(subtotalNet)}</span>
           </div>
 
           {includeVAT && (
             <div className="flex justify-between text-sm">
               <span>Umsatzsteuer (19%):</span>
-              <span>{vatAmount.toFixed(2)} €</span>
+              <span>{formatCurrency(vatAmount)}</span>
             </div>
           )}
 
@@ -188,7 +190,7 @@ const TotalCalculation: React.FC<TotalCalculationProps> = ({
 
           <div className="flex justify-between text-lg font-bold text-green-700">
             <span>Gesamtsumme brutto:</span>
-            <span>{totalGross.toFixed(2)} €</span>
+            <span>{formatCurrency(totalGross)}</span>
           </div>
         </div>
 

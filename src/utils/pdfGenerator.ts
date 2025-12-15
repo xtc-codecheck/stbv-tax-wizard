@@ -3,6 +3,7 @@ import autoTable from 'jspdf-autotable';
 import { Position, ClientData } from "@/types/stbvv";
 import { calculatePosition, calculateTotal } from "./stbvvCalculator";
 import { formatBillingDetails } from "./formatBillingDetails";
+import { formatCurrency } from "@/lib/utils";
 
 export const generatePDF = (
   positions: Position[], 
@@ -136,9 +137,9 @@ export const generatePDF = (
       position.description || '-',
       billingDetails,
       position.quantity.toString(),
-      `${calc.adjustedFee.toFixed(2)} €`,
-      `${calc.expenseFee.toFixed(2)} €`,
-      `${(calc.totalNet * position.quantity).toFixed(2)} €`
+      formatCurrency(calc.adjustedFee),
+      formatCurrency(calc.expenseFee),
+      formatCurrency(calc.totalNet * position.quantity)
     ];
   });
   
@@ -182,31 +183,31 @@ export const generatePDF = (
   let totalY = finalY + 8;
   
   doc.text('Summe netto aller Positionen:', 25, totalY);
-  doc.text(`${totals.positionsTotal.toFixed(2)} €`, 185, totalY, { align: 'right' });
+  doc.text(formatCurrency(totals.positionsTotal), 185, totalY, { align: 'right' });
   
   totalY += 7;
   doc.text('Dokumentenpauschale:', 25, totalY);
-  doc.text(`${totals.documentFee.toFixed(2)} €`, 185, totalY, { align: 'right' });
+  doc.text(formatCurrency(totals.documentFee), 185, totalY, { align: 'right' });
   
   if (discount && discount.value > 0) {
     totalY += 7;
     const discountLabel = discount.type === 'percentage' 
       ? `Rabatt (-${discount.value}%)` 
-      : `Rabatt (-${discount.value.toFixed(2)} €)`;
+      : `Rabatt (-${formatCurrency(discount.value)})`;
     doc.setTextColor(255, 87, 34); // Orange
     doc.text(discountLabel, 25, totalY);
-    doc.text(`-${totals.discountAmount.toFixed(2)} €`, 185, totalY, { align: 'right' });
+    doc.text(`-${formatCurrency(totals.discountAmount)}`, 185, totalY, { align: 'right' });
     doc.setTextColor(0, 0, 0); // Reset to black
   }
   
   totalY += 7;
   doc.text('Zwischensumme netto:', 25, totalY);
-  doc.text(`${totals.subtotalNet.toFixed(2)} €`, 185, totalY, { align: 'right' });
+  doc.text(formatCurrency(totals.subtotalNet), 185, totalY, { align: 'right' });
   
   if (includeVAT) {
     totalY += 7;
     doc.text('Umsatzsteuer (19%):', 25, totalY);
-    doc.text(`${totals.vatAmount.toFixed(2)} €`, 185, totalY, { align: 'right' });
+    doc.text(formatCurrency(totals.vatAmount), 185, totalY, { align: 'right' });
   }
   
   totalY += 10;
@@ -214,7 +215,7 @@ export const generatePDF = (
   doc.setFontSize(12);
   doc.setTextColor(5, 150, 105); // Green
   doc.text('Gesamtsumme brutto:', 25, totalY);
-  doc.text(`${totals.totalGross.toFixed(2)} €`, 185, totalY, { align: 'right' });
+  doc.text(formatCurrency(totals.totalGross), 185, totalY, { align: 'right' });
   
   // Footer
   const footerY = doc.internal.pageSize.height - 40;
