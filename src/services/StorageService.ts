@@ -71,7 +71,9 @@ export class StorageService {
     const rawResult = this.getRaw<unknown>(key);
     
     if (!rawResult.success) {
-      return err(rawResult.error);
+      // TypeScript narrowing: after this check, rawResult is Failure<StorageError>
+      const failureResult = rawResult as { success: false; error: StorageError };
+      return err(failureResult.error);
     }
     
     if (rawResult.data === null) {
