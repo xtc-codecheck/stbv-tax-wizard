@@ -13,3 +13,14 @@ export type {
   Discount,
   BrandingSettings,
 } from './stbvv';
+
+// Blog Types
+export type {
+  BlogArticle,
+  BlogCategory,
+  ArticleCardProps,
+  ArticleGridProps,
+  ArticleHeaderProps,
+  ArticleContentProps,
+  CategoryBadgeProps,
+} from './blog';
