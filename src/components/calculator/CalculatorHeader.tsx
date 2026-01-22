@@ -5,7 +5,7 @@
 
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Calculator, Keyboard, Settings as SettingsIcon, Command } from "lucide-react";
+import { Calculator, Keyboard, Settings as SettingsIcon, Command, BarChart3 } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface CalculatorHeaderProps {
@@ -46,6 +46,16 @@ export function CalculatorHeader({ onShowKeyboardShortcuts, onOpenCommandPalette
             aria-label="Tastenkombinationen anzeigen"
           >
             <Keyboard className="w-5 h-5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate('/dashboard')}
+            className="text-muted-foreground hover:text-primary"
+            title="Analyse-Dashboard"
+            aria-label="Dashboard öffnen"
+          >
+            <BarChart3 className="w-5 h-5" />
           </Button>
           <Button
             variant="ghost"

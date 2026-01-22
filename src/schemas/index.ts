@@ -72,3 +72,11 @@ export {
   SavedClientListSchema,
   type SavedClient,
 } from './client.schema';
+
+// Document Archive Schemas
+export {
+  archivedDocumentSchema,
+  documentArchiveSchema,
+  type ArchivedDocument,
+  type DocumentArchive,
+} from './archivedDocument.schema';
