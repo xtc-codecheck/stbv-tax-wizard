@@ -74,7 +74,7 @@ export function AdvancedTemplateSelector({
 }: AdvancedTemplateSelectorProps) {
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [newTemplateName, setNewTemplateName] = useState('');
-  const [expandedCategories, setExpandedCategories] = useState<string[]>(['einkommensteuer']);
+  const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
 
   const templates = useMemo(() => getTemplates(), []);
   const {

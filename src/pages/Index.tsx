@@ -666,16 +666,18 @@ Mit freundlichen Grüßen`);
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Positions Column */}
             <div className="lg:col-span-2 space-y-6">
-              <AdvancedTemplateSelector
-                onLoadTemplate={loadTemplate}
-                onSaveAsTemplate={saveAsTemplate}
-                hasPositions={positions.length > 0}
-              />
-
+              {/* Mandantendaten zuerst */}
               <ClientDataFormAdvanced 
                 clientData={clientData} 
                 onUpdate={updateClientData}
                 onUpdateAll={updateAllClientData}
+              />
+
+              {/* Dann Vorlagen */}
+              <AdvancedTemplateSelector
+                onLoadTemplate={loadTemplate}
+                onSaveAsTemplate={saveAsTemplate}
+                hasPositions={positions.length > 0}
               />
 
               {isBulkMode && positions.length > 0 && (
