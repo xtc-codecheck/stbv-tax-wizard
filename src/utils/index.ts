@@ -3,8 +3,18 @@
  * @module utils
  */
 
-// Calculator
-export { calculatePosition, calculateTotal } from './stbvvCalculator';
+// Calculator (Cent-basierte Integer-Arithmetik)
+export { calculatePosition, calculateTotal, calculatePositionInCent, calculateTotalInCent } from './stbvvCalculator';
+export { 
+  euroToCent, 
+  centToEuro, 
+  formatCentAsEuro, 
+  formatEuro,
+  applyRate,
+  percentOfCent,
+  sanitizeEuro,
+} from './centArithmetic';
+export type { CentCalculationResult, CentTotalResult } from './centArithmetic';
 export { getFeeTables } from './stbvvTables';
 
 // Export
