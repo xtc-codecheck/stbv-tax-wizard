@@ -24,3 +24,10 @@ export type {
   ArticleContentProps,
   CategoryBadgeProps,
 } from './blog';
+
+// Document Tab Types
+export type {
+  DocumentTabData,
+  DocumentTabsState,
+} from './documentTab';
+export { createEmptyTabData } from './documentTab';

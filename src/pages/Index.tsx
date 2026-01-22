@@ -3,8 +3,9 @@
  * @module pages/Index
  */
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useDocumentArchive } from '@/hooks/useDocumentArchive';
+import { useDocumentTabs } from '@/hooks/useDocumentTabs';
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Plus } from "lucide-react";
@@ -36,66 +37,98 @@ import {
   CalculatorFooter,
   AddPositionCard,
   PDFPreviewModal,
+  DocumentTabs,
 } from "@/components/calculator";
 import { usePDFPreview } from "@/hooks/usePDFPreview";
 import { GuidedWorkflow } from "@/components/wizard";
 const emailSchema = z.string().email();
 
-// LocalStorage keys
-const STORAGE_KEYS = {
-  positions: 'stbvv_autosave_positions',
-  clientData: 'stbvv_autosave_client',
-  documentFee: 'stbvv_autosave_documentFee',
-  includeVAT: 'stbvv_autosave_includeVAT',
-  documentType: 'stbvv_autosave_documentType',
-  invoiceNumber: 'stbvv_autosave_invoiceNumber',
-  invoiceDate: 'stbvv_autosave_invoiceDate',
-  servicePeriod: 'stbvv_autosave_servicePeriod',
-  discount: 'stbvv_autosave_discount',
-  invoiceCounter: 'stbvv_invoice_counter',
-  lastSaveTimestamp: 'stbvv_autosave_timestamp',
-  lastSaveHash: 'stbvv_autosave_hash',
-};
-
 // Helper function to generate next document number
 const getNextDocumentNumber = (type: 'quote' | 'invoice', increment = false): string => {
-  const counter = parseInt(localStorage.getItem(STORAGE_KEYS.invoiceCounter) || '1000');
+  const counterKey = 'stbvv_invoice_counter';
+  const counter = parseInt(localStorage.getItem(counterKey) || '1000');
   const nextCounter = increment ? counter + 1 : counter;
   const prefix = type === 'invoice' ? 'RE' : 'AG';
   if (increment) {
-    localStorage.setItem(STORAGE_KEYS.invoiceCounter, nextCounter.toString());
+    localStorage.setItem(counterKey, nextCounter.toString());
   }
   return `${prefix}-${nextCounter}`;
 };
 
-// Helper function to create data hash for change detection
-const createDataHash = (data: unknown): string => {
-  return JSON.stringify(data);
-};
-
 const Index = () => {
-  // Core State
-  const [positions, setPositions] = useState<Position[]>([]);
-  const [documentFee, setDocumentFee] = useState(0);
-  const [includeVAT, setIncludeVAT] = useState(true);
-  const [discount, setDiscount] = useState<Discount | null>(null);
-  const [documentType, setDocumentType] = useState<'quote' | 'invoice'>('quote');
-  const [clientData, setClientData] = useState<ClientData>({
-    name: '',
-    street: '',
-    postalCode: '',
-    city: '',
-    email: '',
-  });
+  // Multi-Tab State Management
+  const {
+    tabs,
+    activeTab,
+    activeTabId,
+    addTab,
+    closeTab,
+    switchTab,
+    updateTab,
+    renameTab,
+    duplicateTab,
+    canAddTab,
+    hasUnsavedChanges,
+  } = useDocumentTabs();
 
-  // Invoice metadata
-  const [invoiceNumber, setInvoiceNumber] = useState('');
-  const [invoiceDate, setInvoiceDate] = useState<Date>(new Date());
-  const [servicePeriod, setServicePeriod] = useState('');
+  // Derived state from active tab
+  const positions = activeTab.positions;
+  const documentFee = activeTab.documentFee;
+  const includeVAT = activeTab.includeVAT;
+  const discount = activeTab.discount;
+  const documentType = activeTab.documentType;
+  const clientData = activeTab.clientData;
+  const invoiceNumber = activeTab.invoiceNumber;
+  const invoiceDate = new Date(activeTab.invoiceDate);
+  const servicePeriod = activeTab.servicePeriod;
+
+  // Setters that update the active tab
+  const setPositions = useCallback((newPositions: Position[] | ((prev: Position[]) => Position[])) => {
+    const value = typeof newPositions === 'function' ? newPositions(activeTab.positions) : newPositions;
+    updateTab(activeTabId, { positions: value });
+  }, [activeTabId, activeTab.positions, updateTab]);
+
+  const setDocumentFee = useCallback((fee: number) => {
+    updateTab(activeTabId, { documentFee: fee });
+  }, [activeTabId, updateTab]);
+
+  const setIncludeVAT = useCallback((include: boolean) => {
+    updateTab(activeTabId, { includeVAT: include });
+  }, [activeTabId, updateTab]);
+
+  const setDiscount = useCallback((d: Discount | null) => {
+    updateTab(activeTabId, { discount: d });
+  }, [activeTabId, updateTab]);
+
+  const setDocumentType = useCallback((type: 'quote' | 'invoice') => {
+    updateTab(activeTabId, { documentType: type });
+    // Update invoice number prefix
+    const currentPrefix = activeTab.invoiceNumber.split('-')[0];
+    const expectedPrefix = type === 'invoice' ? 'RE' : 'AG';
+    if (currentPrefix !== expectedPrefix) {
+      const numberPart = activeTab.invoiceNumber.split('-')[1] || '1001';
+      updateTab(activeTabId, { invoiceNumber: `${expectedPrefix}-${numberPart}` });
+    }
+  }, [activeTabId, activeTab.invoiceNumber, updateTab]);
+
+  const setClientData = useCallback((data: ClientData | ((prev: ClientData) => ClientData)) => {
+    const value = typeof data === 'function' ? data(activeTab.clientData) : data;
+    updateTab(activeTabId, { clientData: value });
+  }, [activeTabId, activeTab.clientData, updateTab]);
+
+  const setInvoiceNumber = useCallback((num: string) => {
+    updateTab(activeTabId, { invoiceNumber: num });
+  }, [activeTabId, updateTab]);
+
+  const setInvoiceDate = useCallback((date: Date) => {
+    updateTab(activeTabId, { invoiceDate: date.toISOString() });
+  }, [activeTabId, updateTab]);
+
+  const setServicePeriod = useCallback((period: string) => {
+    updateTab(activeTabId, { servicePeriod: period });
+  }, [activeTabId, updateTab]);
 
   // UI State
-  const [showRestoreDialog, setShowRestoreDialog] = useState(false);
-  const [savedTimestamp, setSavedTimestamp] = useState<string>('');
   const [lastTemplateLoadTime, setLastTemplateLoadTime] = useState<number>(0);
   const [renderKey, setRenderKey] = useState<number>(0);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
@@ -140,81 +173,13 @@ const Index = () => {
       pushHistory({ positions, clientData, documentFee, includeVAT, discount });
     }, 500);
     return () => clearTimeout(debounceTimer);
-  }, [positions, clientData, documentFee, includeVAT, discount]);
+  }, [positions, clientData, documentFee, includeVAT, discount, pushHistory]);
 
-  // Auto-generate invoice number based on document type
+  // Clear selection when switching tabs
   useEffect(() => {
-    if (!invoiceNumber) {
-      setInvoiceNumber(getNextDocumentNumber(documentType));
-      return;
-    }
-    const currentPrefix = invoiceNumber.split('-')[0];
-    const expectedPrefix = documentType === 'invoice' ? 'RE' : 'AG';
-    if (currentPrefix !== expectedPrefix) {
-      const numberPart = invoiceNumber.split('-')[1] || '1001';
-      setInvoiceNumber(`${expectedPrefix}-${numberPart}`);
-    }
-  }, [documentType, invoiceNumber]);
-
-  // Check for saved session on mount
-  useEffect(() => {
-    const savedPositions = localStorage.getItem(STORAGE_KEYS.positions);
-    const timestamp = localStorage.getItem(STORAGE_KEYS.lastSaveTimestamp);
-    if (savedPositions && timestamp) {
-      setSavedTimestamp(timestamp);
-      setShowRestoreDialog(true);
-    }
-  }, []);
-
-  // Auto-save with change detection
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const timeSinceLoad = Date.now() - lastTemplateLoadTime;
-      if (timeSinceLoad < TIMING.TEMPLATE_LOAD_GRACE) return;
-
-      if (positions.length > 0 || clientData.name || clientData.email) {
-        try {
-          const currentData = {
-            positions,
-            clientData,
-            documentFee,
-            includeVAT,
-            documentType,
-            invoiceNumber,
-            invoiceDate: invoiceDate.toISOString(),
-            servicePeriod,
-            discount,
-          };
-          const currentHash = createDataHash(currentData);
-          const lastHash = localStorage.getItem(STORAGE_KEYS.lastSaveHash);
-
-          if (currentHash !== lastHash) {
-            localStorage.setItem(STORAGE_KEYS.positions, JSON.stringify(positions));
-            localStorage.setItem(STORAGE_KEYS.clientData, JSON.stringify(clientData));
-            localStorage.setItem(STORAGE_KEYS.documentFee, documentFee.toString());
-            localStorage.setItem(STORAGE_KEYS.includeVAT, includeVAT.toString());
-            localStorage.setItem(STORAGE_KEYS.documentType, documentType);
-            localStorage.setItem(STORAGE_KEYS.invoiceNumber, invoiceNumber);
-            localStorage.setItem(STORAGE_KEYS.invoiceDate, invoiceDate.toISOString());
-            localStorage.setItem(STORAGE_KEYS.servicePeriod, servicePeriod);
-            if (discount) {
-              localStorage.setItem(STORAGE_KEYS.discount, JSON.stringify(discount));
-            }
-            localStorage.setItem(STORAGE_KEYS.lastSaveTimestamp, new Date().toISOString());
-            localStorage.setItem(STORAGE_KEYS.lastSaveHash, currentHash);
-          }
-        } catch (error) {
-          console.error('[Auto-Save] Failed:', error);
-          if (error instanceof Error && error.name === 'QuotaExceededError') {
-            toast.error('Speicherplatz voll. Auto-Speichern deaktiviert.');
-          } else {
-            toast.error('Auto-Speichern fehlgeschlagen. Daten könnten verloren gehen.');
-          }
-        }
-      }
-    }, TIMING.AUTOSAVE_INTERVAL);
-    return () => clearInterval(interval);
-  }, [positions, clientData, documentFee, includeVAT, documentType, invoiceNumber, invoiceDate, servicePeriod, discount, lastTemplateLoadTime]);
+    setSelectedPositionIds([]);
+    setIsBulkMode(false);
+  }, [activeTabId]);
 
   // Keyboard shortcuts
   useKeyboardShortcuts(
@@ -223,21 +188,50 @@ const Index = () => {
       { key: 'p', ctrl: true, description: 'PDF generieren', action: () => !isGeneratingPDF && handleGeneratePDF() },
       { key: 'z', ctrl: true, description: 'Rückgängig machen', action: () => canUndo && handleUndo() },
       { key: 'y', ctrl: true, description: 'Wiederherstellen', action: () => canRedo && handleRedo() },
+      { key: 't', ctrl: true, description: 'Neuer Tab', action: () => canAddTab && handleAddTab() },
       { key: '?', description: 'Tastenkombinationen anzeigen', action: () => setShowKeyboardShortcuts(true) },
     ],
-    !showRestoreDialog && !showKeyboardShortcuts
+    !showKeyboardShortcuts
   );
+
+  // ============== Tab Handlers ==============
+
+  const handleAddTab = () => {
+    const newTab = addTab();
+    if (newTab) {
+      toast.success(`Neues Dokument "${newTab.name}" erstellt`);
+    } else {
+      toast.error('Maximale Anzahl an Tabs erreicht (10)');
+    }
+  };
+
+  const handleCloseTab = (tabId: string) => {
+    const tab = tabs.find(t => t.id === tabId);
+    closeTab(tabId);
+    if (tab) {
+      toast.success(`"${tab.name}" geschlossen`);
+    }
+  };
+
+  const handleDuplicateTab = (tabId: string) => {
+    const newTab = duplicateTab(tabId);
+    if (newTab) {
+      toast.success(`Dokument dupliziert als "${newTab.name}"`);
+    }
+  };
 
   // ============== Handlers ==============
 
   const handleUndo = () => {
     const previousState = historyUndo();
     if (previousState) {
-      setPositions(previousState.positions);
-      setClientData(previousState.clientData);
-      setDocumentFee(previousState.documentFee);
-      setIncludeVAT(previousState.includeVAT);
-      setDiscount(previousState.discount);
+      updateTab(activeTabId, {
+        positions: previousState.positions,
+        clientData: previousState.clientData,
+        documentFee: previousState.documentFee,
+        includeVAT: previousState.includeVAT,
+        discount: previousState.discount,
+      });
       toast.success('Rückgängig gemacht');
     }
   };
@@ -245,48 +239,15 @@ const Index = () => {
   const handleRedo = () => {
     const nextState = historyRedo();
     if (nextState) {
-      setPositions(nextState.positions);
-      setClientData(nextState.clientData);
-      setDocumentFee(nextState.documentFee);
-      setIncludeVAT(nextState.includeVAT);
-      setDiscount(nextState.discount);
+      updateTab(activeTabId, {
+        positions: nextState.positions,
+        clientData: nextState.clientData,
+        documentFee: nextState.documentFee,
+        includeVAT: nextState.includeVAT,
+        discount: nextState.discount,
+      });
       toast.success('Wiederhergestellt');
     }
-  };
-
-  const restoreSession = () => {
-    try {
-      const savedPositions = localStorage.getItem(STORAGE_KEYS.positions);
-      const savedClientData = localStorage.getItem(STORAGE_KEYS.clientData);
-      const savedDocumentFee = localStorage.getItem(STORAGE_KEYS.documentFee);
-      const savedIncludeVAT = localStorage.getItem(STORAGE_KEYS.includeVAT);
-      const savedDocumentType = localStorage.getItem(STORAGE_KEYS.documentType);
-      const savedInvoiceNumber = localStorage.getItem(STORAGE_KEYS.invoiceNumber);
-      const savedInvoiceDate = localStorage.getItem(STORAGE_KEYS.invoiceDate);
-      const savedServicePeriod = localStorage.getItem(STORAGE_KEYS.servicePeriod);
-      const savedDiscount = localStorage.getItem(STORAGE_KEYS.discount);
-
-      if (savedPositions) setPositions(JSON.parse(savedPositions));
-      if (savedClientData) setClientData(JSON.parse(savedClientData));
-      if (savedDocumentFee) setDocumentFee(parseFloat(savedDocumentFee));
-      if (savedIncludeVAT) setIncludeVAT(savedIncludeVAT === 'true');
-      if (savedDocumentType) setDocumentType(savedDocumentType as 'quote' | 'invoice');
-      if (savedInvoiceNumber) setInvoiceNumber(savedInvoiceNumber);
-      if (savedInvoiceDate) setInvoiceDate(new Date(savedInvoiceDate));
-      if (savedServicePeriod) setServicePeriod(savedServicePeriod);
-      if (savedDiscount) setDiscount(JSON.parse(savedDiscount));
-
-      toast.success('Sitzung wiederhergestellt');
-    } catch {
-      toast.error('Fehler beim Wiederherstellen der Sitzung');
-    }
-    setShowRestoreDialog(false);
-  };
-
-  const clearSession = () => {
-    Object.values(STORAGE_KEYS).forEach((key) => localStorage.removeItem(key));
-    setShowRestoreDialog(false);
-    toast.success('Neue Sitzung gestartet');
   };
 
   // Position management
@@ -393,7 +354,6 @@ const Index = () => {
 
   // Template management
   const loadTemplate = (template: Template) => {
-    Object.values(STORAGE_KEYS).forEach((key) => localStorage.removeItem(key));
     const newPositions = template.positions.map((pos, index) => ({
       ...pos,
       id: generateUniqueId(`pos-tpl-${index}`),
@@ -658,24 +618,6 @@ Mit freundlichen Grüßen`);
 
   return (
     <>
-      {/* Session Restore Dialog */}
-      <AlertDialog open={showRestoreDialog} onOpenChange={setShowRestoreDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Letzte Sitzung wiederherstellen?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Es wurde eine gespeicherte Sitzung gefunden vom{' '}
-              {savedTimestamp && new Date(savedTimestamp).toLocaleString('de-DE')}.
-              Möchten Sie diese wiederherstellen oder neu starten?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={clearSession}>Neu starten</AlertDialogCancel>
-            <AlertDialogAction onClick={restoreSession}>Wiederherstellen</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
       <KeyboardShortcutsDialog open={showKeyboardShortcuts} onOpenChange={setShowKeyboardShortcuts} />
 
       <CommandPalette
@@ -727,6 +669,19 @@ Mit freundlichen Grüßen`);
             onShowKeyboardShortcuts={() => setShowKeyboardShortcuts(true)}
             onOpenCommandPalette={() => setShowCommandPalette(true)}
             onStartWizard={() => setShowWizard(true)}
+          />
+
+          {/* Multi-Tab Bar */}
+          <DocumentTabs
+            tabs={tabs}
+            activeTabId={activeTabId}
+            canAddTab={canAddTab}
+            onSwitchTab={switchTab}
+            onCloseTab={handleCloseTab}
+            onAddTab={handleAddTab}
+            onRenameTab={renameTab}
+            onDuplicateTab={handleDuplicateTab}
+            hasUnsavedChanges={hasUnsavedChanges}
           />
 
           {/* Main Content */}
