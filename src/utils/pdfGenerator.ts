@@ -5,18 +5,36 @@ import { calculatePosition, calculateTotal } from "./stbvvCalculator";
 import { formatBillingDetails } from "./formatBillingDetails";
 import { formatCurrency } from "@/lib/utils";
 
-export const generatePDF = (
-  positions: Position[], 
-  documentFee: number, 
-  includeVAT: boolean,
-  discount: { type: 'percentage' | 'fixed'; value: number } | null,
-  documentType: 'quote' | 'invoice' = 'quote',
-  clientData?: ClientData,
-  invoiceNumber?: string,
-  invoiceDate?: Date,
-  servicePeriod?: string,
-  branding?: any
-) => {
+export interface PDFGeneratorOptions {
+  positions: Position[];
+  documentFee: number;
+  includeVAT: boolean;
+  discount: { type: 'percentage' | 'fixed'; value: number } | null;
+  documentType?: 'quote' | 'invoice';
+  clientData?: ClientData;
+  invoiceNumber?: string;
+  invoiceDate?: Date;
+  servicePeriod?: string;
+  branding?: any;
+}
+
+/**
+ * Creates the PDF document and returns the jsPDF instance
+ */
+const createPDFDocument = (options: PDFGeneratorOptions): jsPDF => {
+  const {
+    positions,
+    documentFee,
+    includeVAT,
+    discount,
+    documentType = 'quote',
+    clientData,
+    invoiceNumber,
+    invoiceDate,
+    servicePeriod,
+    branding,
+  } = options;
+
   const doc = new jsPDF();
   const totals = calculateTotal(positions, documentFee, includeVAT, discount);
   const documentTitle = documentType === 'quote' ? 'Angebot' : 'Rechnung';
@@ -249,8 +267,70 @@ export const generatePDF = (
   doc.line(105, footerY + 20, 190, footerY + 20);
   doc.text('Datum', 20, footerY + 25);
   doc.text('Unterschrift', 105, footerY + 25);
+
+  return doc;
+};
+
+/**
+ * Generates PDF and saves it directly (original behavior)
+ */
+export const generatePDF = (
+  positions: Position[], 
+  documentFee: number, 
+  includeVAT: boolean,
+  discount: { type: 'percentage' | 'fixed'; value: number } | null,
+  documentType: 'quote' | 'invoice' = 'quote',
+  clientData?: ClientData,
+  invoiceNumber?: string,
+  invoiceDate?: Date,
+  servicePeriod?: string,
+  branding?: any
+) => {
+  const doc = createPDFDocument({
+    positions,
+    documentFee,
+    includeVAT,
+    discount,
+    documentType,
+    clientData,
+    invoiceNumber,
+    invoiceDate,
+    servicePeriod,
+    branding,
+  });
   
-  // Save PDF
   const fileName = `stbvv-${documentType}-${invoiceNumber || new Date().toISOString().split('T')[0]}.pdf`;
   doc.save(fileName);
+};
+
+/**
+ * Generates PDF and returns a Blob URL for preview
+ */
+export const generatePDFPreview = (options: PDFGeneratorOptions): string => {
+  const doc = createPDFDocument(options);
+  return doc.output('bloburl').toString();
+};
+
+/**
+ * Generates PDF and returns a Blob for download
+ */
+export const generatePDFBlob = (options: PDFGeneratorOptions): Blob => {
+  const doc = createPDFDocument(options);
+  return doc.output('blob');
+};
+
+/**
+ * Downloads a PDF from a Blob
+ */
+export const downloadPDFFromBlob = (blob: Blob, options: PDFGeneratorOptions): void => {
+  const { documentType = 'quote', invoiceNumber } = options;
+  const fileName = `stbvv-${documentType}-${invoiceNumber || new Date().toISOString().split('T')[0]}.pdf`;
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 };
