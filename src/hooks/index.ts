@@ -14,6 +14,7 @@ export { useTheme } from './useTheme';
 export { useClientDatabase } from './useClientDatabase';
 export { useTemplateSearch, getCategoryForTemplate, TEMPLATE_CATEGORIES, type TemplateCategory } from './useTemplateSearch';
 export { useDocumentArchive, type MonthlyRevenue, type TopClient, type CategoryStats } from './useDocumentArchive';
+export { usePWAInstall } from './usePWAInstall';
 
 // Re-export toast hooks
 export { useToast, toast } from './use-toast';
