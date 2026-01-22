@@ -36,8 +36,7 @@ import {
   CalculatorFooter,
   AddPositionCard,
 } from "@/components/calculator";
-
-// Email validation schema
+import { GuidedWorkflow } from "@/components/wizard";
 const emailSchema = z.string().email();
 
 // LocalStorage keys
@@ -104,6 +103,7 @@ const Index = () => {
   const [selectedPositionIds, setSelectedPositionIds] = useState<string[]>([]);
   const [isBulkMode, setIsBulkMode] = useState(false);
   const [showFloatingSummary, setShowFloatingSummary] = useState(true);
+  const [showWizard, setShowWizard] = useState(false);
 
   // History for Undo/Redo
   const {
@@ -627,12 +627,39 @@ Mit freundlichen Grüßen`);
         isGeneratingPDF={isGeneratingPDF}
       />
 
+      {/* Guided Workflow Mode */}
+      {showWizard ? (
+        <GuidedWorkflow
+          positions={positions}
+          clientData={clientData}
+          documentFee={documentFee}
+          includeVAT={includeVAT}
+          discount={discount}
+          documentType={documentType}
+          invoiceNumber={invoiceNumber}
+          invoiceDate={invoiceDate}
+          servicePeriod={servicePeriod}
+          isGeneratingPDF={isGeneratingPDF}
+          onPositionsChange={setPositions}
+          onClientDataChange={setClientData}
+          onDocumentFeeChange={setDocumentFee}
+          onIncludeVATChange={setIncludeVAT}
+          onDocumentTypeChange={setDocumentType}
+          onInvoiceNumberChange={setInvoiceNumber}
+          onInvoiceDateChange={setInvoiceDate}
+          onServicePeriodChange={setServicePeriod}
+          onGeneratePDF={handleGeneratePDF}
+          onUpdatePosition={updatePosition}
+          onClose={() => setShowWizard(false)}
+        />
+      ) : (
       <div className="min-h-screen bg-gradient-to-br from-background to-muted/50">
         <div className="container mx-auto px-4 py-8 max-w-6xl">
           {/* Header */}
           <CalculatorHeader 
             onShowKeyboardShortcuts={() => setShowKeyboardShortcuts(true)}
             onOpenCommandPalette={() => setShowCommandPalette(true)}
+            onStartWizard={() => setShowWizard(true)}
           />
 
           {/* Main Content */}
@@ -755,6 +782,7 @@ Mit freundlichen Grüßen`);
 
         <CalculatorFooter />
       </div>
+      )}
     </>
   );
 };
