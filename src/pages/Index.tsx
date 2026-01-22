@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
+import { useDocumentArchive } from '@/hooks/useDocumentArchive';
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Plus } from "lucide-react";
@@ -479,6 +480,9 @@ const Index = () => {
     return true;
   };
 
+  // Document archive hook
+  const { archiveDocument } = useDocumentArchive();
+
   // Export handlers
   const handleGeneratePDF = async () => {
     if (!validateBeforeGenerate()) return;
@@ -487,6 +491,10 @@ const Index = () => {
       getNextDocumentNumber(documentType, true);
       const branding = loadBrandingSettings();
       const { generatePDF } = await import('@/utils/pdfGenerator');
+      
+      // Calculate totals for archiving
+      const totals = calculateTotal(positions, documentFee, includeVAT, discount);
+      
       generatePDF(
         positions,
         documentFee,
@@ -499,6 +507,24 @@ const Index = () => {
         servicePeriod,
         branding
       );
+      
+      // Archive the document
+      archiveDocument({
+        documentNumber: invoiceNumber,
+        documentType: documentType === 'invoice' ? 'Rechnung' : 'Angebot',
+        invoiceDate,
+        servicePeriod,
+        clientData,
+        positions,
+        subtotalNet: totals.subtotalNet,
+        documentFee,
+        discount: discount || undefined,
+        discountAmount: totals.discountAmount,
+        vatAmount: totals.vatAmount,
+        totalGross: totals.totalGross,
+        includeVAT,
+      });
+      
       toast.success(`${documentType === 'quote' ? 'Angebot' : 'Rechnung'} erfolgreich erstellt`);
     } catch (error) {
       console.error('PDF generation failed:', error);
