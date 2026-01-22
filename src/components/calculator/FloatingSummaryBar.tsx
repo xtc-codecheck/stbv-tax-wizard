@@ -4,7 +4,7 @@
  */
 
 import { Button } from "@/components/ui/button";
-import { Download, Loader2, X } from "lucide-react";
+import { Eye, Loader2, X } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 
 interface FloatingSummaryBarProps {
@@ -25,7 +25,7 @@ export function FloatingSummaryBar({
   onClose,
 }: FloatingSummaryBarProps) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-blue-600 to-green-600 text-white shadow-2xl z-50 animate-slide-in-up">
+    <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground shadow-2xl z-50 animate-slide-in-up">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-6">
@@ -43,14 +43,14 @@ export function FloatingSummaryBar({
             <Button
               onClick={onGeneratePDF}
               disabled={isGeneratingPDF}
-              className="bg-white text-blue-600 hover:bg-blue-50"
+              className="bg-white text-primary hover:bg-primary/5"
             >
               {isGeneratingPDF ? (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
               ) : (
-                <Download className="w-4 h-4 mr-2" />
+                <Eye className="w-4 h-4 mr-2" />
               )}
-              PDF
+              PDF-Vorschau
             </Button>
             <Button
               variant="ghost"

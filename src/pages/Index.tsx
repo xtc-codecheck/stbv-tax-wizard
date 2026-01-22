@@ -35,7 +35,9 @@ import {
   CalculatorHeader,
   CalculatorFooter,
   AddPositionCard,
+  PDFPreviewModal,
 } from "@/components/calculator";
+import { usePDFPreview } from "@/hooks/usePDFPreview";
 import { GuidedWorkflow } from "@/components/wizard";
 const emailSchema = z.string().email();
 
@@ -104,8 +106,18 @@ const Index = () => {
   const [isBulkMode, setIsBulkMode] = useState(false);
   const [showFloatingSummary, setShowFloatingSummary] = useState(true);
   const [showWizard, setShowWizard] = useState(false);
+  const [showPDFPreview, setShowPDFPreview] = useState(false);
 
-  // History for Undo/Redo
+  // PDF Preview Hook
+  const {
+    previewUrl,
+    isGenerating: isGeneratingPreview,
+    error: previewError,
+    generatePreview,
+    clearPreview,
+    downloadPDF,
+  } = usePDFPreview();
+
   const {
     pushHistory,
     undo: historyUndo,
@@ -484,6 +496,61 @@ const Index = () => {
   const { archiveDocument } = useDocumentArchive();
 
   // Export handlers
+  
+  // Open PDF Preview Modal
+  const handleOpenPDFPreview = async () => {
+    if (!validateBeforeGenerate()) return;
+    
+    const branding = loadBrandingSettings();
+    setShowPDFPreview(true);
+    
+    await generatePreview({
+      positions,
+      documentFee,
+      includeVAT,
+      discount,
+      documentType,
+      clientData,
+      invoiceNumber,
+      invoiceDate,
+      servicePeriod,
+      branding,
+    });
+  };
+
+  // Close PDF Preview and cleanup
+  const handleClosePDFPreview = () => {
+    setShowPDFPreview(false);
+    clearPreview();
+  };
+
+  // Download PDF from preview and archive
+  const handleDownloadFromPreview = () => {
+    getNextDocumentNumber(documentType, true);
+    downloadPDF();
+    
+    // Archive the document
+    const totals = calculateTotal(positions, documentFee, includeVAT, discount);
+    archiveDocument({
+      documentNumber: invoiceNumber,
+      documentType: documentType === 'invoice' ? 'Rechnung' : 'Angebot',
+      invoiceDate,
+      servicePeriod,
+      clientData,
+      positions,
+      subtotalNet: totals.subtotalNet,
+      documentFee,
+      discount: discount || undefined,
+      discountAmount: totals.discountAmount,
+      vatAmount: totals.vatAmount,
+      totalGross: totals.totalGross,
+      includeVAT,
+    });
+    
+    toast.success(`${documentType === 'quote' ? 'Angebot' : 'Rechnung'} erfolgreich erstellt`);
+  };
+
+  // Direct PDF generation (without preview - legacy/quick export)
   const handleGeneratePDF = async () => {
     if (!validateBeforeGenerate()) return;
     setIsGeneratingPDF(true);
@@ -746,9 +813,9 @@ Mit freundlichen Grüßen`);
                   <ActionButtons
                     documentType={documentType}
                     clientEmail={clientData.email}
-                    isGeneratingPDF={isGeneratingPDF}
+                    isGeneratingPDF={isGeneratingPDF || isGeneratingPreview}
                     isExportingExcel={isExportingExcel}
-                    onGeneratePDF={handleGeneratePDF}
+                    onGeneratePDF={handleOpenPDFPreview}
                     onExportExcel={handleExportExcel}
                     onExportCSV={handleExportCSV}
                     onPrint={handlePrint}
@@ -760,14 +827,25 @@ Mit freundlichen Grüßen`);
           </div>
         </div>
 
+        {/* PDF Preview Modal */}
+        <PDFPreviewModal
+          isOpen={showPDFPreview}
+          onClose={handleClosePDFPreview}
+          previewUrl={previewUrl}
+          isLoading={isGeneratingPreview}
+          error={previewError}
+          onDownload={handleDownloadFromPreview}
+          documentType={documentType}
+        />
+
         {/* Floating Summary Bar */}
         {positions.length > 0 && showFloatingSummary && (
           <FloatingSummaryBar
             totalGross={totals.totalGross}
             vatAmount={totals.vatAmount}
             includeVAT={includeVAT}
-            isGeneratingPDF={isGeneratingPDF}
-            onGeneratePDF={handleGeneratePDF}
+            isGeneratingPDF={isGeneratingPDF || isGeneratingPreview}
+            onGeneratePDF={handleOpenPDFPreview}
             onClose={() => setShowFloatingSummary(false)}
           />
         )}

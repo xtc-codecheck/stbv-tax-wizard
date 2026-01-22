@@ -13,3 +13,4 @@ export { ActionButtons } from './ActionButtons';
 export { CalculatorHeader } from './CalculatorHeader';
 export { CalculatorFooter } from './CalculatorFooter';
 export { AddPositionCard } from './AddPositionCard';
+export { PDFPreviewModal } from './PDFPreviewModal';
