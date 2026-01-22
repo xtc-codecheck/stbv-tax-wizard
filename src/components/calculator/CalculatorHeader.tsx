@@ -1,55 +1,72 @@
 /**
- * CalculatorHeader - Header mit Titel und Aktionen
+ * CalculatorHeader - Header mit Titel, Theme Toggle und Aktionen
  * @module components/calculator/CalculatorHeader
  */
 
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Calculator, Keyboard, Settings as SettingsIcon } from "lucide-react";
+import { Calculator, Keyboard, Settings as SettingsIcon, Command } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface CalculatorHeaderProps {
   onShowKeyboardShortcuts: () => void;
+  onOpenCommandPalette?: () => void;
 }
 
-export function CalculatorHeader({ onShowKeyboardShortcuts }: CalculatorHeaderProps) {
+export function CalculatorHeader({ onShowKeyboardShortcuts, onOpenCommandPalette }: CalculatorHeaderProps) {
   const navigate = useNavigate();
 
   return (
     <div className="text-center mb-8">
       <div className="flex items-center justify-center mb-4 gap-2 flex-wrap">
-        <Calculator className="w-8 h-8 text-blue-600" />
-        <h1 className="text-4xl font-bold text-gray-900">STBVV-Rechner</h1>
-        <div className="flex gap-2">
+        <Calculator className="w-8 h-8 text-primary" />
+        <h1 className="text-4xl font-bold text-foreground">STBVV-Rechner</h1>
+        <div className="flex gap-1">
+          {onOpenCommandPalette && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onOpenCommandPalette}
+              className="hidden md:flex items-center gap-2 text-muted-foreground"
+            >
+              <Command className="w-3.5 h-3.5" />
+              <span className="text-xs">Suche</span>
+              <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+                ⌘K
+              </kbd>
+            </Button>
+          )}
+          <ThemeToggle />
           <Button
             variant="ghost"
             size="icon"
             onClick={onShowKeyboardShortcuts}
-            className="text-gray-600 hover:text-blue-600"
+            className="text-muted-foreground hover:text-primary"
             title="Tastenkombinationen"
             aria-label="Tastenkombinationen anzeigen"
           >
-            <Keyboard className="w-6 h-6" />
+            <Keyboard className="w-5 h-5" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate('/settings')}
-            className="text-gray-600 hover:text-blue-600"
+            className="text-muted-foreground hover:text-primary"
             title="Kanzlei-Einstellungen"
             aria-label="Kanzlei-Einstellungen öffnen"
           >
-            <SettingsIcon className="w-6 h-6" />
+            <SettingsIcon className="w-5 h-5" />
           </Button>
         </div>
       </div>
-      <p className="text-gray-600 max-w-2xl mx-auto text-xl">
+      <p className="text-muted-foreground max-w-2xl mx-auto text-xl">
         Gesetzeskonforme Steuerberatervergütung nach StBVV 2025 mit automatischer PDF-Erstellung.
         (Hinweis: Berechnung erfolgt nach gesetzlichen Mittelwerten)
       </p>
       <div className="mt-3 flex justify-center">
         <Link
           to="/gebuhrenordnung"
-          className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200 hover:bg-blue-200 transition-colors cursor-pointer"
+          className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors cursor-pointer"
         >
           StBVV Stand: 01.07.2025
         </Link>
