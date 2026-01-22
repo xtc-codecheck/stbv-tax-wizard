@@ -5,8 +5,9 @@
 
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Calculator, Keyboard, Settings as SettingsIcon, Command, BarChart3, Wand2 } from "lucide-react";
+import { Calculator, Keyboard, Settings as SettingsIcon, Command, BarChart3, Wand2, Download } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { usePWAInstall } from "@/hooks/usePWAInstall";
 
 interface CalculatorHeaderProps {
   onShowKeyboardShortcuts: () => void;
@@ -16,6 +17,7 @@ interface CalculatorHeaderProps {
 
 export function CalculatorHeader({ onShowKeyboardShortcuts, onOpenCommandPalette, onStartWizard }: CalculatorHeaderProps) {
   const navigate = useNavigate();
+  const { canInstall, promptInstall } = usePWAInstall();
 
   return (
     <div className="text-center mb-8">
@@ -79,6 +81,18 @@ export function CalculatorHeader({ onShowKeyboardShortcuts, onOpenCommandPalette
           >
             <SettingsIcon className="w-5 h-5" />
           </Button>
+          {canInstall && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={promptInstall}
+              className="gap-2 bg-primary/10 text-primary border-primary/30 hover:bg-primary/20"
+              title="App installieren"
+            >
+              <Download className="w-4 h-4" />
+              <span className="hidden sm:inline">Installieren</span>
+            </Button>
+          )}
         </div>
       </div>
       <p className="text-muted-foreground max-w-2xl mx-auto text-xl">
