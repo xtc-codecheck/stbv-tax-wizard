@@ -17,6 +17,8 @@ export { useTemplateSearch, getCategoryForTemplate, TEMPLATE_CATEGORIES, type Te
 export { useDocumentArchive, type MonthlyRevenue, type TopClient, type CategoryStats } from './useDocumentArchive';
 export { usePWAInstall } from './usePWAInstall';
 export { usePDFPreview } from './usePDFPreview';
+export { useDocumentValidation } from './useDocumentValidation';
+export { useDocumentExport } from './useDocumentExport';
 
 // Re-export toast hooks
 export { useToast, toast } from './use-toast';
