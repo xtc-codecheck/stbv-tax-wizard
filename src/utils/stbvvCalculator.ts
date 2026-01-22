@@ -8,7 +8,7 @@
 
 import { Position, CalculationResult } from "@/types/stbvv";
 import { getFeeTables } from "./stbvvTables";
-import { VAT_RATE, EXPENSE_FEE_RATE, EXPENSE_FEE_MAX } from "./constants";
+import { VAT_RATE, EXPENSE_FEE_RATE, EXPENSE_FEE_MAX } from "@/constants";
 import {
   euroToCent,
   centToEuro,

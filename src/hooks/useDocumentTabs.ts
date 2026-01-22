@@ -6,17 +6,11 @@
 import { useState, useCallback, useEffect } from 'react';
 import { DocumentTabData, DocumentTabsState, createEmptyTabData } from '@/types/documentTab';
 import { generateUniqueId } from '@/utils/idGenerator';
+import { getNextDocumentNumber } from '@/utils/documentNumber';
+import { STORAGE_KEYS } from '@/constants';
 
-const STORAGE_KEY = 'stbvv_document_tabs';
+const STORAGE_KEY = STORAGE_KEYS.POSITIONS.replace('autosave_positions', 'document_tabs');
 const MAX_TABS = 10;
-
-// Helper to get next document number for a new tab
-const getNextDocumentNumber = (type: 'quote' | 'invoice'): string => {
-  const counterKey = 'stbvv_invoice_counter';
-  const counter = parseInt(localStorage.getItem(counterKey) || '1000');
-  const prefix = type === 'invoice' ? 'RE' : 'AG';
-  return `${prefix}-${counter}`;
-};
 
 export function useDocumentTabs() {
   const [tabsState, setTabsState] = useState<DocumentTabsState>(() => {

@@ -17,6 +17,9 @@ export {
 export type { CentCalculationResult, CentTotalResult } from './centArithmetic';
 export { getFeeTables } from './stbvvTables';
 
+// Document Number
+export { getNextDocumentNumber, resetDocumentCounter, getCurrentDocumentCounter } from './documentNumber';
+
 // Export
 export { exportToCSV } from './csvExporter';
 // Note: pdfGenerator and excelExporter are lazy-loaded for bundle size
