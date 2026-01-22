@@ -1,6 +1,5 @@
-
 import { ActivityPreset } from "@/types/stbvv";
-import { MIN_OBJECT_VALUES } from "@/utils/constants";
+import { MIN_OBJECT_VALUES } from "@/constants";
 
 export const activityPresets: ActivityPreset[] = [
   { 

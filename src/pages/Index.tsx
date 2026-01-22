@@ -17,7 +17,8 @@ import { saveCustomTemplate } from "@/utils/templateManager";
 import { loadBrandingSettings } from "@/utils/brandingStorage";
 import { generateUniqueId } from "@/utils/idGenerator";
 import { exportToCSV } from "@/utils/csvExporter";
-import { TIMING, VALIDATION } from "@/utils/constants";
+import { getNextDocumentNumber } from "@/utils/documentNumber";
+import { TIMING, VALIDATION } from "@/constants";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { KeyboardShortcutsDialog } from "@/components/KeyboardShortcutsDialog";
 import { useHistory } from "@/hooks/useHistory";
@@ -42,18 +43,6 @@ import {
 import { usePDFPreview } from "@/hooks/usePDFPreview";
 import { GuidedWorkflow } from "@/components/wizard";
 const emailSchema = z.string().email();
-
-// Helper function to generate next document number
-const getNextDocumentNumber = (type: 'quote' | 'invoice', increment = false): string => {
-  const counterKey = 'stbvv_invoice_counter';
-  const counter = parseInt(localStorage.getItem(counterKey) || '1000');
-  const nextCounter = increment ? counter + 1 : counter;
-  const prefix = type === 'invoice' ? 'RE' : 'AG';
-  if (increment) {
-    localStorage.setItem(counterKey, nextCounter.toString());
-  }
-  return `${prefix}-${nextCounter}`;
-};
 
 const Index = () => {
   // Multi-Tab State Management
