@@ -5,15 +5,16 @@
 
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Calculator, Keyboard, Settings as SettingsIcon, Command, BarChart3 } from "lucide-react";
+import { Calculator, Keyboard, Settings as SettingsIcon, Command, BarChart3, Wand2 } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface CalculatorHeaderProps {
   onShowKeyboardShortcuts: () => void;
   onOpenCommandPalette?: () => void;
+  onStartWizard?: () => void;
 }
 
-export function CalculatorHeader({ onShowKeyboardShortcuts, onOpenCommandPalette }: CalculatorHeaderProps) {
+export function CalculatorHeader({ onShowKeyboardShortcuts, onOpenCommandPalette, onStartWizard }: CalculatorHeaderProps) {
   const navigate = useNavigate();
 
   return (
@@ -34,6 +35,17 @@ export function CalculatorHeader({ onShowKeyboardShortcuts, onOpenCommandPalette
               <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
                 ⌘K
               </kbd>
+            </Button>
+          )}
+          {onStartWizard && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onStartWizard}
+              className="gap-2 text-primary border-primary/30 hover:bg-primary/10"
+            >
+              <Wand2 className="w-4 h-4" />
+              <span className="hidden md:inline">Wizard</span>
             </Button>
           )}
           <ThemeToggle />
