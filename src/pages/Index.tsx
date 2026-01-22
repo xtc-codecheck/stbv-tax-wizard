@@ -4,27 +4,23 @@
  */
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { useDocumentArchive } from '@/hooks/useDocumentArchive';
 import { useDocumentTabs } from '@/hooks/useDocumentTabs';
 import { Button } from "@/components/ui/button";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Plus } from "lucide-react";
-import { z } from "zod";
 import { toast } from "sonner";
 import { Position, ClientData, Template, Discount } from "@/types/stbvv";
 import { calculateTotal } from "@/utils/stbvvCalculator";
 import { saveCustomTemplate } from "@/utils/templateManager";
-import { loadBrandingSettings } from "@/utils/brandingStorage";
 import { generateUniqueId } from "@/utils/idGenerator";
-import { exportToCSV } from "@/utils/csvExporter";
-import { getNextDocumentNumber } from "@/utils/documentNumber";
-import { TIMING, VALIDATION } from "@/constants";
+import { TIMING } from "@/constants";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { KeyboardShortcutsDialog } from "@/components/KeyboardShortcutsDialog";
 import { useHistory } from "@/hooks/useHistory";
 import { AdvancedTemplateSelector } from "@/components/AdvancedTemplateSelector";
 import { CommandPalette } from "@/components/CommandPalette";
 import TotalCalculation from "@/components/TotalCalculation";
+import { useDocumentValidation } from "@/hooks/useDocumentValidation";
+import { useDocumentExport } from "@/hooks/useDocumentExport";
 
 // Neue Komponenten
 import {
@@ -40,9 +36,7 @@ import {
   PDFPreviewModal,
   DocumentTabs,
 } from "@/components/calculator";
-import { usePDFPreview } from "@/hooks/usePDFPreview";
 import { GuidedWorkflow } from "@/components/wizard";
-const emailSchema = z.string().email();
 
 const Index = () => {
   // Multi-Tab State Management
@@ -120,25 +114,50 @@ const Index = () => {
   // UI State
   const [lastTemplateLoadTime, setLastTemplateLoadTime] = useState<number>(0);
   const [renderKey, setRenderKey] = useState<number>(0);
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-  const [isExportingExcel, setIsExportingExcel] = useState(false);
   const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false);
   const [showCommandPalette, setShowCommandPalette] = useState(false);
   const [selectedPositionIds, setSelectedPositionIds] = useState<string[]>([]);
   const [isBulkMode, setIsBulkMode] = useState(false);
   const [showFloatingSummary, setShowFloatingSummary] = useState(true);
   const [showWizard, setShowWizard] = useState(false);
-  const [showPDFPreview, setShowPDFPreview] = useState(false);
 
-  // PDF Preview Hook
+  // Validation Hook
+  const { validateBeforeGenerate } = useDocumentValidation({
+    positions,
+    clientData,
+    documentFee,
+    includeVAT,
+    discount,
+  });
+
+  // Export Hook
   const {
+    handleGeneratePDF,
+    handleOpenPDFPreview,
+    handleClosePDFPreview,
+    handleDownloadFromPreview,
+    handleExportExcel,
+    handleExportCSV,
+    handlePrint,
+    handleSendEmail,
+    isGeneratingPDF,
+    isExportingExcel,
+    showPDFPreview,
     previewUrl,
-    isGenerating: isGeneratingPreview,
-    error: previewError,
-    generatePreview,
-    clearPreview,
-    downloadPDF,
-  } = usePDFPreview();
+    isGeneratingPreview,
+    previewError,
+  } = useDocumentExport({
+    positions,
+    documentFee,
+    includeVAT,
+    discount,
+    documentType,
+    clientData,
+    invoiceNumber,
+    invoiceDate,
+    servicePeriod,
+    validateBeforeGenerate,
+  });
 
   const {
     pushHistory,
@@ -355,252 +374,6 @@ const Index = () => {
 
   const saveAsTemplate = (name: string) => {
     saveCustomTemplate(name, positions);
-  };
-
-  // Validation
-  const validateBeforeGenerate = (): boolean => {
-    const errors: string[] = [];
-    const warnings: string[] = [];
-
-    if (positions.length === 0) {
-      errors.push('Bitte fügen Sie mindestens eine Position hinzu');
-    }
-
-    positions.forEach((position, index) => {
-      if (!position.activity) {
-        errors.push(`Position ${index + 1}: Tätigkeit fehlt`);
-      }
-      switch (position.billingType) {
-        case 'objectValue':
-          if (!position.objectValue || position.objectValue <= 0) {
-            errors.push(`Position ${index + 1}: Gegenstandswert muss größer als 0 sein`);
-          }
-          break;
-        case 'hourly':
-          if (!position.hourlyRate || position.hourlyRate <= 0) {
-            errors.push(`Position ${index + 1}: Stundensatz muss größer als 0 sein`);
-          }
-          if (!position.hours || position.hours <= 0) {
-            errors.push(`Position ${index + 1}: Stunden müssen größer als 0 sein`);
-          }
-          break;
-        case 'flatRate':
-          if (!position.flatRate || position.flatRate <= 0) {
-            errors.push(`Position ${index + 1}: Pauschalbetrag muss größer als 0 sein`);
-          }
-          break;
-      }
-    });
-
-    const calculatedTotals = calculateTotal(positions, documentFee, includeVAT, discount);
-    if (calculatedTotals.totalGross < VALIDATION.MIN_TOTAL_WARNING) {
-      warnings.push(`Gesamtsumme (${calculatedTotals.totalGross.toFixed(2)} €) ist sehr niedrig`);
-    }
-
-    if (!includeVAT) {
-      warnings.push('Umsatzsteuer ist nicht aktiviert');
-    }
-
-    if (clientData.email) {
-      try {
-        emailSchema.parse(clientData.email);
-      } catch {
-        errors.push('E-Mail-Adresse ist ungültig');
-      }
-    }
-
-    if (errors.length > 0) {
-      toast.error(
-        <div>
-          <div className="font-semibold mb-1">Fehler gefunden:</div>
-          <ul className="list-disc list-inside text-sm">
-            {errors.map((error, i) => (
-              <li key={i}>{error}</li>
-            ))}
-          </ul>
-        </div>,
-        { duration: 5000 }
-      );
-      return false;
-    }
-
-    if (warnings.length > 0) {
-      toast.warning(
-        <div>
-          <div className="font-semibold mb-1">Hinweise:</div>
-          <ul className="list-disc list-inside text-sm">
-            {warnings.map((warning, i) => (
-              <li key={i}>{warning}</li>
-            ))}
-          </ul>
-        </div>,
-        { duration: 4000 }
-      );
-    }
-
-    return true;
-  };
-
-  // Document archive hook
-  const { archiveDocument } = useDocumentArchive();
-
-  // Export handlers
-  
-  // Open PDF Preview Modal
-  const handleOpenPDFPreview = async () => {
-    if (!validateBeforeGenerate()) return;
-    
-    const branding = loadBrandingSettings();
-    setShowPDFPreview(true);
-    
-    await generatePreview({
-      positions,
-      documentFee,
-      includeVAT,
-      discount,
-      documentType,
-      clientData,
-      invoiceNumber,
-      invoiceDate,
-      servicePeriod,
-      branding,
-    });
-  };
-
-  // Close PDF Preview and cleanup
-  const handleClosePDFPreview = () => {
-    setShowPDFPreview(false);
-    clearPreview();
-  };
-
-  // Download PDF from preview and archive
-  const handleDownloadFromPreview = () => {
-    getNextDocumentNumber(documentType, true);
-    downloadPDF();
-    
-    // Archive the document
-    const totals = calculateTotal(positions, documentFee, includeVAT, discount);
-    archiveDocument({
-      documentNumber: invoiceNumber,
-      documentType: documentType === 'invoice' ? 'Rechnung' : 'Angebot',
-      invoiceDate,
-      servicePeriod,
-      clientData,
-      positions,
-      subtotalNet: totals.subtotalNet,
-      documentFee,
-      discount: discount || undefined,
-      discountAmount: totals.discountAmount,
-      vatAmount: totals.vatAmount,
-      totalGross: totals.totalGross,
-      includeVAT,
-    });
-    
-    toast.success(`${documentType === 'quote' ? 'Angebot' : 'Rechnung'} erfolgreich erstellt`);
-  };
-
-  // Direct PDF generation (without preview - legacy/quick export)
-  const handleGeneratePDF = async () => {
-    if (!validateBeforeGenerate()) return;
-    setIsGeneratingPDF(true);
-    try {
-      getNextDocumentNumber(documentType, true);
-      const branding = loadBrandingSettings();
-      const { generatePDF } = await import('@/utils/pdfGenerator');
-      
-      // Calculate totals for archiving
-      const totals = calculateTotal(positions, documentFee, includeVAT, discount);
-      
-      generatePDF(
-        positions,
-        documentFee,
-        includeVAT,
-        discount,
-        documentType,
-        clientData,
-        invoiceNumber,
-        invoiceDate,
-        servicePeriod,
-        branding
-      );
-      
-      // Archive the document
-      archiveDocument({
-        documentNumber: invoiceNumber,
-        documentType: documentType === 'invoice' ? 'Rechnung' : 'Angebot',
-        invoiceDate,
-        servicePeriod,
-        clientData,
-        positions,
-        subtotalNet: totals.subtotalNet,
-        documentFee,
-        discount: discount || undefined,
-        discountAmount: totals.discountAmount,
-        vatAmount: totals.vatAmount,
-        totalGross: totals.totalGross,
-        includeVAT,
-      });
-      
-      toast.success(`${documentType === 'quote' ? 'Angebot' : 'Rechnung'} erfolgreich erstellt`);
-    } catch (error) {
-      console.error('PDF generation failed:', error);
-      toast.error('Fehler beim Erstellen der PDF');
-    } finally {
-      setIsGeneratingPDF(false);
-    }
-  };
-
-  const handleExportExcel = async () => {
-    if (positions.length === 0) {
-      toast.error('Bitte fügen Sie mindestens eine Position hinzu');
-      return;
-    }
-    setIsExportingExcel(true);
-    try {
-      const { exportToExcel } = await import('@/utils/excelExporter');
-      exportToExcel(positions, documentFee, includeVAT, discount, documentType, clientData, invoiceNumber, invoiceDate, servicePeriod);
-      toast.success('Excel-Datei erfolgreich erstellt');
-    } catch (error) {
-      console.error('Excel export failed:', error);
-      toast.error('Fehler beim Exportieren der Excel-Datei');
-    } finally {
-      setIsExportingExcel(false);
-    }
-  };
-
-  const handleExportCSV = () => {
-    const brandingSettings = loadBrandingSettings();
-    exportToCSV({ positions, totals, clientData, invoiceNumber, brandingSettings });
-    toast.success('CSV-Export erfolgreich');
-  };
-
-  const handlePrint = () => {
-    window.print();
-    toast.success('Druckansicht geöffnet');
-  };
-
-  const handleSendEmail = () => {
-    if (!clientData.email) {
-      toast.error('Bitte geben Sie eine E-Mail-Adresse ein');
-      return;
-    }
-    try {
-      emailSchema.parse(clientData.email);
-    } catch {
-      toast.error('E-Mail-Adresse ist ungültig');
-      return;
-    }
-    const calculatedTotals = calculateTotal(positions, documentFee, includeVAT, discount);
-    const documentTitle = documentType === 'quote' ? 'Angebot' : 'Rechnung';
-    const subject = encodeURIComponent(`${documentTitle} - Steuerberatervergütung`);
-    const body = encodeURIComponent(`Sehr geehrte Damen und Herren,
-
-anbei erhalten Sie unser${documentType === 'quote' ? ' Angebot' : 'e Rechnung'} über Steuerberatungsleistungen.
-
-Gesamtsumme: ${calculatedTotals.totalGross.toFixed(2)} €
-
-Mit freundlichen Grüßen`);
-    window.location.href = `mailto:${clientData.email}?subject=${subject}&body=${body}`;
   };
 
   // ============== Render ==============
