@@ -4,6 +4,7 @@
  */
 
 export { ClientDataForm } from './ClientDataForm';
+export { ClientDataFormAdvanced } from './ClientDataFormAdvanced';
 export { DocumentSettings } from './DocumentSettings';
 export { PositionList } from './PositionList';
 export { FloatingSummaryBar } from './FloatingSummaryBar';

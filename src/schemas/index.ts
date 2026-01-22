@@ -65,3 +65,10 @@ export {
   type BlogCategory,
   type BlogArticle,
 } from './blogArticle.schema';
+
+// Client Schemas
+export {
+  SavedClientSchema,
+  SavedClientListSchema,
+  type SavedClient,
+} from './client.schema';

@@ -19,12 +19,13 @@ import { TIMING, VALIDATION } from "@/utils/constants";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { KeyboardShortcutsDialog } from "@/components/KeyboardShortcutsDialog";
 import { useHistory } from "@/hooks/useHistory";
-import TemplateSelector from "@/components/TemplateSelector";
+import { AdvancedTemplateSelector } from "@/components/AdvancedTemplateSelector";
+import { CommandPalette } from "@/components/CommandPalette";
 import TotalCalculation from "@/components/TotalCalculation";
 
 // Neue Komponenten
 import {
-  ClientDataForm,
+  ClientDataFormAdvanced,
   DocumentSettings,
   PositionList,
   FloatingSummaryBar,
@@ -98,6 +99,7 @@ const Index = () => {
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [isExportingExcel, setIsExportingExcel] = useState(false);
   const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false);
+  const [showCommandPalette, setShowCommandPalette] = useState(false);
   const [selectedPositionIds, setSelectedPositionIds] = useState<string[]>([]);
   const [isBulkMode, setIsBulkMode] = useState(false);
   const [showFloatingSummary, setShowFloatingSummary] = useState(true);
@@ -332,6 +334,10 @@ const Index = () => {
 
   const updateClientData = (field: keyof ClientData, value: string) => {
     setClientData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const updateAllClientData = (data: ClientData) => {
+    setClientData(data);
   };
 
   // Bulk operations
@@ -579,22 +585,45 @@ Mit freundlichen Grüßen`);
 
       <KeyboardShortcutsDialog open={showKeyboardShortcuts} onOpenChange={setShowKeyboardShortcuts} />
 
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+      <CommandPalette
+        open={showCommandPalette}
+        onOpenChange={setShowCommandPalette}
+        onAddPosition={addPosition}
+        onLoadTemplate={loadTemplate}
+        onGeneratePDF={handleGeneratePDF}
+        onExportExcel={handleExportExcel}
+        onPrint={handlePrint}
+        onUndo={handleUndo}
+        onRedo={handleRedo}
+        onShowShortcuts={() => setShowKeyboardShortcuts(true)}
+        canUndo={canUndo}
+        canRedo={canRedo}
+        isGeneratingPDF={isGeneratingPDF}
+      />
+
+      <div className="min-h-screen bg-gradient-to-br from-background to-muted/50">
         <div className="container mx-auto px-4 py-8 max-w-6xl">
           {/* Header */}
-          <CalculatorHeader onShowKeyboardShortcuts={() => setShowKeyboardShortcuts(true)} />
+          <CalculatorHeader 
+            onShowKeyboardShortcuts={() => setShowKeyboardShortcuts(true)}
+            onOpenCommandPalette={() => setShowCommandPalette(true)}
+          />
 
           {/* Main Content */}
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Positions Column */}
             <div className="lg:col-span-2 space-y-6">
-              <TemplateSelector
+              <AdvancedTemplateSelector
                 onLoadTemplate={loadTemplate}
                 onSaveAsTemplate={saveAsTemplate}
                 hasPositions={positions.length > 0}
               />
 
-              <ClientDataForm clientData={clientData} onUpdate={updateClientData} />
+              <ClientDataFormAdvanced 
+                clientData={clientData} 
+                onUpdate={updateClientData}
+                onUpdateAll={updateAllClientData}
+              />
 
               {isBulkMode && positions.length > 0 && (
                 <BulkActionsToolbar
@@ -691,7 +720,7 @@ Mit freundlichen Grüßen`);
         {/* Mobile FAB */}
         <Button
           onClick={addPosition}
-          className="md:hidden fixed bottom-20 right-6 w-14 h-14 rounded-full bg-blue-600 hover:bg-blue-700 shadow-2xl z-40"
+          className="md:hidden fixed bottom-20 right-6 w-14 h-14 rounded-full bg-primary hover:bg-primary/90 shadow-2xl z-40"
           size="icon"
           aria-label="Position hinzufügen"
         >
