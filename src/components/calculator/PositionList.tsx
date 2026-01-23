@@ -1,9 +1,11 @@
 /**
  * PositionList - Container für alle Positionen mit Drag & Drop
  * @module components/calculator/PositionList
+ * 
+ * Performance-optimiert mit React.memo und useCallback
  */
 
-import { useMemo } from 'react';
+import { useMemo, memo, useCallback } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { FileText } from "lucide-react";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
@@ -24,7 +26,7 @@ interface PositionListProps {
   onReorder: (positions: Position[]) => void;
 }
 
-export function PositionList({
+function PositionListComponent({
   positions,
   renderKey,
   isBulkMode,
@@ -36,7 +38,7 @@ export function PositionList({
   onToggleSelection,
   onReorder,
 }: PositionListProps) {
-  // DnD sensors
+  // DnD sensors - memoized
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -44,15 +46,15 @@ export function PositionList({
     })
   );
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  // Memoized drag end handler
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
       const oldIndex = positions.findIndex((item) => item.id === active.id);
       const newIndex = positions.findIndex((item) => item.id === over.id);
       onReorder(arrayMove(positions, oldIndex, newIndex));
     }
-  };
-
+  }, [positions, onReorder]);
   const positionIds = useMemo(() => positions.map((p) => p.id), [positions]);
 
   if (positions.length === 0) {
@@ -101,3 +103,6 @@ export function PositionList({
     </DndContext>
   );
 }
+
+// Memoized export for performance
+export const PositionList = memo(PositionListComponent);

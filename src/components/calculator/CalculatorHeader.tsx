@@ -1,8 +1,11 @@
 /**
  * CalculatorHeader - Header mit Titel, Theme Toggle und Aktionen
  * @module components/calculator/CalculatorHeader
+ * 
+ * Performance-optimiert mit React.memo
  */
 
+import { memo } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Calculator, Keyboard, Settings as SettingsIcon, Command, BarChart3, Wand2, Download } from "lucide-react";
@@ -15,7 +18,7 @@ interface CalculatorHeaderProps {
   onStartWizard?: () => void;
 }
 
-export function CalculatorHeader({ onShowKeyboardShortcuts, onOpenCommandPalette, onStartWizard }: CalculatorHeaderProps) {
+function CalculatorHeaderComponent({ onShowKeyboardShortcuts, onOpenCommandPalette, onStartWizard }: CalculatorHeaderProps) {
   const navigate = useNavigate();
   const { canInstall, promptInstall } = usePWAInstall();
 
@@ -110,3 +113,6 @@ export function CalculatorHeader({ onShowKeyboardShortcuts, onOpenCommandPalette
     </div>
   );
 }
+
+// Memoized export for performance
+export const CalculatorHeader = memo(CalculatorHeaderComponent);

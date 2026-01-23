@@ -1,8 +1,11 @@
 /**
  * FloatingSummaryBar - Sticky Footer mit Brutto-Summe
  * @module components/calculator/FloatingSummaryBar
+ * 
+ * Performance-optimiert mit React.memo
  */
 
+import { memo } from 'react';
 import { Button } from "@/components/ui/button";
 import { Eye, Loader2, X } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
@@ -16,7 +19,7 @@ interface FloatingSummaryBarProps {
   onClose: () => void;
 }
 
-export function FloatingSummaryBar({
+function FloatingSummaryBarComponent({
   totalGross,
   vatAmount,
   includeVAT,
@@ -66,3 +69,6 @@ export function FloatingSummaryBar({
     </div>
   );
 }
+
+// Memoized export for performance
+export const FloatingSummaryBar = memo(FloatingSummaryBarComponent);
