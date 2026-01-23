@@ -1,6 +1,10 @@
+/**
+ * TotalCalculation - Gesamtberechnung mit Rabatt und MwSt.
+ * 
+ * Performance-optimiert mit React.memo und useCallback
+ */
 
-
-import React, { useMemo } from 'react';
+import React, { useMemo, memo, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -37,21 +41,26 @@ const TotalCalculation: React.FC<TotalCalculationProps> = ({
     [positions, documentFee, includeVAT, discount]
   );
 
-  const handleDiscountTypeChange = (type: 'percentage' | 'fixed') => {
+  // Memoized handlers to prevent child re-renders
+  const handleDiscountTypeChange = useCallback((type: 'percentage' | 'fixed') => {
     onDiscountChange(discount ? { ...discount, type } : { type, value: 0 });
-  };
+  }, [discount, onDiscountChange]);
 
-  const handleDiscountValueChange = (value: number) => {
+  const handleDiscountValueChange = useCallback((value: number) => {
     if (!discount) {
       onDiscountChange({ type: 'percentage', value });
     } else {
       onDiscountChange({ ...discount, value });
     }
-  };
+  }, [discount, onDiscountChange]);
 
-  const handleClearDiscount = () => {
+  const handleClearDiscount = useCallback(() => {
     onDiscountChange(null);
-  };
+  }, [onDiscountChange]);
+
+  const handleDocumentFeeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    onDocumentFeeChange(Math.max(0, parseFloat(e.target.value) || 0));
+  }, [onDocumentFeeChange]);
   
   const { positionsTotal, discountAmount, subtotalNet, vatAmount, totalGross } = totals;
 
@@ -72,7 +81,7 @@ const TotalCalculation: React.FC<TotalCalculationProps> = ({
             id="documentFee"
             type="number"
             value={documentFee === 0 ? '' : documentFee}
-            onChange={(e) => onDocumentFeeChange(Math.max(0, parseFloat(e.target.value) || 0))}
+            onChange={handleDocumentFeeChange}
             min="0"
             step="0.01"
             placeholder="12.00"
@@ -206,4 +215,5 @@ const TotalCalculation: React.FC<TotalCalculationProps> = ({
   );
 };
 
-export default TotalCalculation;
+// Memoized export for performance
+export default memo(TotalCalculation);

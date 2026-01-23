@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -706,4 +706,15 @@ const PositionCard: React.FC<PositionCardProps> = ({
   );
 };
 
-export default PositionCard;
+// Memoized export to prevent unnecessary re-renders
+export default memo(PositionCard, (prevProps, nextProps) => {
+  // Custom comparison for better performance
+  return (
+    prevProps.position === nextProps.position &&
+    prevProps.index === nextProps.index &&
+    prevProps.canMoveUp === nextProps.canMoveUp &&
+    prevProps.canMoveDown === nextProps.canMoveDown &&
+    prevProps.isSelectable === nextProps.isSelectable &&
+    prevProps.isSelected === nextProps.isSelected
+  );
+});

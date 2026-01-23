@@ -391,6 +391,63 @@ src/constants/
 
 ---
 
+## Phase 7: Performance-Optimierung
+
+### 7.1 React.memo Optimierung
+
+Folgende Komponenten wurden mit `React.memo` optimiert, um unnötige Re-Renders zu vermeiden:
+
+| Komponente | Optimierung | Effekt |
+|------------|-------------|--------|
+| `PositionCard` | Custom areEqual-Funktion | Verhindert Re-Render bei unveränderter Position |
+| `TotalCalculation` | memo + useCallback | Stabile Handler, memoized Berechnung |
+| `FloatingSummaryBar` | memo | Keine Re-Renders bei Parent-Updates |
+| `CalculatorHeader` | memo | Statische UI-Elemente gecached |
+| `PositionList` | memo + useCallback | Drag-Handler und ID-Liste memoized |
+
+### 7.2 useMemo & useCallback
+
+```typescript
+// Beispiel: PositionCard - Custom Comparison
+export default memo(PositionCard, (prevProps, nextProps) => {
+  return (
+    prevProps.position === nextProps.position &&
+    prevProps.index === nextProps.index &&
+    prevProps.canMoveUp === nextProps.canMoveUp &&
+    prevProps.canMoveDown === nextProps.canMoveDown &&
+    prevProps.isSelectable === nextProps.isSelectable &&
+    prevProps.isSelected === nextProps.isSelected
+  );
+});
+```
+
+### 7.3 Code-Splitting & Lazy Loading
+
+**Bereits implementiert:**
+
+```typescript
+// Dynamische Imports für große Module
+const { generatePDF } = await import('@/utils/pdfGenerator');
+const { exportToExcel } = await import('@/utils/excelExporter');
+```
+
+**Effekte:**
+- Initial Bundle Size reduziert
+- PDF-Generator (~150 KB) wird nur bei Bedarf geladen
+- Excel-Exporter (~100 KB) wird nur bei Bedarf geladen
+
+### 7.4 Debouncing
+
+**Datei:** `src/hooks/useDebounce.ts`
+
+Alle numerischen Eingabefelder nutzen 300ms Debouncing:
+- Gegenstandswert
+- Stundensatz
+- Stunden
+- Pauschale
+
+---
+
 ## Wartung & Aktualisierung
 
 ### Bei StBVV-Änderungen
