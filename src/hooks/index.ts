@@ -24,6 +24,10 @@ export {
   usePositionsValidation,
   type UsePositionValidationResult 
 } from './usePositionValidation';
+export { 
+  useErrorHandler,
+  type UseErrorHandlerResult 
+} from './useErrorHandler';
 
 // Re-export toast hooks
 export { useToast, toast } from './use-toast';
