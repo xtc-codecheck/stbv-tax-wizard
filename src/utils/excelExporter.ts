@@ -3,6 +3,7 @@ import { Position, ClientData, Discount } from "@/types/stbvv";
 import { calculatePosition, calculateTotal } from "./stbvvCalculator";
 import { formatBillingDetails } from "./formatBillingDetails";
 import { formatCurrency } from "@/lib/utils";
+import { STBVV_CURRENT_VERSION, STBVV_DISCLAIMERS, generateDocumentChecksum } from "@/constants/stbvv";
 
 export const exportToExcel = (
   positions: Position[], 
@@ -60,12 +61,20 @@ export const exportToExcel = (
   // Create workbook
   const wb = XLSX.utils.book_new();
 
-  // Add metadata sheet
+  // Prüfsumme generieren
+  const checksum = generateDocumentChecksum(positions.length, totals.totalGross, invoiceNumber);
+
+  // Add metadata sheet with legal references
   const metadataData = [
     { 'Feld': 'Dokumenttyp', 'Wert': documentType === 'invoice' ? 'Rechnung' : 'Angebot' },
     { 'Feld': invoiceNumber ? (documentType === 'invoice' ? 'Rechnungs-Nr.' : 'Angebots-Nr.') : '', 'Wert': invoiceNumber || '' },
     { 'Feld': 'Datum', 'Wert': invoiceDate ? invoiceDate.toLocaleDateString('de-DE') : new Date().toLocaleDateString('de-DE') },
     { 'Feld': 'Leistungszeitraum', 'Wert': servicePeriod || '' },
+    { 'Feld': '', 'Wert': '' },
+    { 'Feld': 'Rechtsgrundlage', 'Wert': `StBVV ${STBVV_CURRENT_VERSION.version}` },
+    { 'Feld': 'Gültig ab', 'Wert': new Date(STBVV_CURRENT_VERSION.effectiveDate).toLocaleDateString('de-DE') },
+    { 'Feld': 'Quelle', 'Wert': STBVV_CURRENT_VERSION.federalGazetteRef },
+    { 'Feld': 'Prüfsumme', 'Wert': checksum },
   ];
 
   if (clientData && clientData.name) {
@@ -77,6 +86,12 @@ export const exportToExcel = (
       { 'Feld': 'E-Mail', 'Wert': clientData.email }
     );
   }
+
+  // Add legal disclaimer
+  metadataData.push(
+    { 'Feld': '', 'Wert': '' },
+    { 'Feld': 'Hinweis', 'Wert': STBVV_DISCLAIMERS.medium }
+  );
 
   const wsMetadata = XLSX.utils.json_to_sheet(metadataData);
   XLSX.utils.book_append_sheet(wb, wsMetadata, 'Metadaten');
