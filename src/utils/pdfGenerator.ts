@@ -15,6 +15,11 @@ import { Position, ClientData } from "@/types/stbvv";
 import { calculatePosition, calculateTotal } from "./stbvvCalculator";
 import { formatBillingDetails } from "./formatBillingDetails";
 import { formatCurrency } from "@/lib/utils";
+import { 
+  STBVV_CURRENT_VERSION, 
+  STBVV_DISCLAIMERS, 
+  generateDocumentChecksum 
+} from "@/constants/stbvv";
 
 // ============== Konstanten ==============
 
@@ -92,14 +97,14 @@ const addPageFooter = (ctx: PDFContext): void => {
   doc.setFontSize(7);
   doc.setTextColor(...COLORS.MUTED);
   
-  // Rechtlicher Hinweis
+  // Rechtlicher Hinweis mit Versionierung
   doc.text(
-    'Rechtsgrundlage: Steuerberatervergütungsverordnung (StBVV) in der Fassung von 2025',
+    STBVV_DISCLAIMERS.medium,
     PAGE.MARGIN_LEFT,
     footerY
   );
   doc.text(
-    `Hinweis: ${documentType === 'quote' ? 'Dieses Angebot' : 'Diese Rechnung'} wurde automatisch erstellt und entspricht den gesetzlichen Bestimmungen der StBVV.`,
+    documentType === 'quote' ? STBVV_DISCLAIMERS.quote : STBVV_DISCLAIMERS.invoice,
     PAGE.MARGIN_LEFT,
     footerY + 4
   );
@@ -234,7 +239,7 @@ const createPDFDocument = (options: PDFGeneratorOptions): jsPDF => {
   yPosition += 10;
   doc.setFontSize(10);
   doc.setTextColor(...COLORS.MUTED);
-  doc.text('Steuerberatervergütung nach StBVV 2025', PAGE.MARGIN_LEFT, yPosition);
+  doc.text(`Steuerberatervergütung nach StBVV ${STBVV_CURRENT_VERSION.version} (gültig ab ${new Date(STBVV_CURRENT_VERSION.effectiveDate).toLocaleDateString('de-DE')})`, PAGE.MARGIN_LEFT, yPosition);
   
   // Branding (rechte Seite)
   if (branding?.companyName) {
@@ -464,8 +469,8 @@ const createPDFDocument = (options: PDFGeneratorOptions): jsPDF => {
   doc.setFontSize(6);
   doc.setTextColor(...COLORS.MUTED);
   
-  // Einfache Prüfsumme: Anzahl Positionen + Bruttosumme
-  const checksum = `${positions.length}P-${Math.round(totals.totalGross * 100)}`;
+  // Strukturierte Prüfsumme mit Versionierung
+  const checksum = generateDocumentChecksum(positions.length, totals.totalGross, invoiceNumber);
   doc.text(`Prüfziffer: ${checksum}`, PAGE.WIDTH - PAGE.MARGIN_RIGHT, checksumY, { align: 'right' });
   
   // ============== UNTERSCHRIFTSZEILEN ==============

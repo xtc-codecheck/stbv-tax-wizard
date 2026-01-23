@@ -1,5 +1,6 @@
 import { Position, BrandingSettings } from "@/types/stbvv";
 import { calculatePosition } from "@/utils/stbvvCalculator";
+import { STBVV_CURRENT_VERSION, generateDocumentChecksum } from "@/constants/stbvv";
 
 const formatNumber = (value: number): string => {
   return value.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -28,8 +29,17 @@ interface ExportData {
 export const exportToCSV = (data: ExportData): void => {
   const { positions, totals, clientData, invoiceNumber, brandingSettings } = data;
   
+  // Prüfsumme generieren
+  const checksum = generateDocumentChecksum(positions.length, totals.totalGross, invoiceNumber);
+  
   // CSV Header
   let csvContent = "data:text/csv;charset=utf-8,";
+  
+  // Legal header with StBVV version
+  csvContent += `Rechtsgrundlage,StBVV ${STBVV_CURRENT_VERSION.version} (${STBVV_CURRENT_VERSION.federalGazetteRef})\n`;
+  csvContent += `Gültig ab,${new Date(STBVV_CURRENT_VERSION.effectiveDate).toLocaleDateString('de-DE')}\n`;
+  csvContent += `Prüfsumme,${checksum}\n`;
+  csvContent += "\n";
   
   // Invoice Header Info
   if (invoiceNumber) {
