@@ -9,6 +9,7 @@ import {
   resetDocumentCounter,
   getCurrentDocumentCounter,
 } from '../documentNumber';
+import { STORAGE_KEYS } from '@/constants';
 
 // Mock localStorage
 const localStorageMock = (() => {
@@ -24,6 +25,7 @@ const localStorageMock = (() => {
     clear: vi.fn(() => {
       store = {};
     }),
+    _getStore: () => store,
   };
 })();
 
@@ -68,7 +70,7 @@ describe('documentNumber', () => {
     });
 
     it('verwendet gespeicherten Zählerstand', () => {
-      localStorageMock.setItem('stbvv_invoice_counter', '2000');
+      localStorageMock.setItem(STORAGE_KEYS.INVOICE_COUNTER, '2000');
       
       const number = getNextDocumentNumber('quote');
       expect(number).toBe('AG-2000');
@@ -77,12 +79,12 @@ describe('documentNumber', () => {
 
   describe('resetDocumentCounter', () => {
     it('setzt Zähler auf Standardwert zurück', () => {
-      localStorageMock.setItem('stbvv_invoice_counter', '5000');
+      localStorageMock.setItem(STORAGE_KEYS.INVOICE_COUNTER, '5000');
       
       resetDocumentCounter();
       
       expect(localStorageMock.setItem).toHaveBeenCalledWith(
-        'stbvv_invoice_counter',
+        STORAGE_KEYS.INVOICE_COUNTER,
         '1000'
       );
     });
@@ -91,7 +93,7 @@ describe('documentNumber', () => {
       resetDocumentCounter(500);
       
       expect(localStorageMock.setItem).toHaveBeenCalledWith(
-        'stbvv_invoice_counter',
+        STORAGE_KEYS.INVOICE_COUNTER,
         '500'
       );
     });
@@ -103,7 +105,7 @@ describe('documentNumber', () => {
     });
 
     it('gibt gespeicherten Wert zurück', () => {
-      localStorageMock.setItem('stbvv_invoice_counter', '3500');
+      localStorageMock.setItem(STORAGE_KEYS.INVOICE_COUNTER, '3500');
       
       expect(getCurrentDocumentCounter()).toBe(3500);
     });
