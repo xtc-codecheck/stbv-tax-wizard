@@ -706,8 +706,8 @@ const PositionCard: React.FC<PositionCardProps> = ({
   );
 };
 
-// Memoized export to prevent unnecessary re-renders
-export default memo(PositionCard, (prevProps, nextProps) => {
+// Memoized component with stable export pattern for HMR compatibility
+const PositionCardMemo = memo(PositionCard, (prevProps, nextProps) => {
   // Custom comparison for better performance
   return (
     prevProps.position === nextProps.position &&
@@ -718,3 +718,8 @@ export default memo(PositionCard, (prevProps, nextProps) => {
     prevProps.isSelected === nextProps.isSelected
   );
 });
+
+// Add displayName for debugging and ensure stable export
+PositionCardMemo.displayName = 'PositionCard';
+
+export default PositionCardMemo;

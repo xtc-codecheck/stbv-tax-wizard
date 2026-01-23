@@ -215,5 +215,8 @@ const TotalCalculation: React.FC<TotalCalculationProps> = ({
   );
 };
 
-// Memoized export for performance
-export default memo(TotalCalculation);
+// Memoized component with stable export pattern for HMR compatibility
+const TotalCalculationMemo = memo(TotalCalculation);
+TotalCalculationMemo.displayName = 'TotalCalculation';
+
+export default TotalCalculationMemo;

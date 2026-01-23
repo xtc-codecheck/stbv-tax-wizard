@@ -395,21 +395,32 @@ src/constants/
 
 ### 7.1 React.memo Optimierung
 
-Folgende Komponenten wurden mit `React.memo` optimiert, um unnötige Re-Renders zu vermeiden:
+Folgende Komponenten wurden mit `React.memo` und stabilem Export-Pattern optimiert:
 
 | Komponente | Optimierung | Effekt |
 |------------|-------------|--------|
-| `PositionCard` | Custom areEqual-Funktion | Verhindert Re-Render bei unveränderter Position |
-| `TotalCalculation` | memo + useCallback | Stabile Handler, memoized Berechnung |
+| `PositionCard` | Custom areEqual + displayName | Verhindert Re-Render bei unveränderter Position |
+| `TotalCalculation` | memo + useCallback + displayName | Stabile Handler, memoized Berechnung |
 | `FloatingSummaryBar` | memo | Keine Re-Renders bei Parent-Updates |
 | `CalculatorHeader` | memo | Statische UI-Elemente gecached |
 | `PositionList` | memo + useCallback | Drag-Handler und ID-Liste memoized |
 
-### 7.2 useMemo & useCallback
+### 7.2 Stabiles Export-Pattern
+
+Um HMR-Kompatibilitätsprobleme zu vermeiden, verwenden alle memoized Komponenten das folgende Pattern:
+
+```typescript
+// Stabiles Export-Pattern für HMR-Kompatibilität
+const PositionCardMemo = memo(PositionCard, customCompare);
+PositionCardMemo.displayName = 'PositionCard';
+export default PositionCardMemo;
+```
+
+### 7.3 useMemo & useCallback
 
 ```typescript
 // Beispiel: PositionCard - Custom Comparison
-export default memo(PositionCard, (prevProps, nextProps) => {
+const PositionCardMemo = memo(PositionCard, (prevProps, nextProps) => {
   return (
     prevProps.position === nextProps.position &&
     prevProps.index === nextProps.index &&
@@ -421,7 +432,7 @@ export default memo(PositionCard, (prevProps, nextProps) => {
 });
 ```
 
-### 7.3 Code-Splitting & Lazy Loading
+### 7.4 Code-Splitting & Lazy Loading
 
 **Bereits implementiert:**
 
@@ -436,7 +447,7 @@ const { exportToExcel } = await import('@/utils/excelExporter');
 - PDF-Generator (~150 KB) wird nur bei Bedarf geladen
 - Excel-Exporter (~100 KB) wird nur bei Bedarf geladen
 
-### 7.4 Debouncing
+### 7.5 Debouncing
 
 **Datei:** `src/hooks/useDebounce.ts`
 
@@ -445,6 +456,37 @@ Alle numerischen Eingabefelder nutzen 300ms Debouncing:
 - Stundensatz
 - Stunden
 - Pauschale
+
+---
+
+## Phase 8: Stabilitätsverbesserungen
+
+### 8.1 Erweitertes ErrorBoundary
+
+**Datei:** `src/components/ErrorBoundary.tsx`
+
+Das ErrorBoundary wurde erweitert um:
+- Integration mit `ErrorLoggingService` für strukturiertes Crash-Reporting
+- Erfassung des ComponentStack für Debugging
+- Expandierbare technische Details im Entwicklungsmodus
+- "Erneut versuchen"-Button neben "Seite neu laden"
+- Optional: Custom Fallback-UI via `fallback` Prop
+
+```typescript
+<ErrorBoundary fallback={<CustomErrorUI />}>
+  <App />
+</ErrorBoundary>
+```
+
+### 8.2 Komponenten-Loading-Tests
+
+**Datei:** `src/components/__tests__/componentLoading.test.ts`
+
+Unit-Tests zur Absicherung der Komponentenexporte:
+- Prüfung auf gültige React-Komponenten (`typeof === 'function'` oder memo-Objekt)
+- Validierung von `displayName` auf memoized Komponenten
+- Batch-Test aller Calculator- und Wizard-Komponenten
+- Schutz vor "Component is not a function"-Fehlern
 
 ---
 
