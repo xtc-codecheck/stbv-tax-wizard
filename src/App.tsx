@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Index from "./pages/Index";
 import Settings from "./pages/Settings";
-import Dashboard from "./pages/Dashboard";
 import InstallApp from "./pages/InstallApp";
 import Impressum from "./pages/Impressum";
 import Datenschutz from "./pages/Datenschutz";
@@ -18,6 +17,11 @@ import Anleitungen from "./pages/Anleitungen";
 import Blog from "./pages/Blog";
 import BlogArticle from "./pages/BlogArticle";
 import NotFound from "./pages/NotFound";
+
+// Development-only imports
+const Dashboard = import.meta.env.DEV 
+  ? await import("./pages/Dashboard").then(m => m.default)
+  : null;
 
 const queryClient = new QueryClient();
 
@@ -31,7 +35,10 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/settings" element={<Settings />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            {/* Dashboard only available in development mode */}
+            {import.meta.env.DEV && Dashboard && (
+              <Route path="/dashboard" element={<Dashboard />} />
+            )}
             <Route path="/install" element={<InstallApp />} />
             <Route path="/ueber-den-rechner" element={<UeberDenRechner />} />
             <Route path="/gebuhrenordnung" element={<Gebuhrenordnung />} />

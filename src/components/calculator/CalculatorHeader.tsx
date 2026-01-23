@@ -64,16 +64,19 @@ function CalculatorHeaderComponent({ onShowKeyboardShortcuts, onOpenCommandPalet
           >
             <Keyboard className="w-5 h-5" />
           </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate('/dashboard')}
-            className="text-muted-foreground hover:text-primary"
-            title="Analyse-Dashboard"
-            aria-label="Dashboard öffnen"
-          >
-            <BarChart3 className="w-5 h-5" />
-          </Button>
+          {/* Dashboard only visible in development mode */}
+          {import.meta.env.DEV && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate('/dashboard')}
+              className="text-muted-foreground hover:text-primary"
+              title="Analyse-Dashboard (Dev Only)"
+              aria-label="Dashboard öffnen"
+            >
+              <BarChart3 className="w-5 h-5" />
+            </Button>
+          )}
           <Button
             variant="ghost"
             size="icon"
