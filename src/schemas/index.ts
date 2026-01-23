@@ -80,3 +80,19 @@ export {
   type ArchivedDocument,
   type DocumentArchive,
 } from './archivedDocument.schema';
+
+// Position Validation (Phase 2)
+export {
+  validatePosition,
+  validatePositions,
+  validateField,
+  getMinObjectValue,
+  tenthRateValidationSchema,
+  billingTypeValidationSchema,
+  feeTableValidationSchema,
+  positionValidationSchema,
+  type ValidationSeverity,
+  type ValidationIssue,
+  type ValidationResult,
+  type ValidatedPosition,
+} from './positionValidation.schema';
