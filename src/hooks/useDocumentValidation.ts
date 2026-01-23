@@ -1,6 +1,8 @@
 /**
  * useDocumentValidation - Hook für Dokumentvalidierung vor Export
  * @module hooks/useDocumentValidation
+ * 
+ * Integriert useErrorHandler für strukturiertes Fehler-Logging
  */
 
 import { useCallback, useMemo } from 'react';
@@ -9,6 +11,7 @@ import { toast } from 'sonner';
 import { Position, ClientData, Discount } from '@/types/stbvv';
 import { calculateTotal } from '@/utils/stbvvCalculator';
 import { VALIDATION } from '@/constants';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
 
 const emailSchema = z.string().email();
 
@@ -50,6 +53,8 @@ export function useDocumentValidation({
   discount,
 }: UseDocumentValidationOptions): UseDocumentValidationReturn {
   
+  // Error handler hook
+  const { handleError, showErrorToast } = useErrorHandler();
   // Memoized validation results
   const validationResult = useMemo((): ValidationResult => {
     const errors: string[] = [];
@@ -120,13 +125,28 @@ export function useDocumentValidation({
     return validationResult;
   }, [validationResult]);
 
-  // Validate with toast messages
+  // Validate with toast messages using error handler
   const validateBeforeGenerate = useCallback((): boolean => {
     const { isValid, errors, warnings } = validationResult;
 
     if (!isValid) {
-      const errorMessage = `Fehler gefunden:\n• ${errors.join('\n• ')}`;
-      toast.error(errorMessage, { duration: 5000 });
+      // Log validation errors with structured error handling
+      errors.forEach((error, index) => {
+        handleError(error, {
+          code: 'VALIDATION_ERROR',
+          context: { errorIndex: index, totalErrors: errors.length },
+          showToast: index === 0, // Only show toast for first error
+        });
+      });
+      
+      // Show consolidated error message
+      if (errors.length > 1) {
+        showErrorToast(
+          'Validierungsfehler',
+          `${errors.length} Fehler gefunden. Bitte korrigieren Sie die markierten Felder.`,
+          { severity: 'error' }
+        );
+      }
       return false;
     }
 
@@ -136,7 +156,7 @@ export function useDocumentValidation({
     }
 
     return true;
-  }, [validationResult]);
+  }, [validationResult, handleError, showErrorToast]);
 
   // Derived booleans for quick checks
   const hasPositions = positions.length > 0;

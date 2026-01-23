@@ -1,6 +1,8 @@
 /**
  * useDocumentExport - Hook für alle Dokumentexport-Funktionen
  * @module hooks/useDocumentExport
+ * 
+ * Integriert useErrorHandler für strukturiertes Fehler-Logging
  */
 
 import { useState, useCallback } from 'react';
@@ -13,6 +15,8 @@ import { exportToCSV } from '@/utils/csvExporter';
 import { getNextDocumentNumber } from '@/utils/documentNumber';
 import { useDocumentArchive } from '@/hooks/useDocumentArchive';
 import { usePDFPreview } from '@/hooks/usePDFPreview';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
+import { ExportError } from '@/errors';
 
 const emailSchema = z.string().email();
 
@@ -83,6 +87,9 @@ export function useDocumentExport({
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [isExportingExcel, setIsExportingExcel] = useState(false);
   const [showPDFPreview, setShowPDFPreview] = useState(false);
+
+  // Error handler hook
+  const { handleError } = useErrorHandler();
 
   // Document archive hook
   const { archiveDocument } = useDocumentArchive();
@@ -178,17 +185,25 @@ export function useDocumentExport({
       archiveCurrentDocument();
       toast.success(`${documentType === 'quote' ? 'Angebot' : 'Rechnung'} erfolgreich erstellt`);
     } catch (error) {
-      console.error('PDF generation failed:', error);
-      toast.error('Fehler beim Erstellen der PDF');
+      handleError(
+        ExportError.pdfGeneration(error instanceof Error ? error : undefined),
+        { 
+          code: 'PDF_GENERATION_FAILED',
+          context: { documentType, positionCount: positions.length }
+        }
+      );
     } finally {
       setIsGeneratingPDF(false);
     }
-  }, [validateBeforeGenerate, positions, documentFee, includeVAT, discount, documentType, clientData, invoiceNumber, invoiceDate, servicePeriod, archiveCurrentDocument]);
+  }, [validateBeforeGenerate, positions, documentFee, includeVAT, discount, documentType, clientData, invoiceNumber, invoiceDate, servicePeriod, archiveCurrentDocument, handleError]);
 
   // Excel export
   const handleExportExcel = useCallback(async () => {
     if (positions.length === 0) {
-      toast.error('Bitte fügen Sie mindestens eine Position hinzu');
+      handleError('Bitte fügen Sie mindestens eine Position hinzu', {
+        code: 'NO_POSITIONS',
+        context: { action: 'excel_export' }
+      });
       return;
     }
     
@@ -208,12 +223,17 @@ export function useDocumentExport({
       );
       toast.success('Excel-Datei erfolgreich erstellt');
     } catch (error) {
-      console.error('Excel export failed:', error);
-      toast.error('Fehler beim Exportieren der Excel-Datei');
+      handleError(
+        ExportError.excelGeneration(error instanceof Error ? error : undefined),
+        {
+          code: 'EXCEL_EXPORT_FAILED',
+          context: { documentType, positionCount: positions.length }
+        }
+      );
     } finally {
       setIsExportingExcel(false);
     }
-  }, [positions, documentFee, includeVAT, discount, documentType, clientData, invoiceNumber, invoiceDate, servicePeriod]);
+  }, [positions, documentFee, includeVAT, discount, documentType, clientData, invoiceNumber, invoiceDate, servicePeriod, handleError]);
 
   // CSV export
   const handleExportCSV = useCallback(() => {
@@ -232,14 +252,20 @@ export function useDocumentExport({
   // Send email
   const handleSendEmail = useCallback(() => {
     if (!clientData.email) {
-      toast.error('Bitte geben Sie eine E-Mail-Adresse ein');
+      handleError('Bitte geben Sie eine E-Mail-Adresse ein', {
+        code: 'EMAIL_MISSING',
+        context: { action: 'send_email' }
+      });
       return;
     }
     
     try {
       emailSchema.parse(clientData.email);
     } catch {
-      toast.error('E-Mail-Adresse ist ungültig');
+      handleError('E-Mail-Adresse ist ungültig', {
+        code: 'EMAIL_INVALID',
+        context: { email: clientData.email }
+      });
       return;
     }
     
@@ -255,7 +281,7 @@ Gesamtsumme: ${calculatedTotals.totalGross.toFixed(2)} €
 Mit freundlichen Grüßen`);
     
     window.location.href = `mailto:${clientData.email}?subject=${subject}&body=${body}`;
-  }, [clientData.email, positions, documentFee, includeVAT, discount, documentType]);
+  }, [clientData.email, positions, documentFee, includeVAT, discount, documentType, handleError]);
 
   return {
     handleGeneratePDF,
