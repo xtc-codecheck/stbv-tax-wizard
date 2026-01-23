@@ -19,6 +19,11 @@ export { usePWAInstall } from './usePWAInstall';
 export { usePDFPreview } from './usePDFPreview';
 export { useDocumentValidation } from './useDocumentValidation';
 export { useDocumentExport } from './useDocumentExport';
+export { 
+  usePositionValidation, 
+  usePositionsValidation,
+  type UsePositionValidationResult 
+} from './usePositionValidation';
 
 // Re-export toast hooks
 export { useToast, toast } from './use-toast';
