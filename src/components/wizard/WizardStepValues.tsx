@@ -46,7 +46,9 @@ export function WizardStepValues({
     const position = positions.find(p => p.id === id);
     if (!position) return;
     
-    const numValue = parseFloat(value.replace(',', '.')) || 0;
+    // Handle German number format: remove thousand separators (.), replace decimal comma with dot
+    const cleanedValue = value.replace(/\./g, '').replace(',', '.');
+    const numValue = parseFloat(cleanedValue) || 0;
     onUpdatePosition(id, { ...position, objectValue: numValue });
   };
 
