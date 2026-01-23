@@ -8,10 +8,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Position } from '@/types/stbvv';
-import { calculateTotal } from '@/utils/stbvvCalculator';
+import { calculateTotal, calculatePosition } from '@/utils/stbvvCalculator';
 import { ArrowLeft, ArrowRight, Calculator, Euro, Info } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { formatCurrency } from '@/lib/utils';
 
 interface WizardStepValuesProps {
   positions: Position[];
@@ -33,14 +34,6 @@ export function WizardStepValues({
   onNext,
 }: WizardStepValuesProps) {
   const totals = calculateTotal(positions, documentFee, includeVAT);
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('de-DE', {
-      style: 'currency',
-      currency: 'EUR',
-      minimumFractionDigits: 2,
-    }).format(value);
-  };
 
   const handleObjectValueChange = (id: string, value: string) => {
     const position = positions.find(p => p.id === id);
@@ -71,75 +64,106 @@ export function WizardStepValues({
       {/* Positions List */}
       <ScrollArea className="h-[350px] pr-4">
         <div className="space-y-4">
-          {positions.map((position, index) => (
-            <Card key={position.id}>
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Badge variant="outline" className="text-xs">
-                        {index + 1}
-                      </Badge>
-                      <p className="font-medium">{position.activity || 'Unbenannte Position'}</p>
-                    </div>
-                    
-                    {position.billingType === 'objectValue' && (
-                      <div className="flex items-center gap-3">
-                        <div className="flex-1 max-w-[200px]">
-                          <Label htmlFor={`value-${position.id}`} className="text-xs text-muted-foreground">
-                            Gegenstandswert
-                          </Label>
-                          <div className="relative mt-1">
-                            <Euro className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                            <Input
-                              id={`value-${position.id}`}
-                              type="text"
-                              inputMode="decimal"
-                              placeholder="0,00"
-                              value={position.objectValue > 0 ? position.objectValue.toLocaleString('de-DE') : ''}
-                              onChange={(e) => handleObjectValueChange(position.id, e.target.value)}
-                              className="pl-9"
-                            />
+          {positions.map((position, index) => {
+            // Calculate position total for live preview
+            const positionCalc = calculatePosition(position);
+            const hasValue = position.billingType !== 'objectValue' || position.objectValue > 0;
+            
+            return (
+              <Card key={position.id} className={hasValue ? 'border-primary/30' : ''}>
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Badge variant="outline" className="text-xs">
+                          {index + 1}
+                        </Badge>
+                        <p className="font-medium flex-1">{position.activity || 'Unbenannte Position'}</p>
+                        {/* Live calculation badge */}
+                        {hasValue && (
+                          <Badge 
+                            variant="default" 
+                            className="bg-primary/10 text-primary border border-primary/20 font-semibold animate-in fade-in duration-200"
+                          >
+                            {formatCurrency(positionCalc.totalNet)}
+                          </Badge>
+                        )}
+                      </div>
+                      
+                      {position.billingType === 'objectValue' && (
+                        <div className="flex items-center gap-3">
+                          <div className="flex-1 max-w-[200px]">
+                            <Label htmlFor={`value-${position.id}`} className="text-xs text-muted-foreground">
+                              Gegenstandswert
+                            </Label>
+                            <div className="relative mt-1">
+                              <Euro className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                              <Input
+                                id={`value-${position.id}`}
+                                type="text"
+                                inputMode="decimal"
+                                placeholder="0,00"
+                                value={position.objectValue > 0 ? position.objectValue.toLocaleString('de-DE') : ''}
+                                onChange={(e) => handleObjectValueChange(position.id, e.target.value)}
+                                className="pl-9"
+                              />
+                            </div>
+                          </div>
+                          
+                          {/* Live calculation details */}
+                          {position.objectValue > 0 && (
+                            <div className="text-xs text-muted-foreground mt-5 hidden sm:block">
+                              <span className="text-foreground/70">
+                                Tab. {position.feeTable} × {position.tenthRate.numerator}/{position.tenthRate.denominator}
+                              </span>
+                            </div>
+                          )}
+                          
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8 mt-5">
+                                <Info className="w-4 h-4 text-muted-foreground" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="max-w-[200px] text-xs">
+                                Tabelle {position.feeTable} • {position.tenthRate.numerator}/{position.tenthRate.denominator} Satz
+                                {position.objectValue > 0 && (
+                                  <><br />Gebühr: {formatCurrency(positionCalc.baseFee)}</>
+                                )}
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </div>
+                      )}
+
+                      {position.billingType === 'hourly' && (
+                        <div className="flex items-center justify-between mt-2">
+                          <div className="flex items-center gap-2">
+                            <Badge variant="secondary">Zeitgebühr</Badge>
+                            <span className="text-sm text-muted-foreground">
+                              {formatCurrency(position.hourlyRate || 0)}/Std × {position.hours} Std
+                            </span>
                           </div>
                         </div>
-                        
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 mt-5">
-                              <Info className="w-4 h-4 text-muted-foreground" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="max-w-[200px] text-xs">
-                              Tabelle {position.feeTable} • {position.tenthRate.numerator}/{position.tenthRate.denominator} Satz
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </div>
-                    )}
+                      )}
 
-                    {position.billingType === 'hourly' && (
-                      <div className="flex items-center gap-2 mt-2">
-                        <Badge variant="secondary">Zeitgebühr</Badge>
-                        <span className="text-sm text-muted-foreground">
-                          {position.hourlyRate} €/Std × {position.hours} Std
-                        </span>
-                      </div>
-                    )}
-
-                    {position.billingType === 'flatRate' && (
-                      <div className="flex items-center gap-2 mt-2">
-                        <Badge variant="secondary">Pauschale</Badge>
-                        <span className="text-sm text-muted-foreground">
-                          {formatCurrency(position.flatRate || 0)}
-                        </span>
-                      </div>
-                    )}
+                      {position.billingType === 'flatRate' && (
+                        <div className="flex items-center justify-between mt-2">
+                          <div className="flex items-center gap-2">
+                            <Badge variant="secondary">Pauschale</Badge>
+                            <span className="text-sm text-muted-foreground">
+                              {formatCurrency(position.flatRate || 0)}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </ScrollArea>
 
