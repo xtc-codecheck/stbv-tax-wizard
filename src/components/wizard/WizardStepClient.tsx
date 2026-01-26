@@ -8,8 +8,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ClientData } from '@/types/stbvv';
-import { User, ArrowRight } from 'lucide-react';
+import { User, ArrowRight, ShieldCheck } from 'lucide-react';
 
 interface WizardStepClientProps {
   clientData: ClientData;
@@ -35,6 +36,15 @@ export function WizardStepClient({ clientData, onUpdateClientData, onNext }: Wiz
           Für wen erstellen Sie diese Rechnung? Geben Sie die Mandantendaten ein.
         </p>
       </div>
+
+      {/* Privacy Notice */}
+      <Alert className="border-primary/30 bg-primary/5">
+        <ShieldCheck className="h-4 w-4 text-primary" />
+        <AlertDescription className="text-sm">
+          <strong>Datenschutz:</strong> Mandantendaten werden nur für die aktuelle Sitzung verwendet und nicht gespeichert. 
+          Beim Schließen des Browsers werden alle eingegebenen Daten automatisch gelöscht.
+        </AlertDescription>
+      </Alert>
 
       {/* Client Form */}
       <Card>
