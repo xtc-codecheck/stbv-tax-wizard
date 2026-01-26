@@ -310,7 +310,7 @@ const Settings: React.FC = () => {
                 Verwalten Sie Ihre lokal gespeicherten Daten.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6">
               <Alert>
                 <ShieldCheck className="h-4 w-4" />
                 <AlertTitle>DSGVO-Hinweis</AlertTitle>
@@ -321,10 +321,38 @@ const Settings: React.FC = () => {
                 </AlertDescription>
               </Alert>
 
-              <div className="pt-2">
+              {/* Cookie Consent Management */}
+              <div className="space-y-3">
+                <h3 className="text-sm font-medium">Cookie-Einwilligung</h3>
+                <p className="text-sm text-muted-foreground">
+                  Sie haben beim ersten Besuch der Website Ihre Einwilligung zur lokalen Datenspeicherung gegeben. 
+                  Sie können diese Einwilligung jederzeit widerrufen.
+                </p>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => {
+                    localStorage.removeItem('stbvv_cookie_consent');
+                    toast.success("Einwilligung widerrufen", {
+                      description: "Der Cookie-Banner wird beim nächsten Seitenaufruf erneut angezeigt.",
+                    });
+                  }}
+                >
+                  Cookie-Einwilligung widerrufen
+                </Button>
+              </div>
+
+              <Separator />
+
+              {/* Delete All Data */}
+              <div className="space-y-3">
+                <h3 className="text-sm font-medium text-destructive">Alle Daten löschen</h3>
+                <p className="text-sm text-muted-foreground">
+                  Löschen Sie alle lokal gespeicherten Daten unwiderruflich.
+                </p>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant="destructive" className="w-full md:w-auto">
+                    <Button variant="destructive" size="sm">
                       <Trash2 className="w-4 h-4 mr-2" />
                       Alle lokalen Daten löschen
                     </Button>
@@ -338,6 +366,7 @@ const Settings: React.FC = () => {
                           <li>Kanzlei-Branding-Einstellungen</li>
                           <li>Archivierte Dokumente</li>
                           <li>Gespeicherte Tabs</li>
+                          <li>Cookie-Einwilligung</li>
                           <li>Alle anderen App-Daten</li>
                         </ul>
                       </AlertDialogDescription>
