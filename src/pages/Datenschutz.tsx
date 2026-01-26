@@ -152,11 +152,42 @@ const Datenschutz = () => {
               </p>
 
               <h3 className="text-lg font-medium mb-2">Lokale Speicherung (LocalStorage)</h3>
+              <p className="mb-4">
+                Diese Website nutzt die LocalStorage-Funktion Ihres Browsers, um bestimmte Einstellungen 
+                lokal auf Ihrem Gerät zu speichern. Diese Daten werden <strong>nicht</strong> an unsere 
+                Server übertragen und verbleiben ausschließlich auf Ihrem Endgerät.
+              </p>
+
+              <p className="mb-2 font-medium">Welche Daten werden lokal gespeichert?</p>
+              <ul className="list-disc list-inside mb-4 space-y-1">
+                <li><strong>Kanzlei-Branding-Einstellungen:</strong> Ihre Kanzleidaten (Name, Adresse, Bankverbindung) für die PDF-Generierung</li>
+                <li><strong>Erscheinungsbild-Präferenzen:</strong> Hell-/Dunkelmodus-Einstellung</li>
+                <li><strong>Cookie-Einwilligung:</strong> Ihre Zustimmung zur lokalen Datenspeicherung</li>
+              </ul>
+
+              <p className="mb-2 font-medium">Welche Daten werden NICHT gespeichert?</p>
+              <p className="mb-4">
+                <strong>Mandantendaten werden nicht dauerhaft gespeichert.</strong> Namen, Adressen und 
+                E-Mail-Adressen von Mandanten, die Sie im Rechner eingeben, werden ausschließlich für die 
+                aktuelle Browsersitzung verwendet. Beim Schließen des Browsers oder Neuladen der Seite 
+                werden diese Daten automatisch gelöscht. Es findet keine Speicherung oder Übertragung 
+                personenbezogener Mandantendaten statt.
+              </p>
+
+              <p className="mb-2 font-medium">Speicherdauer und Löschung</p>
+              <p className="mb-4">
+                Die lokal gespeicherten Daten (Kanzlei-Einstellungen) bleiben erhalten, bis Sie diese 
+                manuell löschen. Sie können alle gespeicherten Daten jederzeit über die{" "}
+                <Link to="/settings" className="text-primary hover:underline">Einstellungen</Link>{" "}
+                dieser Anwendung oder über die Browsereinstellungen (Website-Daten löschen) entfernen.
+              </p>
+
+              <p className="mb-2 font-medium">Rechtsgrundlage</p>
               <p>
-                Diese Website nutzt die LocalStorage-Funktion Ihres Browsers, um Ihre Eingaben temporär 
-                zu speichern und ein besseres Nutzererlebnis zu gewährleisten. Diese Daten werden nur 
-                lokal auf Ihrem Gerät gespeichert und nicht an unsere Server übertragen. Sie können die 
-                LocalStorage-Daten jederzeit in Ihren Browsereinstellungen löschen.
+                Die Nutzung von LocalStorage für Ihre Einstellungen erfolgt auf Grundlage Ihrer 
+                Einwilligung (Art. 6 Abs. 1 lit. a DSGVO), die Sie beim ersten Besuch der Website 
+                über den Cookie-Banner erteilen. Sie können diese Einwilligung jederzeit widerrufen, 
+                indem Sie die gespeicherten Daten in den Einstellungen löschen.
               </p>
             </section>
 
