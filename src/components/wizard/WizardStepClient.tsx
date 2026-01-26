@@ -1,5 +1,6 @@
 /**
  * Wizard Step 1: Mandanten-Eingabe
+ * DSGVO-konform: Keine Speicherung von Mandantendaten
  */
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,9 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ClientData } from '@/types/stbvv';
-import { useClientDatabase } from '@/hooks/useClientDatabase';
-import { SavedClient } from '@/schemas/client.schema';
-import { User, Clock, ArrowRight, Building2 } from 'lucide-react';
+import { User, ArrowRight } from 'lucide-react';
 
 interface WizardStepClientProps {
   clientData: ClientData;
@@ -19,20 +18,8 @@ interface WizardStepClientProps {
 }
 
 export function WizardStepClient({ clientData, onUpdateClientData, onNext }: WizardStepClientProps) {
-  const { recentClients } = useClientDatabase();
-  
   const handleFieldChange = (field: keyof ClientData, value: string) => {
     onUpdateClientData({ ...clientData, [field]: value });
-  };
-
-  const handleSelectClient = (client: SavedClient) => {
-    onUpdateClientData({
-      name: client.name,
-      street: client.street,
-      postalCode: client.postalCode,
-      city: client.city,
-      email: client.email,
-    });
   };
 
   const isValid = clientData.name.trim().length > 0;
@@ -48,34 +35,6 @@ export function WizardStepClient({ clientData, onUpdateClientData, onNext }: Wiz
           Für wen erstellen Sie diese Rechnung? Geben Sie die Mandantendaten ein.
         </p>
       </div>
-
-      {/* Recent Clients Quick Select */}
-      {recentClients.length > 0 && (
-        <Card className="border-dashed">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Clock className="w-4 h-4" />
-              Zuletzt verwendet
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-2">
-              {recentClients.slice(0, 5).map((client) => (
-                <Button
-                  key={client.id}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleSelectClient(client)}
-                  className="gap-2"
-                >
-                  <Building2 className="w-3 h-3" />
-                  {client.name}
-                </Button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Client Form */}
       <Card>
