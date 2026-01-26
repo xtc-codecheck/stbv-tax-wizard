@@ -14,8 +14,9 @@
 4. [Phase 3: Export-Qualität](#phase-3-export-qualität)
 5. [Phase 4: Fehlertoleranz](#phase-4-fehlertoleranz)
 6. [Phase 5: Compliance](#phase-5-compliance)
-7. [Unit-Test-Übersicht](#unit-test-übersicht)
-8. [Technische Architektur](#technische-architektur)
+7. [Phase 6: DSGVO-Konformität](#phase-6-dsgvo-konformität)
+8. [Unit-Test-Übersicht](#unit-test-übersicht)
+9. [Technische Architektur](#technische-architektur)
 
 ---
 
@@ -298,6 +299,60 @@ Automatisch in alle Exports eingefügt:
 
 ---
 
+## Phase 6: DSGVO-Konformität
+
+> **Vollständige Dokumentation:** [`docs/GDPR_COMPLIANCE.md`](./GDPR_COMPLIANCE.md)
+
+### 6.1 Privacy by Design
+
+Der StBVV-Rechner wurde mit Datenschutz als Kernprinzip entwickelt:
+
+| Maßnahme | Status | Details |
+|----------|--------|---------|
+| Keine Server-Speicherung | ✅ | Alle Daten bleiben lokal |
+| Mandantendaten nur Sitzung | ✅ | Keine Persistenz |
+| Cookie-Einwilligung | ✅ | Banner beim Erstbesuch |
+| Widerrufsrecht | ✅ | Jederzeit in Einstellungen |
+| Löschrecht | ✅ | "Alle Daten löschen"-Button |
+
+### 6.2 Deaktivierte Funktionen
+
+Aus Datenschutzgründen wurden folgende Funktionen deaktiviert:
+
+- **Mandanten-Datenbank** (`useClientDatabase.ts`): Gibt nur leere Arrays zurück
+- **Auto-Complete**: Keine gespeicherten Mandanten-Vorschläge
+- **"Zuletzt verwendet"**: Im Wizard entfernt
+- **Speichern-Button**: Im Hauptformular entfernt
+
+### 6.3 Implementierte Datenschutz-Features
+
+| Feature | Datei | Beschreibung |
+|---------|-------|--------------|
+| Cookie-Banner | `src/components/CookieBanner.tsx` | Einwilligungsbanner beim Erstbesuch |
+| Datenschutz-Hinweise | `WizardStepClient.tsx`, `ClientDataFormAdvanced.tsx` | UI-Hinweise zur Sitzungsdaten |
+| Einwilligung widerrufen | `src/pages/Settings.tsx` | Button zum Widerruf |
+| Alle Daten löschen | `src/pages/Settings.tsx` | Vollständige Datenlöschung |
+| Erweiterte Datenschutzerklärung | `src/pages/Datenschutz.tsx` | Details zur lokalen Speicherung |
+
+### 6.4 localStorage-Nutzung
+
+**Aktive Schlüssel:**
+- `stbvv_cookie_consent` – Einwilligungsstatus
+- `stbvv_branding_settings` – Kanzleidaten für PDFs
+- `stbvv_theme` – Erscheinungsbild
+
+**Nicht verwendet (DSGVO-konform):**
+- `stbvv_saved_clients` – Deaktiviert
+- `stbvv_autosave_client` – Deaktiviert
+
+### 6.5 Audit-Checkliste
+
+```bash
+# Prüfung: Keine Mandantendaten gespeichert
+Object.keys(localStorage).filter(k => k.startsWith('stbvv_'))
+# Erwartete Schlüssel: cookie_consent, branding_settings, theme
+```
+
 ## Unit-Test-Übersicht
 
 ### Testdateien
@@ -560,7 +615,17 @@ Unit-Tests zur Absicherung der Komponentenexporte:
 
 **Repository:** StBVV-Rechner  
 **Dokumentation:** `/docs/QUALITY_ASSURANCE.md`  
+**DSGVO-Dokumentation:** `/docs/GDPR_COMPLIANCE.md`  
 **Tests:** `npm test`
+
+---
+
+## Weiterführende Dokumentation
+
+| Dokument | Beschreibung |
+|----------|--------------|
+| [`GDPR_COMPLIANCE.md`](./GDPR_COMPLIANCE.md) | Vollständige DSGVO-Dokumentation |
+| [`README.md`](../README.md) | Projekt-Übersicht und Setup |
 
 ---
 
