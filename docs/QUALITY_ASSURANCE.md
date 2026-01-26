@@ -307,20 +307,53 @@ Automatisch in alle Exports eingefügt:
 | `stbvvCalculator.test.ts` | ~35 | Gebührenberechnung, MwSt., Rabatte |
 | `centArithmetic.test.ts` | ~30 | Integer-Arithmetik, Präzision |
 | `documentNumber.test.ts` | ~10 | Dokumentnummern-Generierung |
-| `activityPresets.test.ts` | ~25 | 66 Presets, Kategorien, §-Referenzen |
-| `feeTableVerification.test.ts` | ~40 | Tabellen A-D, Prüfsummen |
+| `activityPresets.test.ts` | ~25 | 70 Presets, Kategorien, §-Referenzen |
+| `feeTableVerification.test.ts` | ~60 | Tabellen A-D, Struktur, Grenzwerte |
 | `goldenReference.test.ts` | ~30 | 8 Rechnungsszenarien |
 | `positionValidation.test.ts` | ~25 | Mindestgegenstandswerte, Validierung |
+| `wizardE2E.test.ts` | ~25 | **NEU:** Vollständige Wizard-Workflows |
+| `extremeValues.test.ts` | ~26 | **NEU:** Extreme Werte und Grenzfälle |
+| `crossValidation.test.ts` | ~15 | **NEU:** stbvvCalculator vs CalculatorService |
+| `exportConsistency.test.ts` | ~13 | **NEU:** Export-Formatierung und Konsistenz |
 
-**Gesamt: ~195 Unit-Tests**
+**Gesamt: ~290+ Unit-Tests**
 
-### Test-Ausführung
+### Neue Testabdeckung (Januar 2026)
 
-```bash
-npm test           # Alle Tests ausführen
-npm test:watch     # Watch-Modus
-npm test:coverage  # Code Coverage Report
-```
+#### Wizard End-to-End Tests (`wizardE2E.test.ts`)
+Simuliert komplette Rechnungs-Workflows:
+- Freiberufler ESt + EÜR
+- GmbH Jahresabschluss (8 Positionen)
+- Arbeitnehmer mit § 27 Zwanzigstelsätzen
+- Gemischte Abrechnungsarten (Gegenstandswert, Stunden, Pauschale)
+- Rabatt-Varianten (Prozent und Festbetrag)
+- Auslagenpauschale (20%-Regel und 20€-Maximum)
+- MwSt.-Berechnung nach Rabattabzug
+
+#### Extreme Value Tests (`extremeValues.test.ts`)
+Testet Grenzfälle für robuste Berechnungen:
+- Gegenstandswerte bis 100 Mio. €
+- Minimal-Werte (0,01 €)
+- Quantity bis 999
+- 200+ Positionen in einer Rechnung
+- 99,99% Rabatt
+- Floating-Point-Präzision (0.1 + 0.2 Problem)
+- Ungewöhnliche Zehntelsätze (0.5/10, 30/10, 1/20)
+- NaN und negative Werte (Robustheit)
+
+#### Cross-Validation Tests (`crossValidation.test.ts`)
+Vergleicht beide Calculator-Implementierungen:
+- `stbvvCalculator.ts` (Cent-basiert, primär)
+- `CalculatorService.ts` (Legacy, Floating-Point)
+- Toleranz ≤ 0,05 € bei komplexen Szenarien
+- Alle Abrechnungsarten abgedeckt
+
+#### Export Consistency Tests (`exportConsistency.test.ts`)
+Verifiziert Export-Qualität:
+- Deutsches Zahlenformat (1.234,56 €)
+- Reproduzierbare Berechnungen
+- Maximale 2 Dezimalstellen
+- Prüfsummen-Kompatibilität
 
 ### Kritische Test-Szenarien
 
