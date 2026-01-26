@@ -4,10 +4,11 @@
  * @module components/calculator/ClientDataFormAdvanced
  */
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { User } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { User, ShieldCheck } from 'lucide-react';
 import { ClientData } from '@/types/stbvv';
 
 interface ClientDataFormAdvancedProps {
@@ -27,6 +28,10 @@ export function ClientDataFormAdvanced({
           <User className="w-5 h-5 text-primary" />
           Mandantendaten
         </CardTitle>
+        <CardDescription className="flex items-center gap-1.5 text-xs">
+          <ShieldCheck className="w-3.5 h-3.5 text-primary" />
+          Daten werden nur für diese Sitzung verwendet – keine Speicherung
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

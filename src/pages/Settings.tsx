@@ -9,8 +9,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { ArrowLeft, Building2, Save, Palette, Moon, Sun, Monitor } from "lucide-react";
+import { ArrowLeft, Building2, Save, Palette, Moon, Sun, Monitor, Trash2, ShieldCheck } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { BrandingSettings } from "@/types/stbvv";
 import { saveBrandingSettings, loadBrandingSettings } from "@/utils/brandingStorage";
@@ -49,6 +61,39 @@ const Settings: React.FC = () => {
     saveBrandingSettings(settings);
     toast.success("Einstellungen gespeichert", {
       description: "Ihre Kanzlei-Daten wurden erfolgreich gespeichert.",
+    });
+  };
+
+  const handleDeleteAllData = () => {
+    // Get all keys that belong to our app
+    const keysToDelete = [
+      'stbvv_saved_clients',
+      'stbvv_document_archive',
+      'stbvv_document_tabs',
+      'stbvv_autosave_client',
+      'stbvv_branding_settings',
+    ];
+    
+    keysToDelete.forEach(key => {
+      localStorage.removeItem(key);
+    });
+    
+    // Reset settings state
+    setSettings({
+      companyName: '',
+      street: '',
+      postalCode: '',
+      city: '',
+      phone: '',
+      email: '',
+      taxNumber: '',
+      bankName: '',
+      iban: '',
+      bic: ''
+    });
+    
+    toast.success("Alle Daten gelöscht", {
+      description: "Alle lokal gespeicherten Daten wurden erfolgreich entfernt.",
     });
   };
 
@@ -250,6 +295,61 @@ const Settings: React.FC = () => {
                   <Save className="w-4 h-4 mr-2" />
                   Einstellungen speichern
                 </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Data Privacy Section */}
+          <Card className="border-destructive/30">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-destructive">
+                <ShieldCheck className="w-5 h-5" />
+                Datenschutz & Datenverwaltung
+              </CardTitle>
+              <CardDescription>
+                Verwalten Sie Ihre lokal gespeicherten Daten.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Alert>
+                <ShieldCheck className="h-4 w-4" />
+                <AlertTitle>DSGVO-Hinweis</AlertTitle>
+                <AlertDescription>
+                  Mandantendaten werden ausschließlich für die aktuelle Sitzung verwendet und nicht dauerhaft gespeichert. 
+                  Beim Schließen des Browsers oder Neuladen der Seite werden eingegebene Mandantendaten automatisch gelöscht.
+                  Nur Ihre Kanzlei-Branding-Einstellungen werden lokal gespeichert.
+                </AlertDescription>
+              </Alert>
+
+              <div className="pt-2">
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive" className="w-full md:w-auto">
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Alle lokalen Daten löschen
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Alle Daten löschen?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Dies wird alle lokal gespeicherten Daten unwiderruflich löschen, einschließlich:
+                        <ul className="list-disc list-inside mt-2 space-y-1">
+                          <li>Kanzlei-Branding-Einstellungen</li>
+                          <li>Archivierte Dokumente</li>
+                          <li>Gespeicherte Tabs</li>
+                          <li>Alle anderen App-Daten</li>
+                        </ul>
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Abbrechen</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleDeleteAllData} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                        Endgültig löschen
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             </CardContent>
           </Card>
