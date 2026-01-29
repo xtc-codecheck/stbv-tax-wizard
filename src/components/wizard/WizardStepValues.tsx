@@ -18,7 +18,8 @@ interface WizardStepValuesProps {
   positions: Position[];
   documentFee: number;
   includeVAT: boolean;
-  onUpdatePosition: (id: string, position: Position) => void;
+  // CHANGED: Now accepts a patch (Partial<Position>) instead of full Position
+  onUpdatePosition: (id: string, patch: Partial<Position>) => void;
   onUpdateDocumentFee: (fee: number) => void;
   onBack: () => void;
   onNext: () => void;
@@ -36,13 +37,11 @@ export function WizardStepValues({
   const totals = calculateTotal(positions, documentFee, includeVAT);
 
   const handleObjectValueChange = (id: string, value: string) => {
-    const position = positions.find(p => p.id === id);
-    if (!position) return;
-    
     // Handle German number format: remove thousand separators (.), replace decimal comma with dot
     const cleanedValue = value.replace(/\./g, '').replace(',', '.');
     const numValue = parseFloat(cleanedValue) || 0;
-    onUpdatePosition(id, { ...position, objectValue: numValue });
+    // Send as patch, not full object
+    onUpdatePosition(id, { objectValue: numValue });
   };
 
   const hasAllValues = positions.every(p => 

@@ -23,7 +23,9 @@ import { cn, formatCurrency } from '@/lib/utils';
 interface PositionCardProps {
   position: Position;
   index: number;
-  onUpdate: (id: string, position: Position) => void;
+  // CHANGED: Now accepts a patch (Partial<Position>) instead of full Position
+  // This prevents stale closures from overwriting other fields
+  onUpdate: (id: string, patch: Partial<Position>) => void;
   onRemove: (id: string) => void;
   onDuplicate: (id: string) => void;
   canMoveUp: boolean;
@@ -70,10 +72,11 @@ const PositionCard: React.FC<PositionCardProps> = ({
   const debouncedHours = useDebounce(localHours, 300);
   const debouncedFlatRate = useDebounce(localFlatRate, 300);
 
-  // Stable handleChange callback to prevent stale closures
+  // Stable handleChange callback - NOW SENDS PATCH instead of full object
+  // This is the key fix: we only send the changed field, not the entire position
   const handleChange = useCallback((field: keyof Position, value: any) => {
-    onUpdate(position.id, { ...position, [field]: value });
-  }, [position, onUpdate]);
+    onUpdate(position.id, { [field]: value });
+  }, [position.id, onUpdate]);
   
   // Update parent when debounced values change - ONLY if user was editing
   useEffect(() => {
@@ -171,7 +174,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
     }
   };
 
-  // handleChange is now defined via useCallback above (line 74)
+  // handleChange is now defined via useCallback above (line 73)
 
   const handleActivityChange = (activity: string) => {
     const preset = getActivityPreset(activity);
@@ -179,8 +182,8 @@ const PositionCard: React.FC<PositionCardProps> = ({
     // Save to smart defaults
     addRecentActivity(activity);
     
-    let updatedPosition = {
-      ...position,
+    // Build patch with activity and preset values
+    const patch: Partial<Position> = {
       activity,
       ...(preset && {
         tenthRate: { 
@@ -193,24 +196,15 @@ const PositionCard: React.FC<PositionCardProps> = ({
 
     // Spezielle Behandlung für bestimmte Aktivitäten
     if (activity === 'Prüfung Steuerbescheid') {
-      updatedPosition = {
-        ...updatedPosition,
-        billingType: 'hourly',
-        hourlyRate: 100,
-        hours: 1
-      };
+      patch.billingType = 'hourly';
+      patch.hourlyRate = 100;
+      patch.hours = 1;
     } else if (activity === 'Lohnbuchhaltung') {
-      updatedPosition = {
-        ...updatedPosition,
-        billingType: 'flatRate',
-        flatRate: 18
-      };
+      patch.billingType = 'flatRate';
+      patch.flatRate = 18;
     } else if (activity === 'Lohnabrechnung pro Arbeitnehmer (monatlich)') {
-      updatedPosition = {
-        ...updatedPosition,
-        billingType: 'flatRate',
-        flatRate: 15
-      };
+      patch.billingType = 'flatRate';
+      patch.flatRate = 15;
     } else if (
       activity.startsWith('Beratung') || 
       activity === 'Schriftliche Gutachten' ||
@@ -220,15 +214,13 @@ const PositionCard: React.FC<PositionCardProps> = ({
       activity === 'Betriebswirtschaftliche Beratung' ||
       activity === 'Finanzplanung und Liquiditätsplanung'
     ) {
-      updatedPosition = {
-        ...updatedPosition,
-        billingType: 'hourly',
-        hourlyRate: preset?.defaultTenthRate || 100,
-        hours: 1
-      };
+      patch.billingType = 'hourly';
+      patch.hourlyRate = preset?.defaultTenthRate || 100;
+      patch.hours = 1;
     }
 
-    onUpdate(position.id, updatedPosition);
+    // Send as patch, not full object
+    onUpdate(position.id, patch);
 
     // Clear validation error for activity
     setValidationErrors(prev => {
@@ -241,8 +233,8 @@ const PositionCard: React.FC<PositionCardProps> = ({
   const handleTenthRateChange = (numerator: string) => {
     const num = parseFloat(numerator) || 1;
     const denominator = preset?.rateType === 'twentieth' ? 20 : 10;
+    // Send as patch
     onUpdate(position.id, {
-      ...position,
       tenthRate: { numerator: num, denominator }
     });
   };

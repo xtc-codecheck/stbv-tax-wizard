@@ -18,7 +18,8 @@ interface PositionListProps {
   renderKey: number;
   isBulkMode: boolean;
   selectedPositionIds: string[];
-  onUpdatePosition: (id: string, position: Position) => void;
+  // CHANGED: Now accepts a patch (Partial<Position>) instead of full Position
+  onUpdatePosition: (id: string, patch: Partial<Position>) => void;
   onRemovePosition: (id: string) => void;
   onDuplicatePosition: (id: string) => void;
   onMovePosition: (id: string, direction: 'up' | 'down') => void;
