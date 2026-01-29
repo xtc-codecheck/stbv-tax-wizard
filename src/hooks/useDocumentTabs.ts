@@ -5,6 +5,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { DocumentTabData, DocumentTabsState, createEmptyTabData } from '@/types/documentTab';
+import { Position } from '@/types/stbvv';
 import { generateUniqueId } from '@/utils/idGenerator';
 import { getNextDocumentNumber } from '@/utils/documentNumber';
 import { STORAGE_KEYS } from '@/constants';
@@ -116,6 +117,26 @@ export function useDocumentTabs() {
     }));
   }, []);
 
+  // NEW: Functional updater for positions - prevents stale closure issues
+  // This ensures we always work on the latest state, not a snapshot from render
+  const updateTabPositions = useCallback((
+    tabId: string, 
+    updater: (prevPositions: Position[]) => Position[]
+  ) => {
+    setTabsState(prev => ({
+      ...prev,
+      tabs: prev.tabs.map(tab =>
+        tab.id === tabId
+          ? { 
+              ...tab, 
+              positions: updater(tab.positions), 
+              updatedAt: new Date().toISOString() 
+            }
+          : tab
+      ),
+    }));
+  }, []);
+
   // Rename a tab
   const renameTab = useCallback((tabId: string, newName: string) => {
     updateTab(tabId, { name: newName });
@@ -165,6 +186,7 @@ export function useDocumentTabs() {
     closeTab,
     switchTab,
     updateTab,
+    updateTabPositions,
     renameTab,
     duplicateTab,
     canAddTab,

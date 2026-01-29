@@ -37,7 +37,8 @@ interface GuidedWorkflowProps {
   onInvoiceDateChange: (date: Date) => void;
   onServicePeriodChange: (period: string) => void;
   onGeneratePDF: () => void;
-  onUpdatePosition: (id: string, position: Position) => void;
+  // CHANGED: Now accepts a patch (Partial<Position>) instead of full Position
+  onUpdatePosition: (id: string, patch: Partial<Position>) => void;
   
   // Close wizard
   onClose: () => void;

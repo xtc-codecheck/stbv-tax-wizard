@@ -48,6 +48,7 @@ const Index = () => {
     closeTab,
     switchTab,
     updateTab,
+    updateTabPositions,
     renameTab,
     duplicateTab,
     canAddTab,
@@ -65,11 +66,18 @@ const Index = () => {
   const invoiceDate = new Date(activeTab.invoiceDate);
   const servicePeriod = activeTab.servicePeriod;
 
-  // Setters that update the active tab
+  // setPositions - FIXED: Now uses functional updater to prevent stale closures
+  // When passed a function, it will use updateTabPositions which works on prev state
+  // When passed an array, it will use updateTab directly
   const setPositions = useCallback((newPositions: Position[] | ((prev: Position[]) => Position[])) => {
-    const value = typeof newPositions === 'function' ? newPositions(activeTab.positions) : newPositions;
-    updateTab(activeTabId, { positions: value });
-  }, [activeTabId, activeTab.positions, updateTab]);
+    if (typeof newPositions === 'function') {
+      // Functional update - uses updateTabPositions which operates on prev state
+      updateTabPositions(activeTabId, newPositions);
+    } else {
+      // Direct array - use updateTab
+      updateTab(activeTabId, { positions: newPositions });
+    }
+  }, [activeTabId, updateTab, updateTabPositions]);
 
   const setDocumentFee = useCallback((fee: number) => {
     updateTab(activeTabId, { documentFee: fee });
@@ -258,8 +266,8 @@ const Index = () => {
     }
   };
 
-  // Position management
-  const addPosition = () => {
+  // Position management - All using functional updates to prevent stale closures
+  const addPosition = useCallback(() => {
     const newPosition: Position = {
       id: generateUniqueId('pos'),
       activity: '',
@@ -274,45 +282,56 @@ const Index = () => {
       hours: 0,
       flatRate: 0,
     };
-    setPositions([...positions, newPosition]);
-  };
+    setPositions(prev => [...prev, newPosition]);
+  }, [setPositions]);
 
-  const duplicatePosition = (id: string) => {
-    const positionToDuplicate = positions.find((pos) => pos.id === id);
-    if (!positionToDuplicate) return;
-    const duplicatedPosition: Position = {
-      ...positionToDuplicate,
-      id: generateUniqueId('pos'),
-      activity: positionToDuplicate.activity + ' (Kopie)',
-    };
-    const index = positions.findIndex((pos) => pos.id === id);
-    const newPositions = [...positions];
-    newPositions.splice(index + 1, 0, duplicatedPosition);
-    setPositions(newPositions);
-    toast.success('Position dupliziert');
-  };
-
-  const updatePosition = (id: string, updatedPosition: Position) => {
-    setPositions(positions.map((pos) => (pos.id === id ? updatedPosition : pos)));
-  };
-
-  const removePosition = (id: string) => {
-    const positionName = positions.find((pos) => pos.id === id)?.activity || 'Position';
-    setPositions(positions.filter((pos) => pos.id !== id));
-    toast.success(`${positionName} gelöscht`, {
-      action: { label: 'Rückgängig', onClick: handleUndo },
+  const duplicatePosition = useCallback((id: string) => {
+    setPositions(prev => {
+      const positionToDuplicate = prev.find((pos) => pos.id === id);
+      if (!positionToDuplicate) return prev;
+      
+      const duplicatedPosition: Position = {
+        ...positionToDuplicate,
+        id: generateUniqueId('pos'),
+        activity: positionToDuplicate.activity + ' (Kopie)',
+      };
+      const index = prev.findIndex((pos) => pos.id === id);
+      const newPositions = [...prev];
+      newPositions.splice(index + 1, 0, duplicatedPosition);
+      return newPositions;
     });
-  };
+    toast.success('Position dupliziert');
+  }, [setPositions]);
 
-  const movePosition = (id: string, direction: 'up' | 'down') => {
-    const currentIndex = positions.findIndex((pos) => pos.id === id);
-    if (currentIndex === -1) return;
-    const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
-    if (newIndex < 0 || newIndex >= positions.length) return;
-    const newPositions = [...positions];
-    [newPositions[currentIndex], newPositions[newIndex]] = [newPositions[newIndex], newPositions[currentIndex]];
-    setPositions(newPositions);
-  };
+  // CRITICAL FIX: updatePosition now accepts a PATCH (Partial<Position>)
+  // This prevents stale closures from overwriting other fields
+  const updatePosition = useCallback((id: string, patch: Partial<Position>) => {
+    setPositions(prev => prev.map(pos => 
+      pos.id === id ? { ...pos, ...patch } : pos
+    ));
+  }, [setPositions]);
+
+  const removePosition = useCallback((id: string) => {
+    setPositions(prev => {
+      const positionName = prev.find((pos) => pos.id === id)?.activity || 'Position';
+      toast.success(`${positionName} gelöscht`, {
+        action: { label: 'Rückgängig', onClick: handleUndo },
+      });
+      return prev.filter((pos) => pos.id !== id);
+    });
+  }, [setPositions, handleUndo]);
+
+  const movePosition = useCallback((id: string, direction: 'up' | 'down') => {
+    setPositions(prev => {
+      const currentIndex = prev.findIndex((pos) => pos.id === id);
+      if (currentIndex === -1) return prev;
+      const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+      if (newIndex < 0 || newIndex >= prev.length) return prev;
+      const newPositions = [...prev];
+      [newPositions[currentIndex], newPositions[newIndex]] = [newPositions[newIndex], newPositions[currentIndex]];
+      return newPositions;
+    });
+  }, [setPositions]);
 
   const updateClientData = (field: keyof ClientData, value: string) => {
     setClientData((prev) => ({ ...prev, [field]: value }));
@@ -329,31 +348,35 @@ const Index = () => {
     setSelectedPositionIds((prev) => (selected ? [...prev, id] : prev.filter((pId) => pId !== id)));
   };
 
-  const handleBulkDelete = () => {
+  const handleBulkDelete = useCallback(() => {
     const deletedCount = selectedPositionIds.length;
-    setPositions(positions.filter((pos) => !selectedPositionIds.includes(pos.id)));
+    setPositions(prev => prev.filter((pos) => !selectedPositionIds.includes(pos.id)));
     setSelectedPositionIds([]);
     toast.success(`${deletedCount} Positionen gelöscht`, {
       action: { label: 'Rückgängig', onClick: handleUndo },
     });
-  };
+  }, [selectedPositionIds, setPositions, handleUndo]);
 
-  const handleBulkDuplicate = () => {
-    const selectedPositions = positions.filter((pos) => selectedPositionIds.includes(pos.id));
-    const duplicated = selectedPositions.map((pos) => ({
-      ...pos,
-      id: generateUniqueId('pos'),
-      activity: pos.activity + ' (Kopie)',
-    }));
-    setPositions([...positions, ...duplicated]);
+  const handleBulkDuplicate = useCallback(() => {
+    setPositions(prev => {
+      const selectedPositions = prev.filter((pos) => selectedPositionIds.includes(pos.id));
+      const duplicated = selectedPositions.map((pos) => ({
+        ...pos,
+        id: generateUniqueId('pos'),
+        activity: pos.activity + ' (Kopie)',
+      }));
+      return [...prev, ...duplicated];
+    });
+    toast.success(`${selectedPositionIds.length} Positionen dupliziert`);
     setSelectedPositionIds([]);
-    toast.success(`${duplicated.length} Positionen dupliziert`);
-  };
+  }, [selectedPositionIds, setPositions]);
 
-  const handleBulkChangeFeeTable = (feeTable: 'A' | 'B' | 'C' | 'D') => {
-    setPositions(positions.map((pos) => (selectedPositionIds.includes(pos.id) ? { ...pos, feeTable } : pos)));
+  const handleBulkChangeFeeTable = useCallback((feeTable: 'A' | 'B' | 'C' | 'D') => {
+    setPositions(prev => prev.map((pos) => 
+      selectedPositionIds.includes(pos.id) ? { ...pos, feeTable } : pos
+    ));
     toast.success(`Gebührentabelle für ${selectedPositionIds.length} Positionen geändert`);
-  };
+  }, [selectedPositionIds, setPositions]);
 
   const handleExitBulkMode = () => {
     setIsBulkMode(false);
