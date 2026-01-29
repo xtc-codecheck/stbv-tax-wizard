@@ -1,160 +1,145 @@
 
-# Bugfix-Plan: Race Condition bei Vorlage laden + Position hinzufügen
+Zielsetzung (kurz)
+- Kritischen Bug beheben: Beim Ändern einer Position werden andere Positionen “zurückgesetzt/überschrieben”.
+- Plan/Implementierungsreihenfolge anpassen: Erst Stabilität/Fix, danach Monetarisierung.
+- Monetarisierung: Kein Lovable Cloud Backend, sondern externe Supabase (Supabase Connection) als Backend-Basis.
 
-## Problemursache
+1) Reproduktion & Befund (bereits verifiziert)
+- Repro in Preview:
+  1. Vorlage laden (z.B. “Einkommensteuererklärung Privatperson (Arbeitnehmer)”).
+  2. In Position 1 “Gegenstandswert” setzen (z.B. 1234).
+  3. In Position 2 “Gegenstandswert” setzen (z.B. 2222).
+  4. Ergebnis: Wert von Position 1 verschwindet/reset (überschrieben).
+- Das ist der gleiche Bug-Kern wie zuvor (Race/Stale Update) – tritt jetzt aber schon beim normalen Editieren auf, nicht nur beim “Vorlage laden + Position hinzufügen”.
 
-Das Problem entsteht durch eine **Race Condition** zwischen dem Debounce-Mechanismus in `PositionCard.tsx` und dem Positions-State:
+2) Wahrscheinliche Root Cause (konkret im Code)
+Es gibt derzeit zwei zentrale Ursachen für “Überschreibt andere Positionen”:
 
-```text
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ ZEITABLAUF DES PROBLEMS                                                      │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ t=0ms:    Vorlage geladen → Positionen erhalten Werte (z.B. objectValue=100)│
-│ t=50ms:   PositionCards rendern mit localObjectValue=100                    │
-│ t=100ms:  Debounce-Timer starten (300ms Verzögerung)                        │
-│ t=200ms:  Benutzer klickt "Position hinzufügen"                             │
-│ t=200ms:  Neue Position wird an Array angehängt                             │
-│ t=400ms:  DEBOUNCE FEUERT! Alte useEffect prüft:                            │
-│           → debouncedObjectValue (100) !== position.objectValue (???)       │
-│           → Veraltete Closure-Referenz führt zu handleChange mit 0          │
-│ t=400ms:  Alle Positionen werden überschrieben!                             │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
+2.1 Stale-State durch nicht-funktionale Updates / Closure-Snapshots
+- In `src/pages/Index.tsx` wird `updatePosition` aktuell so gemacht:
+  - `setPositions(positions.map(...))`
+- Das Problem: Durch Debounce in `PositionCard` feuern Updates zeitversetzt. Wenn ein Debounce-Update später mit einer älteren Funktions-/State-Referenz feuert, wird das Positions-Array aus einem alten Snapshot wieder “zurückgeschrieben” → andere Felder/Positionen verlieren ihre neueren Werte.
 
-## Lösungsstrategie
+2.2 “Full replace” statt Patch-Update
+- `PositionCard` ruft häufig `onUpdate(position.id, { ...position, [field]: value })` auf (also kompletten Position-Record).
+- Wenn `position` in der Card nicht mehr aktuell ist (stale Props während Debounce), dann wird ein “alter” kompletter Datensatz zurückgespeichert und überschreibt neuere Änderungen an derselben Position oder anderer Logik, die kurz zuvor stattgefunden hat.
 
-Ich empfehle einen **zweistufigen Fix**, der die Race Condition vollständig eliminiert:
+3) Korrigierte Bugfix-Strategie (robust, priorisiert)
+Wichtig: Der bisherige Fix mit `isEditing*` ist gut gegen Template/Add-Race, aber nicht ausreichend gegen “stale snapshot overwrites”. Wir brauchen jetzt einen State-Update-Pfad, der unabhängig vom Zeitpunkt immer auf dem aktuellsten Stand arbeitet.
 
----
+3.1 Positions-Updates nur noch als Patch (Partial Update)
+- API-Änderung: `onUpdatePosition(id, patch)` statt `onUpdatePosition(id, fullPosition)`
+  - Patch-Beispiele: `{ objectValue: 1234 }`, `{ billingType: 'hourly', hourlyRate: 100, hours: 1 }`
+- Vorteil: Selbst wenn die Card “alt” ist, überschreibt sie nicht unbeteiligte Felder mit alten Defaults/Nullen.
 
-### Schritt 1: Debounce-Effects mit korrekten Dependencies absichern
+3.2 Parent-Reducer-Logik: immer funktional, immer auf “prev”
+- In `Index.tsx` und überall, wo `positions` geändert wird:
+  - `setPositions(prev => prev.map(...))`, `setPositions(prev => [...prev, newPos])`, etc.
+- Damit werden Debounce-Aufrufe und schnell aufeinanderfolgende Updates korrekt zusammengeführt.
 
-**Datei:** `src/components/PositionCard.tsx`
+3.3 “setPositions” muss wirklich functional sein (Tab-Architektur berücksichtigen)
+- In `Index.tsx` ist `setPositions` aktuell ein Wrapper, der bei Funktions-Updates `newPositions(activeTab.positions)` verwendet.
+- Das ist wieder ein Snapshot-Risiko, weil `activeTab.positions` ebenfalls aus dem Render/Closure kommt.
+- Fix: `useDocumentTabs` bekommt eine neue Update-Funktion, die innerhalb von `setTabsState(prev => ...)` Positions-Updates funktional am echten `prev` ausführt, z.B.:
+  - `updateTabPositions(tabId, updaterFn)`
+  - oder `updateTabWith(tabId, (tab) => ({ ...tab, positions: ... }))`
 
-Die `useEffect`-Hooks für debounced Updates haben unvollständige Dependencies. Sie referenzieren `position.objectValue`, aber haben es nicht in der Dependency-Liste.
+4) Geplante Code-Änderungen (Dateien & Reihenfolge)
+Phase A: Stabilitäts-Fix (sofort, blocker)
+A1) `src/hooks/useDocumentTabs.ts`
+- Neue Helper-Funktion hinzufügen:
+  - `updateTabPositions(tabId, updater: (prevPositions: Position[]) => Position[])`
+  - Umsetzung über `setTabsState(prev => ...)`, damit “prev” garantiert aktuell ist.
+- Optional: generischer `updateTabWith(tabId, updater: (prevTab: DocumentTabData) => DocumentTabData)` für zukünftige Features.
 
-**Aktueller problematischer Code:**
-```typescript
-useEffect(() => {
-  if (debouncedObjectValue !== position.objectValue) {
-    handleChange('objectValue', debouncedObjectValue);
-  }
-}, [debouncedObjectValue]); // ← PROBLEM: position.objectValue fehlt!
-```
+A2) `src/pages/Index.tsx`
+- `setPositions` umstellen:
+  - Wenn Array: `updateTab(activeTabId, { positions: array })`
+  - Wenn Function: `updateTabPositions(activeTabId, fn)`
+- Alle Positions-Manipulationen (add/duplicate/remove/move/bulk/reorder/loadTemplate) auf funktionale Updates umstellen, z.B.:
+  - `addPosition`: `setPositions(prev => [...prev, newPosition])`
+  - `updatePosition`: `setPositions(prev => prev.map(p => p.id === id ? { ...p, ...patch } : p))`
+  - `remove`: `setPositions(prev => prev.filter(...))`
+  - `bulk`: ebenfalls `prev => ...`
+- `updatePosition` als `useCallback` stabilisieren (reduziert Re-Renders und Debounce-Stale).
 
-**Lösung:**
-```typescript
-useEffect(() => {
-  if (debouncedObjectValue !== position.objectValue) {
-    handleChange('objectValue', debouncedObjectValue);
-  }
-}, [debouncedObjectValue, position.objectValue, handleChange]);
-```
+A3) `src/components/PositionCard.tsx`
+- `onUpdate` Signatur ändern auf Patch:
+  - von `(id, position: Position)` zu `(id, patch: Partial<Position>)`
+- Alle Stellen von `onUpdate(position.id, { ...position, ... })` auf Patch umstellen:
+  - Debounced numeric updates: `handleChange('objectValue', v)` soll `onUpdate(position.id, { objectValue: v })` senden
+  - `handleActivityChange`: Patch mit allen Feldern, die sich ändern (activity, tenthRate, feeTable, billingType, hourlyRate/hours/flatRate etc.)
+  - `handleTenthRateChange`: Patch `{ tenthRate: ... }`
+- `isEditing*` Mechanik kann bleiben (schützt vor “externen Sync überschreibt User-Eingabe”), aber die Hauptsicherheit kommt ab jetzt aus “functional + patch”.
 
-Gleiches für `debouncedHourlyRate`, `debouncedHours`, und `debouncedFlatRate`.
+A4) Weitere Call-Sites anpassen (TypeScript Compile Fix)
+- `src/components/calculator/PositionList.tsx` (Props-Typen)
+- Wizard-Komponenten:
+  - `src/components/wizard/GuidedWorkflow.tsx`
+  - `src/components/wizard/WizardStepValues.tsx`
+  - und ggf. weitere, die `onUpdatePosition` nutzen
+- Ziel: überall Patch-Semantik, damit niemand mehr “Full replace” macht.
 
----
+A5) Schnelltest / Abnahmekriterien (manuell + optional Test)
+Manuelle “Must pass”-Checks:
+- Vorlage laden → Position 1 Wert ändern → Position 2 Wert ändern → beide Werte bleiben erhalten.
+- Mehrfach schnell tippen (Debounce) → keine anderen Positionen verlieren Werte.
+- Vorlage laden → neue Position hinzufügen → Werte bleiben stabil.
+- DnD reorder → danach Änderungen an einzelnen Positionen ändern nur diese Position.
+Optional (wenn sinnvoll): kleiner Unit-Test für “applyPatch”-Logik (wenn wir Hilfsfunktion extrahieren), ist aber nicht zwingend als Hotfix.
 
-### Schritt 2: handleChange als stabile Callback-Referenz
+Phase B: Monetarisierung (nachdem A grün ist) – angepasst für externe Supabase
+Wichtig: Momentan ist noch kein Supabase-Code im Repo (keine `@supabase/supabase-js` Dependency, keine `src/integrations/supabase`), daher wird das ein eigenständiger Implementierungsblock.
 
-**Datei:** `src/components/PositionCard.tsx`
+B1) Externe Supabase anbinden (statt Lovable Cloud)
+- Verwendung: “Supabase Connection” (externe Supabase)
+- Schritte:
+  - Projekt verbinden (URL + anon key)
+  - `@supabase/supabase-js` hinzufügen
+  - Supabase Client in `src/` anlegen (z.B. `src/integrations/supabase/client.ts`)
+  - Umgebungsvariablen korrekt konfigurieren (Vite: `VITE_...`)
 
-`handleChange` muss mit `useCallback` memoized werden, damit es eine stabile Referenz hat:
+B2) Auth + Basis-DB
+- Tabellen: profiles, subscriptions, usage_limits, (später) clients, custom_templates, document_archive
+- RLS Policies (sehr wichtig, weil Mandanten-/Abrechnungsdaten)
+- Rollenmodell (admin / user / kanzlei_admin)
 
-**Aktueller Code:**
-```typescript
-const handleChange = (field: keyof Position, value: any) => {
-  onUpdate(position.id, { ...position, [field]: value });
-};
-```
+B3) Stripe Billing (Abo: Free/Standard/Premium, optional Premium Plus)
+- Produkte/Preise:
+  - Standard: 9,99 EUR monatlich, jährlich -20%
+  - Premium: 19,99 EUR monatlich, jährlich -20%
+  - Free: technisch “kein Stripe Abo”, aber Plan=free in DB
+  - Premium Plus: 49,99 EUR (optional als separate Phase, erst wenn Basis sauber läuft)
+- Webhook-Verarbeitung:
+  - Empfehlung: über Supabase Edge Functions im externen Supabase Projekt (oder alternativ eigener kleiner Server).
+  - Speichert Subscription-Status in `subscriptions` Tabelle.
+- Customer Portal:
+  - Stripe Customer Portal für Kündigung/Planwechsel.
+- Feature-Gating im Frontend:
+  - `useSubscription()` Hook
+  - Guards für Export-Limits, Template-Limits, Tabs, Mandanten-Datenbank etc.
 
-**Lösung:**
-```typescript
-const handleChange = useCallback((field: keyof Position, value: any) => {
-  onUpdate(position.id, { ...position, [field]: value });
-}, [position, onUpdate]);
-```
+B4) Kundenbereich + Adminbereich
+- Kundenbereich (Account/Billing): Abo-Status, Rechnungen/Portal-Link, Planwechsel
+- Adminbereich: User-Übersicht, Subscription-Status, ggf. Support-Tools
 
----
+5) Überarbeitete Implementierungs-Reihenfolge (wichtig)
+1. Phase A komplett: Positions-Update-Bug (Patch + functional updates + tab-safe updater).
+2. Stabilitätsprüfung end-to-end (inkl. Template, Add Position, mehrere Änderungen hintereinander, DnD, Wizard).
+3. Externe Supabase Verbindung + Auth Skeleton (Login/Register + protected routes).
+4. Subscription Datenmodell + `useSubscription` + Feature-Gating im UI (noch ohne Stripe “echte Zahlungen”, aber Plan-States).
+5. Stripe Integration (Checkout + Webhooks + Customer Portal) auf externer Supabase.
+6. Mandanten-Datenbank (Premium), Dokument-Archiv, weitere Premium-Funktionen.
+7. Optional Premium Plus (Multi-User/Kanzlei, SEPA/Lastschrift nur, wenn Stripe Setup und rechtliche/operative Anforderungen final geklärt sind).
 
-### Schritt 3: Guard gegen stale Debounce-Werte
+6) Definition of Done (Phase A)
+- Einzelne Feldänderung in einer Position darf niemals andere Positionen ändern oder zurücksetzen.
+- Das gilt unabhängig von:
+  - vorher Vorlage geladen,
+  - neue Position hinzugefügt,
+  - schnelles Tippen (Debounce),
+  - Reihenfolge geändert (DnD),
+  - Wizard an/aus.
 
-**Datei:** `src/components/PositionCard.tsx`
-
-Zusätzlicher Schutz: Prüfen ob der lokale Wert wirklich vom Benutzer geändert wurde und nicht durch externe Prop-Änderung:
-
-```typescript
-// Tracking ob der User den Wert aktiv editiert
-const [isUserEditing, setIsUserEditing] = useState(false);
-
-useEffect(() => {
-  // Nur updaten wenn der User editiert hat UND Wert sich unterscheidet
-  if (isUserEditing && debouncedObjectValue !== position.objectValue) {
-    handleChange('objectValue', debouncedObjectValue);
-    setIsUserEditing(false);
-  }
-}, [debouncedObjectValue, position.objectValue, handleChange, isUserEditing]);
-
-// Im Input onChange:
-onChange={(e) => {
-  setIsUserEditing(true); // ← User editiert aktiv
-  setLocalObjectValue(value);
-}}
-```
-
----
-
-### Schritt 4: Sync-Effects vor Debounce-Effects priorisieren
-
-**Datei:** `src/components/PositionCard.tsx`
-
-Die "Sync from props" Effects sollten den lokalen State und die Debounce-Referenz zurücksetzen, **bevor** das Debounce feuert:
-
-```typescript
-// Sync local state when position changes from external source
-useEffect(() => {
-  // Nur synchronisieren, wenn der Wert extern geändert wurde
-  if (!isUserEditing && position.objectValue !== localObjectValue) {
-    setLocalObjectValue(position.objectValue);
-  }
-}, [position.objectValue, isUserEditing]);
-```
-
----
-
-## Zusammenfassung der Änderungen
-
-| Datei | Änderung |
-|-------|----------|
-| `src/components/PositionCard.tsx` | useCallback für `handleChange` |
-| `src/components/PositionCard.tsx` | Vollständige Dependencies in Debounce-Effects |
-| `src/components/PositionCard.tsx` | `isUserEditing` Flag zur Unterscheidung von User vs. External Updates |
-| `src/components/PositionCard.tsx` | Verbesserte Sync-Logik für Props-to-State |
-
----
-
-## Erwartetes Ergebnis
-
-Nach dem Fix:
-- Vorlage laden → Positionen erhalten korrekte Werte
-- Position hinzufügen → Neue Position wird angehängt, bestehende bleiben unverändert
-- Debounce-Timer feuern nur, wenn der Benutzer aktiv einen Wert geändert hat
-- Keine Race Conditions mehr zwischen Template-Laden und Position-Hinzufügen
-
----
-
-## Technische Details
-
-### Warum passiert das überhaupt?
-
-1. **React Closures**: Wenn `setPositions([...positions, newPosition])` aufgerufen wird, enthält `positions` die aktuelle Referenz. Aber die Debounce-Timer in den PositionCards haben noch alte Closures.
-
-2. **Debounce-Timing**: Der 300ms Debounce ist lang genug, dass ein Benutzer in dieser Zeit eine neue Position hinzufügen kann.
-
-3. **Fehlende Dependencies**: Die ESLint-Regel `react-hooks/exhaustive-deps` würde diese fehlenden Dependencies eigentlich anmahnen.
-
-### Alternative Lösungen (nicht empfohlen)
-
-- Template-Loading mit Debounce-Cancel → Zu komplex
-- Alle Debounces entfernen → Performance-Probleme bei großen Listen
-- Positions-ID als Debounce-Key → Funktioniert nicht für bestehende Positionen
+Hinweis zur externen Supabase Anforderung
+- Ich plane die Monetarisierung explizit mit “Supabase Connection” (externe Supabase), ohne Lovable Cloud Backend. Das beeinflusst vor allem: Deployment/Hosting von Webhooks/Edge Functions und das Setup der Datenbank/RLS in eurem Supabase Projekt.
