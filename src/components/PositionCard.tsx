@@ -55,6 +55,12 @@ const PositionCard: React.FC<PositionCardProps> = ({
   const [localHours, setLocalHours] = useState(position.hours || 0);
   const [localFlatRate, setLocalFlatRate] = useState(position.flatRate || 0);
   
+  // Tracking whether user is actively editing (prevents stale debounce from overwriting external changes)
+  const [isEditingObjectValue, setIsEditingObjectValue] = useState(false);
+  const [isEditingHourlyRate, setIsEditingHourlyRate] = useState(false);
+  const [isEditingHours, setIsEditingHours] = useState(false);
+  const [isEditingFlatRate, setIsEditingFlatRate] = useState(false);
+  
   // Validation states
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
@@ -63,48 +69,66 @@ const PositionCard: React.FC<PositionCardProps> = ({
   const debouncedHourlyRate = useDebounce(localHourlyRate, 300);
   const debouncedHours = useDebounce(localHours, 300);
   const debouncedFlatRate = useDebounce(localFlatRate, 300);
+
+  // Stable handleChange callback to prevent stale closures
+  const handleChange = useCallback((field: keyof Position, value: any) => {
+    onUpdate(position.id, { ...position, [field]: value });
+  }, [position, onUpdate]);
   
-  // Update parent when debounced values change
+  // Update parent when debounced values change - ONLY if user was editing
   useEffect(() => {
-    if (debouncedObjectValue !== position.objectValue) {
+    if (isEditingObjectValue && debouncedObjectValue !== position.objectValue) {
       handleChange('objectValue', debouncedObjectValue);
+      setIsEditingObjectValue(false);
     }
-  }, [debouncedObjectValue]);
+  }, [debouncedObjectValue, position.objectValue, handleChange, isEditingObjectValue]);
   
   useEffect(() => {
-    if (debouncedHourlyRate !== position.hourlyRate) {
+    if (isEditingHourlyRate && debouncedHourlyRate !== position.hourlyRate) {
       handleChange('hourlyRate', debouncedHourlyRate);
+      setIsEditingHourlyRate(false);
     }
-  }, [debouncedHourlyRate]);
+  }, [debouncedHourlyRate, position.hourlyRate, handleChange, isEditingHourlyRate]);
   
   useEffect(() => {
-    if (debouncedHours !== position.hours) {
+    if (isEditingHours && debouncedHours !== position.hours) {
       handleChange('hours', debouncedHours);
+      setIsEditingHours(false);
     }
-  }, [debouncedHours]);
+  }, [debouncedHours, position.hours, handleChange, isEditingHours]);
   
   useEffect(() => {
-    if (debouncedFlatRate !== position.flatRate) {
+    if (isEditingFlatRate && debouncedFlatRate !== position.flatRate) {
       handleChange('flatRate', debouncedFlatRate);
+      setIsEditingFlatRate(false);
     }
-  }, [debouncedFlatRate]);
+  }, [debouncedFlatRate, position.flatRate, handleChange, isEditingFlatRate]);
   
-  // Sync local state when position changes from external source
+  // Sync local state when position changes from external source (e.g., template loading)
+  // Only sync if user is NOT actively editing that field
   useEffect(() => {
-    setLocalObjectValue(position.objectValue);
-  }, [position.objectValue]);
-  
-  useEffect(() => {
-    setLocalHourlyRate(position.hourlyRate || 0);
-  }, [position.hourlyRate]);
-  
-  useEffect(() => {
-    setLocalHours(position.hours || 0);
-  }, [position.hours]);
+    if (!isEditingObjectValue && position.objectValue !== localObjectValue) {
+      setLocalObjectValue(position.objectValue);
+    }
+  }, [position.objectValue, isEditingObjectValue, localObjectValue]);
   
   useEffect(() => {
-    setLocalFlatRate(position.flatRate || 0);
-  }, [position.flatRate]);
+    if (!isEditingHourlyRate && (position.hourlyRate || 0) !== localHourlyRate) {
+      setLocalHourlyRate(position.hourlyRate || 0);
+    }
+  }, [position.hourlyRate, isEditingHourlyRate, localHourlyRate]);
+  
+  useEffect(() => {
+    if (!isEditingHours && (position.hours || 0) !== localHours) {
+      setLocalHours(position.hours || 0);
+    }
+  }, [position.hours, isEditingHours, localHours]);
+  
+  useEffect(() => {
+    if (!isEditingFlatRate && (position.flatRate || 0) !== localFlatRate) {
+      setLocalFlatRate(position.flatRate || 0);
+    }
+  }, [position.flatRate, isEditingFlatRate, localFlatRate]);
   
   const {
     attributes,
@@ -147,9 +171,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
     }
   };
 
-  const handleChange = (field: keyof Position, value: any) => {
-    onUpdate(position.id, { ...position, [field]: value });
-  };
+  // handleChange is now defined via useCallback above (line 74)
 
   const handleActivityChange = (activity: string) => {
     const preset = getActivityPreset(activity);
@@ -227,6 +249,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 
   // Smart defaults: Save hourly rate when changed
   const handleHourlyRateChange = (value: number) => {
+    setIsEditingHourlyRate(true); // Mark as user editing
     setLocalHourlyRate(value);
     if (value > 0) {
       updateSmartDefaults({ lastHourlyRate: value });
@@ -418,6 +441,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
                   value={localObjectValue === 0 ? '' : localObjectValue}
                   onChange={(e) => {
                     const value = Math.max(0, parseFloat(e.target.value) || 0);
+                    setIsEditingObjectValue(true); // Mark as user editing
                     setLocalObjectValue(value);
                     handleFieldChange('objectValue', value);
                   }}
@@ -441,7 +465,10 @@ const PositionCard: React.FC<PositionCardProps> = ({
                       Der Gegenstandswert für "{position.activity}" beträgt gemäß StBVV mindestens{' '}
                       <span className="font-semibold">{preset.minObjectValue.toLocaleString('de-DE')} €</span>.
                       <button 
-                        onClick={() => setLocalObjectValue(preset.minObjectValue!)}
+                        onClick={() => {
+                          setIsEditingObjectValue(true);
+                          setLocalObjectValue(preset.minObjectValue!);
+                        }}
                         className="block mt-1 text-amber-700 hover:text-amber-900 underline font-medium"
                       >
                         Mindestgegenstandswert übernehmen
@@ -486,6 +513,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
                   value={localFlatRate === 0 ? '' : localFlatRate}
                   onChange={(e) => {
                     const value = Math.max(0, parseFloat(e.target.value) || 0);
+                    setIsEditingFlatRate(true); // Mark as user editing
                     setLocalFlatRate(value);
                     handleFieldChange('flatRate', value);
                   }}
@@ -640,6 +668,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
                     value={localHours === 0 ? '' : localHours}
                     onChange={(e) => {
                       const value = Math.max(0, parseFloat(e.target.value) || 0);
+                      setIsEditingHours(true); // Mark as user editing
                       setLocalHours(value);
                       handleFieldChange('hours', value);
                     }}
