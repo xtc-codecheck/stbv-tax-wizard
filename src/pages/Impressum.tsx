@@ -1,11 +1,17 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import { Helmet } from "react-helmet";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Impressum = () => {
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Impressum – StBVV-Rechner</title>
+        <meta name="description" content="Impressum der Finanzgeflüster GmbH – Betreiber des StBVV-Rechners." />
+        <link rel="canonical" href="https://stbv-tax-wizard.lovable.app/impressum" />
+      </Helmet>
       <div className="container max-w-4xl mx-auto px-4 py-8">
         <Link to="/">
           <Button variant="ghost" className="mb-6">

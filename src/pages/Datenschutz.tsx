@@ -1,11 +1,17 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import { Helmet } from "react-helmet";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Datenschutz = () => {
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Datenschutzerklärung – StBVV-Rechner</title>
+        <meta name="description" content="Datenschutzerklärung des StBVV-Rechners. Informationen zur Datenverarbeitung, lokaler Speicherung und Ihren Rechten." />
+        <link rel="canonical" href="https://stbv-tax-wizard.lovable.app/datenschutz" />
+      </Helmet>
       <div className="container max-w-4xl mx-auto px-4 py-8">
         <Link to="/">
           <Button variant="ghost" className="mb-6">
