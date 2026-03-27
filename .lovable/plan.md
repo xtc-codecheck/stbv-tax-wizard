@@ -1,145 +1,138 @@
 
-Zielsetzung (kurz)
-- Kritischen Bug beheben: Beim Ändern einer Position werden andere Positionen “zurückgesetzt/überschrieben”.
-- Plan/Implementierungsreihenfolge anpassen: Erst Stabilität/Fix, danach Monetarisierung.
-- Monetarisierung: Kein Lovable Cloud Backend, sondern externe Supabase (Supabase Connection) als Backend-Basis.
 
-1) Reproduktion & Befund (bereits verifiziert)
-- Repro in Preview:
-  1. Vorlage laden (z.B. “Einkommensteuererklärung Privatperson (Arbeitnehmer)”).
-  2. In Position 1 “Gegenstandswert” setzen (z.B. 1234).
-  3. In Position 2 “Gegenstandswert” setzen (z.B. 2222).
-  4. Ergebnis: Wert von Position 1 verschwindet/reset (überschrieben).
-- Das ist der gleiche Bug-Kern wie zuvor (Race/Stale Update) – tritt jetzt aber schon beim normalen Editieren auf, nicht nur beim “Vorlage laden + Position hinzufügen”.
+# Vollständiger Seiten-Check: Performance, Recht, SEO & Produktion
 
-2) Wahrscheinliche Root Cause (konkret im Code)
-Es gibt derzeit zwei zentrale Ursachen für “Überschreibt andere Positionen”:
+## Befunde nach Kategorien
 
-2.1 Stale-State durch nicht-funktionale Updates / Closure-Snapshots
-- In `src/pages/Index.tsx` wird `updatePosition` aktuell so gemacht:
-  - `setPositions(positions.map(...))`
-- Das Problem: Durch Debounce in `PositionCard` feuern Updates zeitversetzt. Wenn ein Debounce-Update später mit einer älteren Funktions-/State-Referenz feuert, wird das Positions-Array aus einem alten Snapshot wieder “zurückgeschrieben” → andere Felder/Positionen verlieren ihre neueren Werte.
+---
 
-2.2 “Full replace” statt Patch-Update
-- `PositionCard` ruft häufig `onUpdate(position.id, { ...position, [field]: value })` auf (also kompletten Position-Record).
-- Wenn `position` in der Card nicht mehr aktuell ist (stale Props während Debounce), dann wird ein “alter” kompletter Datensatz zurückgespeichert und überschreibt neuere Änderungen an derselben Position oder anderer Logik, die kurz zuvor stattgefunden hat.
+### 1. PERFORMANCE
 
-3) Korrigierte Bugfix-Strategie (robust, priorisiert)
-Wichtig: Der bisherige Fix mit `isEditing*` ist gut gegen Template/Add-Race, aber nicht ausreichend gegen “stale snapshot overwrites”. Wir brauchen jetzt einen State-Update-Pfad, der unabhängig vom Zeitpunkt immer auf dem aktuellsten Stand arbeitet.
+**1.1 Kein Code-Splitting / Lazy Loading**
+- Alle 12+ Seiten werden synchron in `App.tsx` importiert (kein `React.lazy`).
+- `Index.tsx` allein ist 610 Zeilen mit ~15 Komponenten-Imports.
+- **Fix:** `React.lazy()` + `Suspense` fuer alle Seiten ausser Index. Reduziert Initial Bundle um geschaetzt 40-60%.
 
-3.1 Positions-Updates nur noch als Patch (Partial Update)
-- API-Änderung: `onUpdatePosition(id, patch)` statt `onUpdatePosition(id, fullPosition)`
-  - Patch-Beispiele: `{ objectValue: 1234 }`, `{ billingType: 'hourly', hourlyRate: 100, hours: 1 }`
-- Vorteil: Selbst wenn die Card “alt” ist, überschreibt sie nicht unbeteiligte Felder mit alten Defaults/Nullen.
+**1.2 Top-Level `await` in App.tsx**
+- Zeile 23-25: `const Dashboard = import.meta.env.DEV ? await import(...)` — Top-Level-Await blockiert das gesamte Modul-Parsing.
+- **Fix:** Durch `React.lazy` ersetzen oder bedingten dynamischen Import.
 
-3.2 Parent-Reducer-Logik: immer funktional, immer auf “prev”
-- In `Index.tsx` und überall, wo `positions` geändert wird:
-  - `setPositions(prev => prev.map(...))`, `setPositions(prev => [...prev, newPos])`, etc.
-- Damit werden Debounce-Aufrufe und schnell aufeinanderfolgende Updates korrekt zusammengeführt.
+**1.3 PositionCard: 746 Zeilen, 12 useEffects**
+- Trotz Patch-Fix immer noch ein komplexes Monolith-Komponent.
+- Jede Position erzeugt 4 Debounce-Timer + 8 Sync-Effects.
+- **Empfehlung:** Mittelfristig in Sub-Komponenten aufteilen (ObjectValueInput, HourlyInput, ActivitySelector).
 
-3.3 “setPositions” muss wirklich functional sein (Tab-Architektur berücksichtigen)
-- In `Index.tsx` ist `setPositions` aktuell ein Wrapper, der bei Funktions-Updates `newPositions(activeTab.positions)` verwendet.
-- Das ist wieder ein Snapshot-Risiko, weil `activeTab.positions` ebenfalls aus dem Render/Closure kommt.
-- Fix: `useDocumentTabs` bekommt eine neue Update-Funktion, die innerhalb von `setTabsState(prev => ...)` Positions-Updates funktional am echten `prev` ausführt, z.B.:
-  - `updateTabPositions(tabId, updaterFn)`
-  - oder `updateTabWith(tabId, (tab) => ({ ...tab, positions: ... }))`
+**1.4 Fehlende Virtualisierung**
+- Bei vielen Positionen (10+) werden alle PositionCards gerendert.
+- **Empfehlung (spaeter):** `react-window` oder aehnliches fuer sehr lange Listen.
 
-4) Geplante Code-Änderungen (Dateien & Reihenfolge)
-Phase A: Stabilitäts-Fix (sofort, blocker)
-A1) `src/hooks/useDocumentTabs.ts`
-- Neue Helper-Funktion hinzufügen:
-  - `updateTabPositions(tabId, updater: (prevPositions: Position[]) => Position[])`
-  - Umsetzung über `setTabsState(prev => ...)`, damit “prev” garantiert aktuell ist.
-- Optional: generischer `updateTabWith(tabId, updater: (prevTab: DocumentTabData) => DocumentTabData)` für zukünftige Features.
+---
 
-A2) `src/pages/Index.tsx`
-- `setPositions` umstellen:
-  - Wenn Array: `updateTab(activeTabId, { positions: array })`
-  - Wenn Function: `updateTabPositions(activeTabId, fn)`
-- Alle Positions-Manipulationen (add/duplicate/remove/move/bulk/reorder/loadTemplate) auf funktionale Updates umstellen, z.B.:
-  - `addPosition`: `setPositions(prev => [...prev, newPosition])`
-  - `updatePosition`: `setPositions(prev => prev.map(p => p.id === id ? { ...p, ...patch } : p))`
-  - `remove`: `setPositions(prev => prev.filter(...))`
-  - `bulk`: ebenfalls `prev => ...`
-- `updatePosition` als `useCallback` stabilisieren (reduziert Re-Renders und Debounce-Stale).
+### 2. SEO
 
-A3) `src/components/PositionCard.tsx`
-- `onUpdate` Signatur ändern auf Patch:
-  - von `(id, position: Position)` zu `(id, patch: Partial<Position>)`
-- Alle Stellen von `onUpdate(position.id, { ...position, ... })` auf Patch umstellen:
-  - Debounced numeric updates: `handleChange('objectValue', v)` soll `onUpdate(position.id, { objectValue: v })` senden
-  - `handleActivityChange`: Patch mit allen Feldern, die sich ändern (activity, tenthRate, feeTable, billingType, hourlyRate/hours/flatRate etc.)
-  - `handleTenthRateChange`: Patch `{ tenthRate: ... }`
-- `isEditing*` Mechanik kann bleiben (schützt vor “externen Sync überschreibt User-Eingabe”), aber die Hauptsicherheit kommt ab jetzt aus “functional + patch”.
+**2.1 Fehlende Sitemap**
+- Keine `sitemap.xml` vorhanden. Fuer Google-Indexierung essentiell.
+- **Fix:** Statische `public/sitemap.xml` mit allen 12 oeffentlichen Routen erstellen.
 
-A4) Weitere Call-Sites anpassen (TypeScript Compile Fix)
-- `src/components/calculator/PositionList.tsx` (Props-Typen)
-- Wizard-Komponenten:
-  - `src/components/wizard/GuidedWorkflow.tsx`
-  - `src/components/wizard/WizardStepValues.tsx`
-  - und ggf. weitere, die `onUpdatePosition` nutzen
-- Ziel: überall Patch-Semantik, damit niemand mehr “Full replace” macht.
+**2.2 Fehlende Canonical-URLs**
+- Nur `BlogArticle.tsx` hat `<link rel="canonical">`. Alle anderen Seiten fehlen.
+- **Fix:** Canonical-Tag auf jeder Seite via Helmet.
 
-A5) Schnelltest / Abnahmekriterien (manuell + optional Test)
-Manuelle “Must pass”-Checks:
-- Vorlage laden → Position 1 Wert ändern → Position 2 Wert ändern → beide Werte bleiben erhalten.
-- Mehrfach schnell tippen (Debounce) → keine anderen Positionen verlieren Werte.
-- Vorlage laden → neue Position hinzufügen → Werte bleiben stabil.
-- DnD reorder → danach Änderungen an einzelnen Positionen ändern nur diese Position.
-Optional (wenn sinnvoll): kleiner Unit-Test für “applyPatch”-Logik (wenn wir Hilfsfunktion extrahieren), ist aber nicht zwingend als Hotfix.
+**2.3 Keine Meta-Tags auf Impressum, Datenschutz, Settings, Index**
+- `Impressum.tsx`, `Datenschutz.tsx`, `Settings.tsx`, `Index.tsx` haben kein `<Helmet>` fuer SEO.
+- **Fix:** Helmet mit title + description auf allen Seiten.
 
-Phase B: Monetarisierung (nachdem A grün ist) – angepasst für externe Supabase
-Wichtig: Momentan ist noch kein Supabase-Code im Repo (keine `@supabase/supabase-js` Dependency, keine `src/integrations/supabase`), daher wird das ein eigenständiger Implementierungsblock.
+**2.4 robots.txt unvollstaendig**
+- Kein Sitemap-Verweis. Keine Disallow-Regeln fuer `/settings`, `/install`, `/dashboard`.
+- **Fix:** Sitemap-URL hinzufuegen, private Routen sperren.
 
-B1) Externe Supabase anbinden (statt Lovable Cloud)
-- Verwendung: “Supabase Connection” (externe Supabase)
-- Schritte:
-  - Projekt verbinden (URL + anon key)
-  - `@supabase/supabase-js` hinzufügen
-  - Supabase Client in `src/` anlegen (z.B. `src/integrations/supabase/client.ts`)
-  - Umgebungsvariablen korrekt konfigurieren (Vite: `VITE_...`)
+**2.5 NotFound-Seite**
+- Englischer Text ("Oops! Page not found"), nicht auf Deutsch.
+- Kein SEO-Tag, kein zurueck-Link mit Button.
+- **Fix:** Deutsch + Helmet + Design angleichen.
 
-B2) Auth + Basis-DB
-- Tabellen: profiles, subscriptions, usage_limits, (später) clients, custom_templates, document_archive
-- RLS Policies (sehr wichtig, weil Mandanten-/Abrechnungsdaten)
-- Rollenmodell (admin / user / kanzlei_admin)
+---
 
-B3) Stripe Billing (Abo: Free/Standard/Premium, optional Premium Plus)
-- Produkte/Preise:
-  - Standard: 9,99 EUR monatlich, jährlich -20%
-  - Premium: 19,99 EUR monatlich, jährlich -20%
-  - Free: technisch “kein Stripe Abo”, aber Plan=free in DB
-  - Premium Plus: 49,99 EUR (optional als separate Phase, erst wenn Basis sauber läuft)
-- Webhook-Verarbeitung:
-  - Empfehlung: über Supabase Edge Functions im externen Supabase Projekt (oder alternativ eigener kleiner Server).
-  - Speichert Subscription-Status in `subscriptions` Tabelle.
-- Customer Portal:
-  - Stripe Customer Portal für Kündigung/Planwechsel.
-- Feature-Gating im Frontend:
-  - `useSubscription()` Hook
-  - Guards für Export-Limits, Template-Limits, Tabs, Mandanten-Datenbank etc.
+### 3. RECHTLICHE AKTUALITAET
 
-B4) Kundenbereich + Adminbereich
-- Kundenbereich (Account/Billing): Abo-Status, Rechnungen/Portal-Link, Planwechsel
-- Adminbereich: User-Übersicht, Subscription-Status, ggf. Support-Tools
+**3.1 StBVV-Version: "2025" mit effectiveDate "2025-07-01"**
+- Die Fuenfte Aenderungsverordnung tritt erst am 01.07.2025 in Kraft. Aktuelles Datum ist 27.03.2026.
+- Die im Code hinterlegte Version und Gebuehrentabellen sind korrekt aktuell.
+- **Status: OK** — Die Tabellen A-D sind auf Stand 2025 und somit gueltig.
 
-5) Überarbeitete Implementierungs-Reihenfolge (wichtig)
-1. Phase A komplett: Positions-Update-Bug (Patch + functional updates + tab-safe updater).
-2. Stabilitätsprüfung end-to-end (inkl. Template, Add Position, mehrere Änderungen hintereinander, DnD, Wizard).
-3. Externe Supabase Verbindung + Auth Skeleton (Login/Register + protected routes).
-4. Subscription Datenmodell + `useSubscription` + Feature-Gating im UI (noch ohne Stripe “echte Zahlungen”, aber Plan-States).
-5. Stripe Integration (Checkout + Webhooks + Customer Portal) auf externer Supabase.
-6. Mandanten-Datenbank (Premium), Dokument-Archiv, weitere Premium-Funktionen.
-7. Optional Premium Plus (Multi-User/Kanzlei, SEPA/Lastschrift nur, wenn Stripe Setup und rechtliche/operative Anforderungen final geklärt sind).
+**3.2 Impressum**
+- Enthaelt: Firma, Adresse, Kontakt, USt-ID, Registergericht, Verantwortlicher nach § 55 RStV, OS-Plattform, Streitschlichtung.
+- **PROBLEM:** § 55 Abs. 2 RStV ist seit 2020 abgeloest durch § 18 Abs. 2 MStV (Medienstaatsvertrag).
+- **Fix:** "§ 55 Abs. 2 RStV" durch "§ 18 Abs. 2 MStV" ersetzen.
 
-6) Definition of Done (Phase A)
-- Einzelne Feldänderung in einer Position darf niemals andere Positionen ändern oder zurücksetzen.
-- Das gilt unabhängig von:
-  - vorher Vorlage geladen,
-  - neue Position hinzugefügt,
-  - schnelles Tippen (Debounce),
-  - Reihenfolge geändert (DnD),
-  - Wizard an/aus.
+**3.3 Datenschutzerklaerung**
+- Google AdSense erwaehnt Art. 6 Abs. 1 lit. f DSGVO als Rechtsgrundlage.
+- **ACHTUNG:** Fuer Werbe-Tracking/Cookies ist nach DSGVO + ePrivacy eigentlich Art. 6 Abs. 1 lit. a (Einwilligung) erforderlich, nicht "berechtigtes Interesse".
+- **Fix:** Rechtsgrundlage auf Einwilligung (lit. a) aendern, wenn AdSense tatsaechlich aktiv ist.
 
-Hinweis zur externen Supabase Anforderung
-- Ich plane die Monetarisierung explizit mit “Supabase Connection” (externe Supabase), ohne Lovable Cloud Backend. Das beeinflusst vor allem: Deployment/Hosting von Webhooks/Edge Functions und das Setup der Datenbank/RLS in eurem Supabase Projekt.
+**3.4 Cookie-Banner**
+- Banner bietet "Akzeptieren"/"Ablehnen", aber: bei "Ablehnen" werden keine Cookies/Tracker tatsaechlich blockiert — es wird nur der Banner-Status gespeichert.
+- **Risiko:** Wenn Google AdSense oder andere Tracker laufen, muss bei Ablehnung tatsaechlich das Laden verhindert werden.
+- **Empfehlung:** Consent-Management implementieren das AdSense nur bei Zustimmung laedt.
+
+---
+
+### 4. ACCESSIBILITY (a11y)
+
+**4.1 Fehlende aria-labels**
+- Seiten-Templates haben kaum `aria-label`, `role`, oder `aria-describedby`.
+- Hauptseite (`Index.tsx`) hat nur 1 aria-label (Mobile FAB).
+- **Fix:** Alle interaktiven Elemente mit sinnvollen Labels versehen, Landmarks (`main`, `nav`, `aside`) hinzufuegen.
+
+---
+
+### 5. UX / PRODUKTION
+
+**5.1 Keine Loading-States beim Seitenwechsel**
+- Kein Suspense-Fallback, kein Skeleton bei Navigation.
+- **Fix:** Suspense-Fallback mit Spinner/Skeleton fuer Lazy-Loaded Seiten.
+
+**5.2 Doppelte Toaster**
+- `App.tsx` rendert sowohl `<Toaster />` (shadcn) als auch `<Sonner />`. Das koennte zu doppelten Benachrichtigungen fuehren.
+- **Pruefung:** Wird ueberhaupt der shadcn-Toaster verwendet? Wenn nicht, entfernen.
+
+---
+
+## Implementierungsplan (priorisiert)
+
+### Schritt 1: Rechtliche Korrekturen (kritisch)
+- **Impressum.tsx:** "§ 55 Abs. 2 RStV" → "§ 18 Abs. 2 MStV"
+- **Datenschutz.tsx:** AdSense-Rechtsgrundlage korrigieren (lit. f → lit. a)
+
+### Schritt 2: SEO-Grundlagen
+- `public/sitemap.xml` erstellen (alle 12 Routen)
+- `public/robots.txt` erweitern (Sitemap-Verweis, Disallow /settings /install /dashboard)
+- Helmet mit title + description + canonical auf allen Seiten ohne SEO-Tags:
+  - `Index.tsx`, `Impressum.tsx`, `Datenschutz.tsx`, `Settings.tsx`, `InstallApp.tsx`, `NotFound.tsx`
+
+### Schritt 3: NotFound-Seite ueberarbeiten
+- Deutscher Text, Design angleichen (Card-Layout wie andere Seiten), Helmet
+
+### Schritt 4: Performance (Code-Splitting)
+- **App.tsx:** Alle Seiten (ausser Index) auf `React.lazy()` + `Suspense` umstellen
+- Top-Level-Await fuer Dashboard entfernen
+- Loading-Fallback-Komponente erstellen
+
+### Schritt 5: Cleanup
+- Pruefen ob shadcn `<Toaster />` genutzt wird; wenn nicht, entfernen (nur Sonner behalten)
+- Semantic HTML Landmarks (`<main>`, `<nav>`) auf Hauptseite
+
+### Dateien die geaendert werden
+
+| Datei | Aenderung |
+|-------|-----------|
+| `src/pages/Impressum.tsx` | § 55 RStV → § 18 MStV |
+| `src/pages/Datenschutz.tsx` | AdSense Rechtsgrundlage |
+| `public/sitemap.xml` | Neu erstellen |
+| `public/robots.txt` | Sitemap + Disallow |
+| `src/App.tsx` | React.lazy + Suspense, Top-Level-Await entfernen |
+| `src/pages/NotFound.tsx` | Deutsche Version + Design |
+| `src/pages/Index.tsx` | Helmet SEO-Tags |
+| `src/pages/Settings.tsx` | Helmet SEO-Tags |
+| `src/pages/InstallApp.tsx` | Helmet SEO-Tags |
+
