@@ -50,8 +50,8 @@ export class AppError extends Error {
     this.originalError = options.originalError;
 
     // Erhält den Stack Trace
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, this.constructor);
+    if ('captureStackTrace' in Error) {
+      (Error as any).captureStackTrace(this, this.constructor);
     }
   }
 

@@ -1,11 +1,17 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import { Helmet } from "react-helmet";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Datenschutz = () => {
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Datenschutzerklärung – StBVV-Rechner</title>
+        <meta name="description" content="Datenschutzerklärung des StBVV-Rechners. Informationen zur Datenverarbeitung, lokaler Speicherung und Ihren Rechten." />
+        <link rel="canonical" href="https://stbv-tax-wizard.lovable.app/datenschutz" />
+      </Helmet>
       <div className="container max-w-4xl mx-auto px-4 py-8">
         <Link to="/">
           <Button variant="ghost" className="mb-6">
@@ -211,9 +217,9 @@ const Datenschutz = () => {
                 einen Server von Google in den USA übertragen und dort gespeichert.
               </p>
               <p className="mb-4">
-                Die Nutzung von Google AdSense erfolgt im Interesse einer ansprechenden Darstellung 
-                unserer Online-Angebote. Dies stellt ein berechtigtes Interesse im Sinne von Art. 6 Abs. 1 
-                lit. f DSGVO dar.
+                Die Nutzung von Google AdSense erfolgt auf Grundlage Ihrer Einwilligung gemäß Art. 6 Abs. 1 
+                lit. a DSGVO. Sie können Ihre Einwilligung jederzeit über den Cookie-Banner oder die 
+                Browsereinstellungen widerrufen.
               </p>
               <p>
                 Weitere Informationen zu Google AdSense finden Sie in den{" "}

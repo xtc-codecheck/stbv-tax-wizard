@@ -12,3 +12,8 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /settings
+Disallow: /install
+Disallow: /dashboard
+
+Sitemap: https://stbv-tax-wizard.lovable.app/sitemap.xml

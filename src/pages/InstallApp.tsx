@@ -3,6 +3,7 @@
  */
 
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
@@ -43,6 +44,10 @@ export default function InstallApp() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/50">
+      <Helmet>
+        <title>App installieren – StBVV-Rechner</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
       {/* Header */}
       <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between px-4">

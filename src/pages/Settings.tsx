@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -105,6 +106,10 @@ const Settings: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/50 flex flex-col">
+      <Helmet>
+        <title>Einstellungen – StBVV-Rechner</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
       <div className="flex-1 p-6">
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Header */}
