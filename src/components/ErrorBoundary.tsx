@@ -83,7 +83,7 @@ class ErrorBoundary extends Component<Props, State> {
               )}
 
               {/* Expandable Details for Developers */}
-              {process.env.NODE_ENV === 'development' && this.state.errorInfo && (
+              {import.meta.env.DEV && this.state.errorInfo && (
                 <div className="border border-border rounded-md">
                   <button 
                     onClick={this.toggleDetails}

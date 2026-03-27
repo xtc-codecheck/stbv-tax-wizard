@@ -211,9 +211,9 @@ const Datenschutz = () => {
                 einen Server von Google in den USA übertragen und dort gespeichert.
               </p>
               <p className="mb-4">
-                Die Nutzung von Google AdSense erfolgt im Interesse einer ansprechenden Darstellung 
-                unserer Online-Angebote. Dies stellt ein berechtigtes Interesse im Sinne von Art. 6 Abs. 1 
-                lit. f DSGVO dar.
+                Die Nutzung von Google AdSense erfolgt auf Grundlage Ihrer Einwilligung gemäß Art. 6 Abs. 1 
+                lit. a DSGVO. Sie können Ihre Einwilligung jederzeit über den Cookie-Banner oder die 
+                Browsereinstellungen widerrufen.
               </p>
               <p>
                 Weitere Informationen zu Google AdSense finden Sie in den{" "}

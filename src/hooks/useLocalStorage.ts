@@ -73,7 +73,7 @@ export function useLocalStorage<T>(
   const [storedValue, setStoredValue] = useState<T>(readValue);
 
   // Debounce-Timer Ref
-  const debounceTimerRef = { current: null as NodeJS.Timeout | null };
+  const debounceTimerRef = { current: null as ReturnType<typeof setTimeout> | null };
 
   // Wert setzen
   const setValue = useCallback(

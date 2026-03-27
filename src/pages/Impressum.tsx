@@ -55,7 +55,7 @@ const Impressum = () => {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold mb-3">Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h2>
+              <h2 className="text-xl font-semibold mb-3">Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
               <div className="space-y-1">
                 <p>Alexandra Elias-Bourier</p>
                 <p>Dürerstr. 7</p>
