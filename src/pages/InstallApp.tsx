@@ -7,11 +7,10 @@ import { Helmet } from 'react-helmet';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import { PageLayout } from '@/components/PageLayout';
 import { 
   Download, 
   Smartphone, 
-  Wifi, 
   WifiOff,
   Zap, 
   Check, 
@@ -43,30 +42,11 @@ export default function InstallApp() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/50">
+    <PageLayout maxWidth="max-w-2xl" noCanonical>
       <Helmet>
         <title>App installieren – StBVV-Rechner</title>
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between px-4">
-          <div className="flex items-center gap-4">
-            <Link to="/">
-              <Button variant="ghost" size="icon">
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-            </Link>
-            <div className="flex items-center gap-2">
-              <Calculator className="h-5 w-5 text-primary" />
-              <span className="font-bold">STBVV-Rechner</span>
-            </div>
-          </div>
-          <ThemeToggle />
-        </div>
-      </header>
-
-      <main className="container max-w-2xl py-12 px-4">
         {/* Hero */}
         <div className="text-center mb-10">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-primary/10 mb-6">
@@ -203,11 +183,9 @@ export default function InstallApp() {
           </Card>
         )}
 
-        {/* Info */}
         <p className="text-center text-sm text-muted-foreground mt-8">
           Die App benötigt keine Berechtigung und speichert keine persönlichen Daten in der Cloud.
         </p>
-      </main>
-    </div>
+    </PageLayout>
   );
 }

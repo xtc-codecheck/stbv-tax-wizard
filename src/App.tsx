@@ -1,7 +1,6 @@
 import React, { Suspense } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { CookieBanner } from "./components/CookieBanner";
@@ -23,40 +22,36 @@ const BlogArticle = React.lazy(() => import("./pages/BlogArticle"));
 const NotFound = React.lazy(() => import("./pages/NotFound"));
 const Dashboard = React.lazy(() => import("./pages/Dashboard"));
 
-const queryClient = new QueryClient();
-
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <ErrorBoundary>
-        <BrowserRouter>
-          <Suspense fallback={<PageLoadingFallback />}>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/settings" element={<Settings />} />
-              {import.meta.env.DEV && (
-                <Route path="/dashboard" element={<Dashboard />} />
-              )}
-              <Route path="/install" element={<InstallApp />} />
-              <Route path="/ueber-den-rechner" element={<UeberDenRechner />} />
-              <Route path="/gebuhrenordnung" element={<Gebuhrenordnung />} />
-              <Route path="/faq" element={<FAQ />} />
-              <Route path="/rechtliche-grundlagen" element={<RechtlicheGrundlagen />} />
-              <Route path="/anleitungen" element={<Anleitungen />} />
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/blog/:slug" element={<BlogArticle />} />
-              <Route path="/impressum" element={<Impressum />} />
-              <Route path="/datenschutz" element={<Datenschutz />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
-          <CookieBanner />
-        </BrowserRouter>
-      </ErrorBoundary>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <TooltipProvider>
+    <Toaster />
+    <ErrorBoundary>
+      <BrowserRouter>
+        <Suspense fallback={<PageLoadingFallback />}>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/settings" element={<Settings />} />
+            {import.meta.env.DEV && (
+              <Route path="/dashboard" element={<Dashboard />} />
+            )}
+            <Route path="/install" element={<InstallApp />} />
+            <Route path="/ueber-den-rechner" element={<UeberDenRechner />} />
+            <Route path="/gebuhrenordnung" element={<Gebuhrenordnung />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/rechtliche-grundlagen" element={<RechtlicheGrundlagen />} />
+            <Route path="/anleitungen" element={<Anleitungen />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogArticle />} />
+            <Route path="/impressum" element={<Impressum />} />
+            <Route path="/datenschutz" element={<Datenschutz />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
+        <CookieBanner />
+      </BrowserRouter>
+    </ErrorBoundary>
+  </TooltipProvider>
 );
 
 export default App;

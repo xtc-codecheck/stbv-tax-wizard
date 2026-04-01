@@ -1,25 +1,18 @@
 import { Link } from "react-router-dom";
-import { ArrowLeft, Scale, BookText, Gavel } from "lucide-react";
+import { Scale, BookText, Gavel, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Helmet } from "react-helmet";
+import { PageLayout } from "@/components/PageLayout";
 
 const RechtlicheGrundlagen = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <PageLayout>
       <Helmet>
         <title>Rechtliche Grundlagen - StBVV Paragraphen und Steuerberatergesetz</title>
         <meta name="description" content="Rechtliche Grundlagen der Steuerberatervergütung: Wichtige Paragraphen der StBVV, Steuerberatergesetz, Rechtsprechung und gesetzliche Änderungen 2025." />
         <meta name="keywords" content="StBVV Paragraphen, Steuerberatergesetz, § 24 StBVV, § 11 StBVV, Rechtsprechung Steuerberater" />
       </Helmet>
-
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <Link to="/">
-          <Button variant="ghost" className="mb-6">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Zurück zum Rechner
-          </Button>
-        </Link>
 
         <div className="space-y-8">
           <div>
@@ -355,8 +348,7 @@ const RechtlicheGrundlagen = () => {
             </Link>
           </div>
         </div>
-      </div>
-    </div>
+    </PageLayout>
   );
 };
 

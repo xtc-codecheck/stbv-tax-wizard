@@ -1,5 +1,6 @@
 /**
  * CookieBanner - DSGVO-konformer Hinweis zur lokalen Datenspeicherung
+ * Mit Consent-Enforcement: AdSense wird nur bei Zustimmung geladen.
  * @module components/CookieBanner
  */
 
@@ -11,14 +12,55 @@ import { Link } from 'react-router-dom';
 
 const CONSENT_KEY = 'stbvv_cookie_consent';
 
+/**
+ * Prüft den aktuellen Consent-Status
+ */
+export function getConsentStatus(): 'accepted' | 'declined' | null {
+  try {
+    const value = localStorage.getItem(CONSENT_KEY);
+    if (value === 'accepted' || value === 'declined') return value;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Lädt AdSense nur wenn Consent erteilt wurde.
+ * Entfernt AdSense-Skripte bei Ablehnung.
+ */
+function enforceConsent(status: 'accepted' | 'declined' | null) {
+  const existingScript = document.querySelector('script[src*="adsbygoogle"]');
+  
+  if (status === 'accepted') {
+    // AdSense laden, falls nicht bereits vorhanden
+    if (!existingScript) {
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
+      script.setAttribute('data-ad-client', 'ca-pub-XXXXXXXXXXXXXXXX'); // Platzhalter
+      script.setAttribute('crossorigin', 'anonymous');
+      document.head.appendChild(script);
+    }
+  } else {
+    // Bei Ablehnung oder keinem Consent: AdSense entfernen
+    if (existingScript) {
+      existingScript.remove();
+    }
+    // Auch bereits geladene Ad-Iframes entfernen
+    document.querySelectorAll('ins.adsbygoogle').forEach(el => el.remove());
+  }
+}
+
 export function CookieBanner() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Check if user has already consented
-    const hasConsented = localStorage.getItem(CONSENT_KEY);
-    if (!hasConsented) {
-      // Small delay for smoother UX
+    const status = getConsentStatus();
+    // Enforce consent on mount
+    enforceConsent(status);
+    
+    if (!status) {
       const timer = setTimeout(() => setIsVisible(true), 500);
       return () => clearTimeout(timer);
     }
@@ -26,12 +68,13 @@ export function CookieBanner() {
 
   const handleAccept = () => {
     localStorage.setItem(CONSENT_KEY, 'accepted');
+    enforceConsent('accepted');
     setIsVisible(false);
   };
 
   const handleDecline = () => {
-    // Even if declined, we note the choice so banner doesn't reappear
     localStorage.setItem(CONSENT_KEY, 'declined');
+    enforceConsent('declined');
     setIsVisible(false);
   };
 

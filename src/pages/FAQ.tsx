@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
-import { ArrowLeft, HelpCircle } from "lucide-react";
+import { HelpCircle, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Helmet } from "react-helmet";
+import { PageLayout } from "@/components/PageLayout";
 import {
   Accordion,
   AccordionContent,
@@ -12,20 +13,12 @@ import {
 
 const FAQ = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <PageLayout>
       <Helmet>
         <title>FAQ - Häufige Fragen zur Steuerberatervergütung und StBVV 2025</title>
         <meta name="description" content="Antworten auf häufige Fragen zur Steuerberatervergütungsverordnung (StBVV): Gebührenberechnung, Zehntelsätze, Abrechnung und praktische Tipps für Steuerberater." />
         <meta name="keywords" content="StBVV FAQ, Steuerberater Fragen, Gebührenberechnung, Honorarvereinbarung, Abrechnung Steuerberater" />
       </Helmet>
-
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <Link to="/">
-          <Button variant="ghost" className="mb-6">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Zurück zum Rechner
-          </Button>
-        </Link>
 
         <div className="space-y-8">
           <div>
@@ -665,8 +658,7 @@ const FAQ = () => {
             </Link>
           </div>
         </div>
-      </div>
-    </div>
+    </PageLayout>
   );
 };
 

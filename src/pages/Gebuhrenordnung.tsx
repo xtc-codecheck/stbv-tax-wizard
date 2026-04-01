@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
-import { ArrowLeft, BookOpen, Calculator, Scale, TrendingUp } from "lucide-react";
+import { BookOpen, Calculator, Scale, TrendingUp, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Helmet } from "react-helmet";
+import { PageLayout } from "@/components/PageLayout";
 import {
   Accordion,
   AccordionContent,
@@ -12,20 +13,12 @@ import {
 
 const Gebuhrenordnung = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <PageLayout>
       <Helmet>
         <title>Steuerberatervergütungsverordnung (StBVV) 2025 erklärt</title>
         <meta name="description" content="Ausführliche Erklärung der StBVV 2025: Gebührentabellen A-D, Zehntelsätze, Auslagenpauschalen und alle wichtigen Paragraphen für Steuerberater verständlich erklärt." />
         <meta name="keywords" content="StBVV 2025, Gebührentabellen, Steuerberater Vergütung, Zehntelsätze, Auslagenpauschalen" />
       </Helmet>
-
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <Link to="/">
-          <Button variant="ghost" className="mb-6">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Zurück zum Rechner
-          </Button>
-        </Link>
 
         <div className="space-y-8">
           <div>
@@ -322,8 +315,7 @@ const Gebuhrenordnung = () => {
             </Link>
           </div>
         </div>
-      </div>
-    </div>
+    </PageLayout>
   );
 };
 

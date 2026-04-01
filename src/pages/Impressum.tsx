@@ -1,24 +1,14 @@
-import { Link } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
 import { Helmet } from "react-helmet";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageLayout } from "@/components/PageLayout";
 
 const Impressum = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <PageLayout>
       <Helmet>
         <title>Impressum – StBVV-Rechner</title>
         <meta name="description" content="Impressum der Finanzgeflüster GmbH – Betreiber des StBVV-Rechners." />
-        <link rel="canonical" href="https://stbv-tax-wizard.lovable.app/impressum" />
       </Helmet>
-      <div className="container max-w-4xl mx-auto px-4 py-8">
-        <Link to="/">
-          <Button variant="ghost" className="mb-6">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Zurück zum Rechner
-          </Button>
-        </Link>
 
         <Card>
           <CardHeader>
@@ -123,8 +113,7 @@ const Impressum = () => {
             </section>
           </CardContent>
         </Card>
-      </div>
-    </div>
+    </PageLayout>
   );
 };
 
