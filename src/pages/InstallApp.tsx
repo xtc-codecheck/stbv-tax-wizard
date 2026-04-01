@@ -7,15 +7,13 @@ import { Helmet } from 'react-helmet';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import { PageLayout } from '@/components/PageLayout';
 import { 
   Download, 
   Smartphone, 
-  Wifi, 
   WifiOff,
   Zap, 
   Check, 
-  ArrowLeft,
   Share,
   PlusSquare,
   Calculator
