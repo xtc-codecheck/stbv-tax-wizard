@@ -6,20 +6,12 @@ import { Helmet } from "react-helmet";
 
 const UeberDenRechner = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <PageLayout>
       <Helmet>
         <title>Über den STBVV Rechner 2025 - Steuerberater Vergütungsverordnung</title>
         <meta name="description" content="Professioneller STBVV-Rechner für Steuerberater zur korrekten Berechnung von Gebühren nach der Steuerberatervergütungsverordnung 2025. Kostenlos, präzise und gesetzeskonform." />
         <meta name="keywords" content="STBVV Rechner, Steuerberater Gebühren, Vergütungsverordnung 2025, Honorarberechnung" />
       </Helmet>
-
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <Link to="/">
-          <Button variant="ghost" className="mb-6">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Zurück zum Rechner
-          </Button>
-        </Link>
 
         <div className="space-y-8">
           <div>
