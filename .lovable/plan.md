@@ -1,138 +1,325 @@
 
 
-# Vollständiger Seiten-Check: Performance, Recht, SEO & Produktion
-
-## Befunde nach Kategorien
+# Vollstaendiger Systemcheck -- Ergebnisse und Verbesserungsplan
 
 ---
 
-### 1. PERFORMANCE
+## 1. CODEQUALITAET & SAUBERKEIT
 
-**1.1 Kein Code-Splitting / Lazy Loading**
-- Alle 12+ Seiten werden synchron in `App.tsx` importiert (kein `React.lazy`).
-- `Index.tsx` allein ist 610 Zeilen mit ~15 Komponenten-Imports.
-- **Fix:** `React.lazy()` + `Suspense` fuer alle Seiten ausser Index. Reduziert Initial Bundle um geschaetzt 40-60%.
+### Redundanzen
+- **Footer-Duplizierung (HOCH):** `Settings.tsx` (Z. 394-433) hat den kompletten Footer inline dupliziert statt `CalculatorFooter` zu verwenden. `Dashboard.tsx` (Z. 219-223) hat einen dritten, abweichenden Footer. Alle anderen Unterseiten (Impressum, FAQ, Anleitungen, etc.) haben gar keinen Footer.
+- **Toast-System doppelt (MITTEL):** `@radix-ui/react-toast` + shadcn Toaster-Infrastruktur (`toast.tsx`, `toaster.tsx`, `use-toast.ts`, `src/components/ui/use-toast.ts`) existiert komplett, wird aber nirgends verwendet. Das gesamte Projekt nutzt ausschliesslich `sonner`. Das sind 5 ungenutzte Dateien + eine npm-Dependency.
+- **Blog-Daten doppelt (MITTEL):** `src/pages/Blog.tsx` definiert Blog-Artikel inline (Z. 7-55) mit eigenem Format, waehrend `src/data/blogArticles.ts` (493 Zeilen) die vollstaendigen Artikel mit Schema-Validierung enthaelt. Die Blog-Seite sollte die zentrale Datenquelle nutzen.
 
-**1.2 Top-Level `await` in App.tsx**
-- Zeile 23-25: `const Dashboard = import.meta.env.DEV ? await import(...)` — Top-Level-Await blockiert das gesamte Modul-Parsing.
-- **Fix:** Durch `React.lazy` ersetzen oder bedingten dynamischen Import.
+### Veralteter Code
+- **`useClientDatabase.ts` (NIEDRIG):** Komplett deaktivierter Hook (alle No-Ops). Ist dokumentiert als "DSGVO-deaktiviert" -- korrekt so, aber koennte als Kommentar/TODO markiert werden statt leere Funktionen zu exportieren.
+- **`@tanstack/react-query` (NIEDRIG):** QueryClient wird in `App.tsx` erstellt, aber nirgendwo im Projekt werden `useQuery`/`useMutation` verwendet. Ungenutzte Dependency.
 
-**1.3 PositionCard: 746 Zeilen, 12 useEffects**
-- Trotz Patch-Fix immer noch ein komplexes Monolith-Komponent.
-- Jede Position erzeugt 4 Debounce-Timer + 8 Sync-Effects.
-- **Empfehlung:** Mittelfristig in Sub-Komponenten aufteilen (ObjectValueInput, HourlyInput, ActivitySelector).
-
-**1.4 Fehlende Virtualisierung**
-- Bei vielen Positionen (10+) werden alle PositionCards gerendert.
-- **Empfehlung (spaeter):** `react-window` oder aehnliches fuer sehr lange Listen.
+### Codekommentare & Konventionen
+- JSDoc-Header auf allen Modulen: gut
+- Mischung aus deutschen und englischen Kommentaren: akzeptabel fuer ein deutsches Produkt
+- `PositionCard.tsx` mit 746 Zeilen ist ein Monolith -- funktional stabil, aber schwer wartbar
 
 ---
 
-### 2. SEO
+## 2. ARCHITEKTUR & STRUKTUR
 
-**2.1 Fehlende Sitemap**
-- Keine `sitemap.xml` vorhanden. Fuer Google-Indexierung essentiell.
-- **Fix:** Statische `public/sitemap.xml` mit allen 12 oeffentlichen Routen erstellen.
+### Positiv
+- Klare Service-Layer-Trennung (StorageService, CalculatorService)
+- Zod-Schema-Validierung fuer Datenintegritaet
+- Hooks extrahiert (useDocumentTabs, useDocumentExport, useDocumentValidation, useHistory)
+- Barrel-Exports in allen Modulen
 
-**2.2 Fehlende Canonical-URLs**
-- Nur `BlogArticle.tsx` hat `<link rel="canonical">`. Alle anderen Seiten fehlen.
-- **Fix:** Canonical-Tag auf jeder Seite via Helmet.
-
-**2.3 Keine Meta-Tags auf Impressum, Datenschutz, Settings, Index**
-- `Impressum.tsx`, `Datenschutz.tsx`, `Settings.tsx`, `Index.tsx` haben kein `<Helmet>` fuer SEO.
-- **Fix:** Helmet mit title + description auf allen Seiten.
-
-**2.4 robots.txt unvollstaendig**
-- Kein Sitemap-Verweis. Keine Disallow-Regeln fuer `/settings`, `/install`, `/dashboard`.
-- **Fix:** Sitemap-URL hinzufuegen, private Routen sperren.
-
-**2.5 NotFound-Seite**
-- Englischer Text ("Oops! Page not found"), nicht auf Deutsch.
-- Kein SEO-Tag, kein zurueck-Link mit Button.
-- **Fix:** Deutsch + Helmet + Design angleichen.
+### Probleme
+- **Index.tsx als Mega-Orchestrator (MITTEL):** 616 Zeilen mit 20+ State-Variablen und 15+ Handlern. Die Tab-Wrapper (`setPositions`, `setClientData`, etc.) koennten in einen eigenen Hook extrahiert werden (`useActiveTabState`).
+- **Kein gemeinsames Layout (HOCH):** Jede Seite baut Header/Footer/Container selbst. Ein `Layout`-Wrapper mit `<Outlet/>` wuerde Konsistenz erzwingen und Code sparen.
+- **useHistory Bug (MITTEL):** `pushHistory` verwendet `currentIndex` aus der Closure, aber setzt dann `setCurrentIndex` innerhalb von `setHistory` -- das ist ein Stale-Closure-Risiko bei schnellen aufeinanderfolgenden Aufrufen.
 
 ---
 
-### 3. RECHTLICHE AKTUALITAET
+## 3. PERFORMANCE & EFFIZIENZ
 
-**3.1 StBVV-Version: "2025" mit effectiveDate "2025-07-01"**
-- Die Fuenfte Aenderungsverordnung tritt erst am 01.07.2025 in Kraft. Aktuelles Datum ist 27.03.2026.
-- Die im Code hinterlegte Version und Gebuehrentabellen sind korrekt aktuell.
-- **Status: OK** — Die Tabellen A-D sind auf Stand 2025 und somit gueltig.
+### Aktueller Stand (gut)
+- Code-Splitting mit React.lazy fuer alle Unterseiten
+- React.memo + useCallback auf kritischen Komponenten
+- Debounced numerische Inputs
+- Patch-basierte Updates statt Full-Replace
 
-**3.2 Impressum**
-- Enthaelt: Firma, Adresse, Kontakt, USt-ID, Registergericht, Verantwortlicher nach § 55 RStV, OS-Plattform, Streitschlichtung.
-- **PROBLEM:** § 55 Abs. 2 RStV ist seit 2020 abgeloest durch § 18 Abs. 2 MStV (Medienstaatsvertrag).
-- **Fix:** "§ 55 Abs. 2 RStV" durch "§ 18 Abs. 2 MStV" ersetzen.
-
-**3.3 Datenschutzerklaerung**
-- Google AdSense erwaehnt Art. 6 Abs. 1 lit. f DSGVO als Rechtsgrundlage.
-- **ACHTUNG:** Fuer Werbe-Tracking/Cookies ist nach DSGVO + ePrivacy eigentlich Art. 6 Abs. 1 lit. a (Einwilligung) erforderlich, nicht "berechtigtes Interesse".
-- **Fix:** Rechtsgrundlage auf Einwilligung (lit. a) aendern, wenn AdSense tatsaechlich aktiv ist.
-
-**3.4 Cookie-Banner**
-- Banner bietet "Akzeptieren"/"Ablehnen", aber: bei "Ablehnen" werden keine Cookies/Tracker tatsaechlich blockiert — es wird nur der Banner-Status gespeichert.
-- **Risiko:** Wenn Google AdSense oder andere Tracker laufen, muss bei Ablehnung tatsaechlich das Laden verhindert werden.
-- **Empfehlung:** Consent-Management implementieren das AdSense nur bei Zustimmung laedt.
+### Verbesserungspotenzial
+- **PositionCard: 12 useEffects (MITTEL):** 4 Debounce-Sync + 4 External-Sync + 4 sonstige. Koennte auf 2-3 reduziert werden durch Zusammenfassung.
+- **Keine Virtualisierung (NIEDRIG):** Bei 10+ Positionen werden alle Cards gerendert. Fuer Kanzleien mit Sammelrechnungen (20+ Positionen) relevant.
+- **pdfGenerator.ts: 596 Zeilen synchron (NIEDRIG):** Wird bereits dynamisch importiert -- OK.
 
 ---
 
-### 4. ACCESSIBILITY (a11y)
+## 4. STABILITAET & ZUVERLAESSIGKEIT
 
-**4.1 Fehlende aria-labels**
-- Seiten-Templates haben kaum `aria-label`, `role`, oder `aria-describedby`.
-- Hauptseite (`Index.tsx`) hat nur 1 aria-label (Mobile FAB).
-- **Fix:** Alle interaktiven Elemente mit sinnvollen Labels versehen, Landmarks (`main`, `nav`, `aside`) hinzufuegen.
+### Positiv
+- Positions-Update-Bug behoben (Patch + functional updates)
+- ErrorBoundary + ErrorLoggingService vorhanden
+- ~195 Unit-Tests (Vitest) fuer Berechnungslogik
 
----
-
-### 5. UX / PRODUKTION
-
-**5.1 Keine Loading-States beim Seitenwechsel**
-- Kein Suspense-Fallback, kein Skeleton bei Navigation.
-- **Fix:** Suspense-Fallback mit Spinner/Skeleton fuer Lazy-Loaded Seiten.
-
-**5.2 Doppelte Toaster**
-- `App.tsx` rendert sowohl `<Toaster />` (shadcn) als auch `<Sonner />`. Das koennte zu doppelten Benachrichtigungen fuehren.
-- **Pruefung:** Wird ueberhaupt der shadcn-Toaster verwendet? Wenn nicht, entfernen.
+### Probleme
+- **useHistory Stale-Closure (MITTEL):** `undo()` liest `history[currentIndex - 1]` direkt -- bei schnellem Doppelklick koennte `currentIndex` veraltet sein. Sollte `setCurrentIndex` + Ref-Pattern verwenden.
+- **removePosition ruft handleUndo in Closure (NIEDRIG):** Die "Rueckgaengig"-Aktion im Toast referenziert `handleUndo` aus der Render-Closure, was bei schnellen Loeschungen veraltet sein koennte.
+- **Keine E2E-Tests (MITTEL):** Unit-Tests sind stark, aber kein Playwright/Cypress fuer kritische User-Flows (Template laden, PDF generieren, Tab-Wechsel).
 
 ---
 
-## Implementierungsplan (priorisiert)
+## 5. SICHERHEIT & DATENSCHUTZ
 
-### Schritt 1: Rechtliche Korrekturen (kritisch)
-- **Impressum.tsx:** "§ 55 Abs. 2 RStV" → "§ 18 Abs. 2 MStV"
-- **Datenschutz.tsx:** AdSense-Rechtsgrundlage korrigieren (lit. f → lit. a)
+- **Keine Backend-APIs im Projekt:** Rein client-seitig, daher kein XSS/SQLi-Risiko durch eigene APIs.
+- **Cookie-Banner: Consent ohne Enforcement (HOCH):** Bei "Ablehnen" wird nur der Status gespeichert, aber AdSense/Tracker werden nicht blockiert. Wenn `ads.txt` aktiv ist, muss das Consent-Management AdSense konditional laden.
+- **localStorage ohne Verschluesselung (NIEDRIG):** Kanzlei-Daten (Firmenname, IBAN, Steuernummer) liegen im Klartext. Fuer lokale Speicherung akzeptabel, aber bei SaaS-Umstellung kritisch.
 
-### Schritt 2: SEO-Grundlagen
-- `public/sitemap.xml` erstellen (alle 12 Routen)
-- `public/robots.txt` erweitern (Sitemap-Verweis, Disallow /settings /install /dashboard)
-- Helmet mit title + description + canonical auf allen Seiten ohne SEO-Tags:
-  - `Index.tsx`, `Impressum.tsx`, `Datenschutz.tsx`, `Settings.tsx`, `InstallApp.tsx`, `NotFound.tsx`
+---
 
-### Schritt 3: NotFound-Seite ueberarbeiten
-- Deutscher Text, Design angleichen (Card-Layout wie andere Seiten), Helmet
+## 6. KONSISTENZ & WARTBARKEIT
 
-### Schritt 4: Performance (Code-Splitting)
-- **App.tsx:** Alle Seiten (ausser Index) auf `React.lazy()` + `Suspense` umstellen
-- Top-Level-Await fuer Dashboard entfernen
-- Loading-Fallback-Komponente erstellen
+### Inkonsistenzen
+- **Footer:** 3 verschiedene Implementierungen (CalculatorFooter-Komponente, Settings-inline, Dashboard-inline). 9 Seiten ohne Footer.
+- **Canonical URLs:** Nur auf Index, Impressum, Datenschutz, InstallApp, NotFound. Fehlt auf: FAQ, Anleitungen, Blog, Gebuhrenordnung, UeberDenRechner, RechtlicheGrundlagen, Settings.
+- **Error-Handling:** `useErrorHandler` ist definiert aber wird nur in `useDocumentExport` verwendet. Andere Fehlerquellen (Template-Loading, localStorage) nutzen direkte try/catch.
 
-### Schritt 5: Cleanup
-- Pruefen ob shadcn `<Toaster />` genutzt wird; wenn nicht, entfernen (nur Sonner behalten)
-- Semantic HTML Landmarks (`<main>`, `<nav>`) auf Hauptseite
+---
 
-### Dateien die geaendert werden
+## 7. VERWEISE & RESSOURCEN
 
-| Datei | Aenderung |
-|-------|-----------|
-| `src/pages/Impressum.tsx` | § 55 RStV → § 18 MStV |
-| `src/pages/Datenschutz.tsx` | AdSense Rechtsgrundlage |
-| `public/sitemap.xml` | Neu erstellen |
-| `public/robots.txt` | Sitemap + Disallow |
-| `src/App.tsx` | React.lazy + Suspense, Top-Level-Await entfernen |
-| `src/pages/NotFound.tsx` | Deutsche Version + Design |
-| `src/pages/Index.tsx` | Helmet SEO-Tags |
-| `src/pages/Settings.tsx` | Helmet SEO-Tags |
-| `src/pages/InstallApp.tsx` | Helmet SEO-Tags |
+### Ungenutzte Dependencies
+| Package | Status |
+|---------|--------|
+| `@tanstack/react-query` | Nicht verwendet -- QueryClient existiert, aber kein useQuery/useMutation |
+| `@radix-ui/react-toast` | Nicht verwendet -- Sonner wird stattdessen genutzt |
+| `react-hook-form` + `@hookform/resolvers` | Nicht verwendet -- Formulare sind manuell gebaut |
+| `input-otp` | Nicht verwendet (kein OTP-Feature) |
+| `embla-carousel-react` | Nicht verwendet (kein Carousel) |
+| `react-resizable-panels` | Nicht verwendet |
+| `vaul` (Drawer) | Nicht verwendet |
+| `pdfjs-dist` | Nur fuer PDF-Preview -- OK |
+
+### Tote Dateien
+- `src/components/ui/toaster.tsx` -- ungenutzt
+- `src/components/ui/toast.tsx` -- ungenutzt
+- `src/components/ui/use-toast.ts` -- Re-export wrapper, ungenutzt
+- `src/hooks/use-toast.ts` -- 191 Zeilen ungenutzter shadcn Toast-Reducer
+
+---
+
+## 8. DOKUMENTATION
+
+- `README.md`, `docs/QUALITY_ASSURANCE.md`, `docs/GDPR_COMPLIANCE.md` vorhanden
+- `.lovable/plan.md` als Projektplan
+- JSDoc-Header auf allen Modulen
+- **Fehlend:** Keine API-Docs fuer Services, kein ARCHITECTURE.md, kein CHANGELOG
+
+---
+
+## 9. BENUTZERERFAHRUNG & DESIGN
+
+### Design-Konsistenz
+- **Footer fehlt auf 9 von 12 Seiten (HOCH):** Impressum, Datenschutz, FAQ, Anleitungen, Blog, BlogArticle, Gebuhrenordnung, UeberDenRechner, RechtlicheGrundlagen, NotFound, InstallApp -- alle haben keinen Footer. Nur Index (CalculatorFooter) und Settings (inline) haben einen.
+- **Kein gemeinsamer Header auf Unterseiten (MITTEL):** Alle Unterseiten haben nur einen "Zurueck zum Rechner"-Button, keinen einheitlichen Header/Navigation.
+- **Dark Mode:** ThemeToggle nur auf der Hauptseite sichtbar. Unterseiten nutzen `bg-background`/`text-foreground` korrekt, aber der Toggle fehlt.
+
+### Responsive
+- Mobile FAB auf Index: gut
+- Touch-Target-Groessen (min 44px): auf PositionCard korrekt
+- Grid-Layout (lg:grid-cols-3): sauber
+
+### Barrierefreiheit
+- aria-labels auf allen Buttons in PositionCard: gut
+- Fehlend: `<main>` Landmark auf Index, keine Skip-Navigation
+
+---
+
+## 10. FUNKTIONSUEBERSICHT
+
+### 10.1 Alle Funktionen des Systems
+
+**A) StBVV-Gebuehrenberechnung**
+- Berechnung nach Gegenstandswert mit Tabellen A-D
+- Zeitgebuehren (Stundensatz x Stunden)
+- Pauschalgebuehren
+- Auslagenpauschale (20%, max 20 EUR) nach § 16 StBVV
+- Mindestgegenstandswert-Pruefung mit Auto-Korrektur
+
+**B) Positions-Management**
+- Positionen hinzufuegen, duplizieren, loeschen, verschieben
+- Drag-and-Drop Reihenfolge (dnd-kit)
+- Bulk-Aktionen (Mehrfachauswahl, Loeschen, Duplizieren, Tabellenwechsel)
+- Inline-Validierung mit Fehlerbadges
+- Patch-basierte Updates (Race-Condition-sicher)
+
+**C) Dokumenten-Management**
+- Multi-Tab-System (bis 10 Tabs)
+- Dokumenttyp-Wechsel (Rechnung/Angebot)
+- Auto-Nummerierung (RE-/AG-Praefix)
+- Mandantendaten-Formular (nicht persistiert)
+- Dokumentenpauschale, MwSt., Rabatt (prozentual/absolut)
+
+**D) Export-Funktionen**
+- PDF-Generierung mit A4-Seitenumbruch + Pruefsumme
+- PDF-Vorschau im Modal
+- Excel-Export (xlsx)
+- CSV-Export
+- Druck-Funktion
+- E-Mail-Versand (mailto)
+
+**E) Vorlagen-System**
+- Vordefinierte Vorlagen (z.B. Einkommensteuererklaerung)
+- Eigene Vorlagen speichern/laden
+- Fuzzy-Suche in Vorlagen
+- Kategorisierte Vorlagenauswahl
+
+**F) Workflow & Produktivitaet**
+- Guided Wizard (4-Schritt-Assistent)
+- Command Palette (Cmd+K)
+- Tastenkombinationen (Strg+N, Strg+P, Strg+Z/Y)
+- Undo/Redo-History
+- Floating Summary Bar
+- Smart Defaults (letzte Einstellungen merken)
+
+**G) Kanzlei-Einstellungen**
+- Firmendaten (Name, Adresse, Kontakt)
+- Bankverbindung (IBAN, BIC)
+- Steuernummer
+- Dark/Light/System-Theme
+- Datenverwaltung (Export, Loeschen)
+
+**H) Content-Bereich**
+- Blog mit 5+ Fachartikeln (Markdown-Content)
+- FAQ-Seite (Accordion)
+- Gebuhrenordnung-Erklaerung
+- Rechtliche Grundlagen
+- Anleitungen/Tutorials
+
+**I) Technische Infrastruktur**
+- PWA-Installation
+- LocalStorage-Persistenz mit Auto-Save
+- Error Boundary + Logging Service
+- Cookie-Banner (DSGVO)
+- Code-Splitting / Lazy Loading
+- SEO-Meta-Tags + Sitemap
+
+### 10.2 Verknuepfungen und Schnittstellen
+
+```text
+Index.tsx (Orchestrator)
+  ├── useDocumentTabs ──► localStorage (Auto-Save)
+  │     ├── updateTab() ──► alle Tab-Felder
+  │     └── updateTabPositions() ──► functional position updates
+  ├── PositionCard ──► onUpdate(id, patch) ──► setPositions(prev => ...)
+  │     ├── useDebounce ──► verzögerter onUpdate
+  │     ├── activityPresets ──► Auto-Fill (Tabelle, Satz, Typ)
+  │     └── calculatePosition() ──► CalculatorService
+  ├── TotalCalculation ──► calculateTotal() ──► Summen
+  ├── useDocumentExport
+  │     ├── pdfGenerator ──► jsPDF + autoTable
+  │     ├── excelExporter ──► xlsx
+  │     ├── csvExporter ──► CSV-String
+  │     └── useDocumentValidation ──► Pre-Export-Check
+  ├── useHistory ──► Undo/Redo Stack
+  ├── AdvancedTemplateSelector ──► templateManager ──► localStorage
+  ├── CommandPalette ──► Verknuepft: addPosition, loadTemplate, PDF, Excel, Undo/Redo
+  ├── GuidedWorkflow ──► Wizard mit Steps: Client, Template, Values, Export
+  ├── CalculatorHeader ──► ThemeToggle, PWA-Install, Settings-Navigation
+  └── CalculatorFooter ──► Interne Links (nur auf Index)
+
+Settings.tsx
+  ├── brandingStorage ──► localStorage (Kanzlei-Daten)
+  └── useTheme ──► Theme-Persistenz
+
+Blog-System
+  ├── Blog.tsx ──► INLINE Artikel-Daten (NICHT blogArticles.ts!)
+  ├── BlogArticle.tsx ──► blogArticles.ts (vollstaendige Daten)
+  └── Blog-Komponenten (ArticleCard, ArticleGrid, etc.) ──► nur in BlogArticle.tsx genutzt
+```
+
+### 10.3 Fehlende/Defekte Verknuepfungen
+
+1. **Blog.tsx nutzt nicht `blogArticles.ts`** -- Die Blog-Uebersichtsseite hat eigene inline-Daten. Wenn Artikel in `blogArticles.ts` geaendert werden, aendert sich die Uebersichtsseite nicht.
+2. **Blog-Komponenten teilweise ungenutzt:** `ArticleSidebar`, `NewsletterCTA`, `BlogNavigation` werden exportiert aber nicht in Blog.tsx verwendet.
+3. **useClientDatabase wird exportiert aber ist komplett deaktiviert** -- Barrel-Export suggeriert aktive Funktionalitaet.
+4. **CookieBanner: Consent hat keine Auswirkung** -- Kein Code prueft den Consent-Status vor dem Laden von Trackern.
+5. **Dashboard nur im DEV-Modus erreichbar** -- `useDocumentArchive` existiert, aber der Archivierungs-Flow ist nicht an die Export-Funktion angebunden (Dokumente werden nicht automatisch archiviert).
+
+---
+
+## 11. DESIGN-KONSISTENZ
+
+| Seite | Header | Footer | Theme-Toggle | Canonical |
+|-------|--------|--------|-------------|-----------|
+| Index | CalculatorHeader | CalculatorFooter | Ja | Ja |
+| Settings | "Zurueck"-Button | Inline-Footer (abweichend) | Inline (Theme-Cards) | Nein |
+| Impressum | "Zurueck"-Button | Keiner | Nein | Ja |
+| Datenschutz | "Zurueck"-Button | Keiner | Nein | Ja |
+| FAQ | "Zurueck"-Button | Keiner | Nein | Nein |
+| Anleitungen | "Zurueck"-Button | Keiner | Nein | Nein |
+| Blog | "Zurueck"-Button | Keiner | Nein | Nein |
+| Gebuhrenordnung | "Zurueck"-Button | Keiner | Nein | Nein |
+| UeberDenRechner | "Zurueck"-Button | Keiner | Nein | Nein |
+| RechtlicheGrundlagen | "Zurueck"-Button | Keiner | Nein | Nein |
+| NotFound | Card-Layout | Keiner | Nein | Nein |
+| InstallApp | "Zurueck"-Button | Keiner | Nein | Nein |
+| Dashboard (Dev) | Eigener Header | Mini-Footer (abweichend) | Nein | Nein |
+
+**Fazit:** Massives Konsistenz-Problem. Nur Index hat vollstaendigen Header+Footer. Alle anderen Seiten wirken wie losgeloeste Unterseiten ohne einheitliche Navigation.
+
+---
+
+## ZUSAMMENFASSUNG: KRITISCHSTE PUNKTE
+
+1. **Kein gemeinsames Layout** -- Footer fehlt auf 10 von 12 Seiten, kein einheitlicher Header
+2. **Blog-Daten doppelt** -- Blog.tsx nutzt nicht die zentrale Datenquelle
+3. **7+ ungenutzte npm-Dependencies** -- Erhoehen Bundle-Size und Angriffsobserflaeche
+4. **5 ungenutzte Toast-Dateien** -- Shadcn Toast parallel zu Sonner
+5. **Cookie-Consent ohne Enforcement** -- DSGVO-Risiko
+6. **Fehlende Canonical-URLs** auf 8 Seiten -- SEO-Problem
+7. **useHistory Stale-Closure** -- Potentieller Bug bei schnellem Undo
+
+---
+
+## VERBESSERUNGSVORSCHLAEGE MIT PRIORITAET
+
+| # | Massnahme | Prioritaet | Aufwand |
+|---|-----------|-----------|--------|
+| 1 | Gemeinsames Layout mit Footer auf allen Seiten | HOCH | Mittel |
+| 2 | Ungenutzte Dependencies entfernen (react-query, toast, react-hook-form, etc.) | HOCH | Niedrig |
+| 3 | Shadcn Toast-System komplett entfernen (5 Dateien) | HOCH | Niedrig |
+| 4 | Blog.tsx auf blogArticles.ts umstellen | HOCH | Niedrig |
+| 5 | Fehlende Canonical-URLs auf 8 Seiten ergaenzen | MITTEL | Niedrig |
+| 6 | Cookie-Consent Enforcement (AdSense nur bei Zustimmung) | HOCH | Mittel |
+| 7 | useHistory Stale-Closure-Fix | MITTEL | Niedrig |
+| 8 | Index.tsx State in useActiveTabState-Hook extrahieren | MITTEL | Mittel |
+| 9 | PositionCard in Sub-Komponenten aufteilen | NIEDRIG | Hoch |
+| 10 | E2E-Tests fuer kritische Flows | NIEDRIG | Hoch |
+
+---
+
+## IMPLEMENTIERUNGSPLAN (4 Phasen)
+
+### Phase 1: Cleanup & Konsistenz (schnelle Gewinne)
+- Ungenutzte Dependencies aus package.json entfernen
+- Shadcn Toast-Dateien loeschen (toast.tsx, toaster.tsx, use-toast.ts x2)
+- Blog.tsx auf zentrale blogArticles.ts umstellen
+- useClientDatabase Barrel-Export kommentieren/markieren
+
+### Phase 2: Layout & Design-Vereinheitlichung
+- Shared `PageLayout`-Komponente erstellen (Header-Navigation, Footer, Container)
+- Alle 12 Seiten auf PageLayout umstellen
+- Settings-inline-Footer und Dashboard-Footer entfernen
+- Fehlende Canonical-URLs + Open Graph Tags ergaenzen
+- ThemeToggle im gemeinsamen Header verfuegbar machen
+
+### Phase 3: Stabilitaet & Recht
+- useHistory Stale-Closure fixen (Ref-Pattern oder functional setState)
+- Cookie-Consent-Enforcement: AdSense-Script nur bei consent=accepted laden
+- removePosition Undo-Closure stabilisieren
+
+### Phase 4: Architektur-Verbesserungen (optional, vor SaaS)
+- Index.tsx Tab-State in `useActiveTabState` Hook extrahieren
+- PositionCard in Sub-Komponenten aufteilen (ObjectValueInput, HourlyInput, ActivitySelector)
+- Ungenutzte Blog-Komponenten (ArticleSidebar, NewsletterCTA) entfernen oder einbinden
+
+**Hinweis:** Keine Aenderungen an funktionierenden Integrationen (PDF-Generator, Excel-Export, StBVV-Berechnungen, Template-System). Diese bleiben unangetastet.
 
