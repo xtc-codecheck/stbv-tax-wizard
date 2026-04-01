@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 
 export interface HistoryState<T> {
   data: T;
@@ -11,44 +11,50 @@ export function useHistory<T>(initialState: T, maxHistory: number = 10) {
   ]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  // Use refs to avoid stale closures in undo/redo
+  const historyRef = useRef(history);
+  historyRef.current = history;
+  const indexRef = useRef(currentIndex);
+  indexRef.current = currentIndex;
+
   const pushHistory = useCallback((newState: T) => {
     setHistory(prev => {
-      // Remove any states after current index (for redo branch clearing)
-      const newHistory = prev.slice(0, currentIndex + 1);
-      
-      // Add new state
-      newHistory.push({
-        data: newState,
-        timestamp: Date.now()
-      });
-
-      // Keep only last maxHistory items
-      const trimmedHistory = newHistory.slice(-maxHistory);
-      
-      setCurrentIndex(trimmedHistory.length - 1);
-      return trimmedHistory;
+      const idx = indexRef.current;
+      const newHistory = prev.slice(0, idx + 1);
+      newHistory.push({ data: newState, timestamp: Date.now() });
+      const trimmed = newHistory.slice(-maxHistory);
+      const newIndex = trimmed.length - 1;
+      setCurrentIndex(newIndex);
+      indexRef.current = newIndex;
+      return trimmed;
     });
-  }, [currentIndex, maxHistory]);
+  }, [maxHistory]);
 
   const undo = useCallback(() => {
-    if (currentIndex > 0) {
-      setCurrentIndex(prev => prev - 1);
-      return history[currentIndex - 1].data;
+    const idx = indexRef.current;
+    if (idx > 0) {
+      const newIndex = idx - 1;
+      setCurrentIndex(newIndex);
+      indexRef.current = newIndex;
+      return historyRef.current[newIndex].data;
     }
     return null;
-  }, [currentIndex, history]);
+  }, []);
 
   const redo = useCallback(() => {
-    if (currentIndex < history.length - 1) {
-      setCurrentIndex(prev => prev + 1);
-      return history[currentIndex + 1].data;
+    const idx = indexRef.current;
+    const hist = historyRef.current;
+    if (idx < hist.length - 1) {
+      const newIndex = idx + 1;
+      setCurrentIndex(newIndex);
+      indexRef.current = newIndex;
+      return hist[newIndex].data;
     }
     return null;
-  }, [currentIndex, history]);
+  }, []);
 
   const canUndo = currentIndex > 0;
   const canRedo = currentIndex < history.length - 1;
-
   const currentState = history[currentIndex]?.data || initialState;
 
   return {
