@@ -6,20 +6,12 @@ import { Helmet } from "react-helmet";
 
 const RechtlicheGrundlagen = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <PageLayout>
       <Helmet>
         <title>Rechtliche Grundlagen - StBVV Paragraphen und Steuerberatergesetz</title>
         <meta name="description" content="Rechtliche Grundlagen der Steuerberatervergütung: Wichtige Paragraphen der StBVV, Steuerberatergesetz, Rechtsprechung und gesetzliche Änderungen 2025." />
         <meta name="keywords" content="StBVV Paragraphen, Steuerberatergesetz, § 24 StBVV, § 11 StBVV, Rechtsprechung Steuerberater" />
       </Helmet>
-
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <Link to="/">
-          <Button variant="ghost" className="mb-6">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Zurück zum Rechner
-          </Button>
-        </Link>
 
         <div className="space-y-8">
           <div>
