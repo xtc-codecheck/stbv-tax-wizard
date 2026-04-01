@@ -4,19 +4,11 @@ import { PageLayout } from "@/components/PageLayout";
 
 const Datenschutz = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <PageLayout>
       <Helmet>
         <title>Datenschutzerklärung – StBVV-Rechner</title>
         <meta name="description" content="Datenschutzerklärung des StBVV-Rechners. Informationen zur Datenverarbeitung, lokaler Speicherung und Ihren Rechten." />
-        <link rel="canonical" href="https://stbv-tax-wizard.lovable.app/datenschutz" />
       </Helmet>
-      <div className="container max-w-4xl mx-auto px-4 py-8">
-        <Link to="/">
-          <Button variant="ghost" className="mb-6">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Zurück zum Rechner
-          </Button>
-        </Link>
 
         <Card>
           <CardHeader>
