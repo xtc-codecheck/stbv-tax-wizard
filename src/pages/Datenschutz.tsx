@@ -225,8 +225,7 @@ const Datenschutz = () => {
             </section>
           </CardContent>
         </Card>
-      </div>
-    </div>
+    </PageLayout>
   );
 };
 

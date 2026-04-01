@@ -347,8 +347,7 @@ const RechtlicheGrundlagen = () => {
             </Link>
           </div>
         </div>
-      </div>
-    </div>
+    </PageLayout>
   );
 };
 

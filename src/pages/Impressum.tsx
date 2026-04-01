@@ -113,8 +113,7 @@ const Impressum = () => {
             </section>
           </CardContent>
         </Card>
-      </div>
-    </div>
+    </PageLayout>
   );
 };
 

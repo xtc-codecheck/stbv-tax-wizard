@@ -312,10 +312,8 @@ const Gebuhrenordnung = () => {
                 <ArrowLeft className="ml-2 h-4 w-4 rotate-180" />
               </Button>
             </Link>
-          </div>
         </div>
-      </div>
-    </div>
+    </PageLayout>
   );
 };
 

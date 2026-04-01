@@ -657,8 +657,7 @@ const FAQ = () => {
             </Link>
           </div>
         </div>
-      </div>
-    </div>
+    </PageLayout>
   );
 };
 

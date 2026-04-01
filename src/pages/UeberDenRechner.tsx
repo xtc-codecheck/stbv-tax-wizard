@@ -226,8 +226,7 @@ const UeberDenRechner = () => {
             </Link>
           </div>
         </div>
-      </div>
-    </div>
+    </PageLayout>
   );
 };
 

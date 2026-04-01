@@ -435,8 +435,7 @@ const Anleitungen = () => {
             </Link>
           </div>
         </div>
-      </div>
-    </div>
+    </PageLayout>
   );
 };
 
