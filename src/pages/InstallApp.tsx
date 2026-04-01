@@ -182,11 +182,9 @@ export default function InstallApp() {
           </Card>
         )}
 
-        {/* Info */}
         <p className="text-center text-sm text-muted-foreground mt-8">
           Die App benötigt keine Berechtigung und speichert keine persönlichen Daten in der Cloud.
         </p>
-      </main>
-    </div>
+    </PageLayout>
   );
 }
