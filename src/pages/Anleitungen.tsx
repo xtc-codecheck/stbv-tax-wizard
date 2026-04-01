@@ -6,20 +6,12 @@ import { Helmet } from "react-helmet";
 
 const Anleitungen = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <PageLayout>
       <Helmet>
         <title>Anleitungen - STBVV Rechner richtig nutzen | Schritt-für-Schritt Guide</title>
         <meta name="description" content="Ausführliche Schritt-für-Schritt Anleitungen zur Nutzung des STBVV Rechners: Gebührenberechnung, PDF-Export, Excel-Export und Best Practices für Steuerberater." />
         <meta name="keywords" content="STBVV Rechner Anleitung, Gebühren berechnen, PDF Export, Excel Export, Steuerberater Tutorial" />
       </Helmet>
-
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <Link to="/">
-          <Button variant="ghost" className="mb-6">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Zurück zum Rechner
-          </Button>
-        </Link>
 
         <div className="space-y-8">
           <div>
