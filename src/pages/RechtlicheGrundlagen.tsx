@@ -1,7 +1,7 @@
-import { Link } from "react-router-dom";
-import { ArrowLeft, Scale, BookText, Gavel } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Scale, BookText, Gavel } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Helmet } from "react-helmet";
+import { PageLayout } from "@/components/PageLayout";
 import { Helmet } from "react-helmet";
 
 const RechtlicheGrundlagen = () => {
