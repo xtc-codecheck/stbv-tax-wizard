@@ -106,23 +106,14 @@ const Settings: React.FC = () => {
   ] as const;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/50 flex flex-col">
+    <PageLayout noCanonical>
       <Helmet>
         <title>Einstellungen – StBVV-Rechner</title>
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
-      <div className="flex-1 p-6">
-        <div className="max-w-4xl mx-auto space-y-6">
+        <div className="space-y-6">
           {/* Header */}
           <div className="mb-6">
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/')}
-              className="mb-4"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Zurück zum Rechner
-            </Button>
             <h1 className="text-3xl font-bold text-foreground flex items-center">
               <Building2 className="w-8 h-8 mr-3 text-primary" />
               Einstellungen
