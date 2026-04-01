@@ -1,8 +1,6 @@
-import { Link } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
 import { Helmet } from "react-helmet";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageLayout } from "@/components/PageLayout";
 
 const Impressum = () => {
   return (
