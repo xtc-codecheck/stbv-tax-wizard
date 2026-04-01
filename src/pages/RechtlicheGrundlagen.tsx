@@ -1,8 +1,9 @@
-import { Scale, BookText, Gavel } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Scale, BookText, Gavel, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Helmet } from "react-helmet";
 import { PageLayout } from "@/components/PageLayout";
-import { Helmet } from "react-helmet";
 
 const RechtlicheGrundlagen = () => {
   return (
