@@ -14,6 +14,7 @@ import {
   WifiOff,
   Zap, 
   Check, 
+  ArrowLeft,
   Share,
   PlusSquare,
   Calculator
