@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://stbv-tax-wizard.lovable.app/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://stbv-tax-wizard.lovable.app/ueber-den-rechner</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://stbv-tax-wizard.lovable.app/gebuhrenordnung</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://stbv-tax-wizard.lovable.app/faq</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://stbv-tax-wizard.lovable.app/rechtliche-grundlagen</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://stbv-tax-wizard.lovable.app/anleitungen</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://stbv-tax-wizard.lovable.app/blog</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://stbv-tax-wizard.lovable.app/impressum</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
-  <url><loc>https://stbv-tax-wizard.lovable.app/datenschutz</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://stbv-tax-wizard.lovable.app/</loc><lastmod>2026-04-13</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://stbv-tax-wizard.lovable.app/ueber-den-rechner</loc><lastmod>2026-04-13</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://stbv-tax-wizard.lovable.app/gebuhrenordnung</loc><lastmod>2026-04-13</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://stbv-tax-wizard.lovable.app/faq</loc><lastmod>2026-04-13</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://stbv-tax-wizard.lovable.app/rechtliche-grundlagen</loc><lastmod>2026-04-13</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://stbv-tax-wizard.lovable.app/anleitungen</loc><lastmod>2026-04-13</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://stbv-tax-wizard.lovable.app/blog</loc><lastmod>2026-04-13</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://stbv-tax-wizard.lovable.app/impressum</loc><lastmod>2026-04-13</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://stbv-tax-wizard.lovable.app/datenschutz</loc><lastmod>2026-04-13</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
 </urlset>

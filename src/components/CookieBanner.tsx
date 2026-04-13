@@ -38,7 +38,7 @@ function enforceConsent(status: 'accepted' | 'declined' | null) {
       const script = document.createElement('script');
       script.async = true;
       script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
-      script.setAttribute('data-ad-client', 'ca-pub-XXXXXXXXXXXXXXXX'); // Platzhalter
+      script.setAttribute('data-ad-client', 'ca-pub-3982401795575611');
       script.setAttribute('crossorigin', 'anonymous');
       document.head.appendChild(script);
     }

@@ -3,6 +3,9 @@
  * @module constants
  */
 
+/** Zentrale Base-URL für Canonical-Tags, Sitemap und OG-Tags */
+export const BASE_URL = "https://stbv-tax-wizard.lovable.app";
+
 // Fees
 export {
   VAT_RATE,

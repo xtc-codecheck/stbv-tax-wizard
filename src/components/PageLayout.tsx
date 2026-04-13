@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Helmet } from "react-helmet";
 
-const BASE_URL = "https://stbv-tax-wizard.lovable.app";
+import { BASE_URL } from "@/constants";
 
 const navLinks = [
   { href: '/ueber-den-rechner', label: 'Über den Rechner' },

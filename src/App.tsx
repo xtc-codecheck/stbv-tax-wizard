@@ -3,9 +3,12 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ErrorBoundary from "./components/ErrorBoundary";
-import { CookieBanner } from "./components/CookieBanner";
+import { CookieBanner, getConsentStatus, enforceConsent } from "./components/CookieBanner";
 import { PageLoadingFallback } from "./components/PageLoadingFallback";
 import Index from "./pages/Index";
+
+// Enforce AdSense consent on app start (for returning visitors)
+enforceConsent(getConsentStatus());
 
 // Lazy-loaded pages
 const Settings = React.lazy(() => import("./pages/Settings"));
