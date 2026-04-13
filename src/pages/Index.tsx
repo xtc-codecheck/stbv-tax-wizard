@@ -5,6 +5,7 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Helmet } from 'react-helmet';
+import { BASE_URL } from '@/constants';
 import { useDocumentTabs } from '@/hooks/useDocumentTabs';
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -407,7 +408,7 @@ const Index = () => {
       <Helmet>
         <title>StBVV-Rechner – Steuerberater-Gebühren online berechnen</title>
         <meta name="description" content="Kostenloser StBVV-Rechner: Berechnen Sie Steuerberatergebühren nach der Steuerberatervergütungsverordnung 2025. Mit PDF-Export, Vorlagen und Mehrfach-Positionen." />
-        <link rel="canonical" href="https://stbv-tax-wizard.lovable.app/" />
+        <link rel="canonical" href={`${BASE_URL}/`} />
       </Helmet>
       <KeyboardShortcutsDialog open={showKeyboardShortcuts} onOpenChange={setShowKeyboardShortcuts} />
 

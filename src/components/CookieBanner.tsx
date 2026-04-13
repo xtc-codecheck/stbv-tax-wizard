@@ -29,7 +29,7 @@ export function getConsentStatus(): 'accepted' | 'declined' | null {
  * Lädt AdSense nur wenn Consent erteilt wurde.
  * Entfernt AdSense-Skripte bei Ablehnung.
  */
-function enforceConsent(status: 'accepted' | 'declined' | null) {
+export function enforceConsent(status: 'accepted' | 'declined' | null) {
   const existingScript = document.querySelector('script[src*="adsbygoogle"]');
   
   if (status === 'accepted') {
@@ -38,7 +38,7 @@ function enforceConsent(status: 'accepted' | 'declined' | null) {
       const script = document.createElement('script');
       script.async = true;
       script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
-      script.setAttribute('data-ad-client', 'ca-pub-XXXXXXXXXXXXXXXX'); // Platzhalter
+      script.setAttribute('data-ad-client', 'ca-pub-3982401795575611');
       script.setAttribute('crossorigin', 'anonymous');
       document.head.appendChild(script);
     }
