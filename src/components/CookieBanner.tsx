@@ -29,7 +29,7 @@ export function getConsentStatus(): 'accepted' | 'declined' | null {
  * Lädt AdSense nur wenn Consent erteilt wurde.
  * Entfernt AdSense-Skripte bei Ablehnung.
  */
-function enforceConsent(status: 'accepted' | 'declined' | null) {
+export function enforceConsent(status: 'accepted' | 'declined' | null) {
   const existingScript = document.querySelector('script[src*="adsbygoogle"]');
   
   if (status === 'accepted') {
