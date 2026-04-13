@@ -5,6 +5,7 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Helmet } from 'react-helmet';
+import { BASE_URL } from '@/constants';
 import { useDocumentTabs } from '@/hooks/useDocumentTabs';
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
