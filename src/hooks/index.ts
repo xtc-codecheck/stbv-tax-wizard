@@ -12,7 +12,7 @@ export { useHistory, type HistoryState } from './useHistory';
 export { useKeyboardShortcuts, type KeyboardShortcut } from './useKeyboardShortcuts';
 export { useIsMobile } from './use-mobile';
 export { useTheme } from './useTheme';
-export { useClientDatabase } from './useClientDatabase';
+
 export { useTemplateSearch, getCategoryForTemplate, TEMPLATE_CATEGORIES, type TemplateCategory } from './useTemplateSearch';
 export { useDocumentArchive, type MonthlyRevenue, type TopClient, type CategoryStats } from './useDocumentArchive';
 export { usePWAInstall } from './usePWAInstall';
