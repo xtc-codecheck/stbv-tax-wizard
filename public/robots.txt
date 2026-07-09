@@ -16,4 +16,4 @@ Disallow: /settings
 Disallow: /install
 Disallow: /dashboard
 
-Sitemap: https://stbv-tax-wizard.lovable.app/sitemap.xml
+Sitemap: https://stbvv-rechner.de/sitemap.xml
