@@ -4,7 +4,7 @@
  */
 
 /** Zentrale Base-URL für Canonical-Tags, Sitemap und OG-Tags */
-export const BASE_URL = "https://stbv-tax-wizard.lovable.app";
+export const BASE_URL = "https://stbvv-rechner.de";
 
 // Fees
 export {
