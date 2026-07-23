@@ -1,196 +1,115 @@
-# Systemcheck – Ergebnis & Verbesserungsplan
+# Plan: Eingabefelder dauerhaft konsistent machen
 
-**Gesamtbewertung:** Produktionsreif und live-fähig (Qualitätsniveau ~92/100). Kritische Bereiche (StBVV-Berechnung, PDF/Excel-Export, DSGVO, Legal Pages) sind stabil und getestet (>260 Tests). Es gibt jedoch mehrere mittlere/niedrige Optimierungspotenziale in Struktur, Konsistenz und UX.
+## Bestätigte Ursache
 
-**Kritische Integrationen bleiben unangetastet:** StBVV-Rechner, Cent-Arithmetik, PDF-Generator, Excel-Export, Templates, Multi-Tab-System, Cookie/AdSense-Consent.
+Der übergeordnete Datenfluss ist bereits richtig aufgebaut:
+- `Index.tsx` aktualisiert Positionen patch-basiert.
+- `useDocumentTabs.ts` nutzt funktionale Updates und überschreibt nicht die komplette Positionsliste mit alten Snapshots.
 
----
+Das Reset-Problem sitzt in `src/components/PositionCard.tsx`:
 
-## 1. Codequalität & Sauberkeit
+- Eurofelder (`objectValue`, `hourlyRate`, `hours`, `flatRate`) werden lokal gespeichert.
+- Danach werden sie per `useDebounce(300ms)` verzögert an den Parent übertragen.
+- Parallel synchronisieren `useEffect`s die Parent-Props zurück in den lokalen State.
+- Sobald eine andere Position hinzugefügt/geändert wird, rendert die ganze Liste neu. Wenn dann ein Debounce oder Sync-Effect in ungünstiger Reihenfolge läuft, schreibt ein alter Prop-Wert wieder in das Eingabefeld.
 
-**Positiv:** Cent-basierte Arithmetik, Zod-Validierung, Barrel-Exports, konsistente TS-Nutzung, JSDoc auf Services.
+Das passt genau zu deiner Beobachtung: Der Betrag erscheint zuerst in der Gesamtberechnung, wird aber beim nächsten Hinzufügen oder Bearbeiten wieder überschrieben.
 
-**Findings:**
-- `PositionCard.tsx` (746 Z.) – Monsterkomponente, sollte in `ObjectValueInput`, `HourlyInput`, `FlatRateInput`, `ActivitySelector`, `TenthRateSelector` zerlegt werden. **Priorität: mittel**
-- `pages/Index.tsx` (617 Z.) – Orchestrator zu groß; Tab-/Export-/Import-Logik in `useCalculatorPage`-Hook auslagern. **Priorität: mittel**
-- `FAQ.tsx` (665 Z.) und `Anleitungen.tsx` (443 Z.) enthalten Content-Blöcke im JSX → in `data/faq.ts` / `data/anleitungen.ts` extrahieren. **Priorität: niedrig**
-- `CalculatorService.ts` dupliziert Logik aus `utils/stbvvCalculator.ts` (Cent-Version). Nur der Cent-Rechner wird produktiv genutzt – Service auf reinen Wrapper reduzieren oder entfernen. **Priorität: mittel** (Achtung: kritisch → nur mit Test-Absicherung)
-- `useClientDatabase.ts` ist ein DSGVO-No-Op-Hook. Aufrufer identifizieren und Hook entfernen. **Priorität: niedrig**
-- Ungenutzte Blog-Komponenten `ArticleSidebar`, `NewsletterCTA` prüfen – einbinden oder löschen. **Priorität: niedrig**
+## Zielzustand
 
-## 2. Architektur & Struktur
+Eingaben müssen sich wie in einer professionellen Fachanwendung verhalten:
 
-**Positiv:** Klare Layer-Trennung (services / hooks / components / schemas / utils), PageLayout vereinheitlicht Header/Footer/SEO, Barrel-Exports.
+1. Ein Wert, der eingegeben wurde, darf nicht durch Änderungen an anderen Positionen zurückspringen.
+2. Vorlagen dürfen nur beim Laden der Vorlage Initialwerte setzen.
+3. Das Bearbeiten einer Position darf keine Werte in anderen Positionen überschreiben.
+4. Eurobeträge, Stunden und Zehntelsätze müssen sofort zuverlässig in der Berechnung landen.
+5. Keine Race Conditions durch Debounce, Local-State-Sync oder verzögerte Effekte.
 
-**Findings:**
-- Doppelte Rechner-Implementierung (Service vs. utils-Cent) → **eine Quelle der Wahrheit** definieren.
-- `hooks/index.ts` exportiert `useHistory` nicht (nur in Datei vorhanden) – prüfen und angleichen. **Priorität: niedrig**
-- 42 shadcn-UI-Komponenten in `src/components/ui/` – Tree-Shake-freundlich, aber ungenutzte (`menubar`, `navigation-menu`, `hover-card`, `aspect-ratio`, `sonner` vs. eigenes toast) auf Verwendung prüfen. **Priorität: niedrig**
+## Umsetzung
 
-## 3. Performance & Effizienz
+### 1. `PositionCard.tsx`: Debounce-Mechanik entfernen
 
-**Positiv:** Route-Splitting via `React.lazy`, Debouncing, `React.memo`/`useCallback` an Hotspots, dynamischer PDF/Excel-Import.
+Ich entferne für die kritischen Zahlenfelder:
+- `useDebounce` Import
+- `debouncedObjectValue`
+- `debouncedHourlyRate`
+- `debouncedHours`
+- `debouncedFlatRate`
+- die vier Effects, die debounced Werte in den Parent schreiben
+- die `isEditing...` State-Flags als React-State
 
-**Findings:**
-- `Index.tsx` re-rendert vermutlich viele Kinder bei jeder Tab-Änderung. `PositionList`-Props-Memoisierung prüfen. **Priorität: mittel**
-- `Helmet` (v6, deprecated) – Migration auf `react-helmet-async` für konfliktfreies SSR/Streaming. **Priorität: niedrig**
-- `pdfjs-dist@3` – groß, prüfen ob nur für Preview gebraucht; ggf. nur bei Bedarf laden (bereits teilweise umgesetzt). **Priorität: niedrig**
+Damit fällt die wichtigste Fehlerquelle weg.
 
-## 4. Stabilität & Zuverlässigkeit
+### 2. Zahlenfelder direkt und atomar patchen
 
-**Positiv:** ErrorBoundary global, strukturiertes `ErrorLoggingService`, ~260 Unit-Tests, Golden-Reference-Tests.
+Die Inputs werden so geändert:
 
-**Findings:**
-- Keine E2E-Tests (Playwright) im Repo – manuelle Browser-Tests wurden durchgeführt, aber nicht automatisiert. **Priorität: mittel**
-- Kein Test-CI-Skript in `package.json` (`test` fehlt) – Vitest ist installiert, aber nicht als Script eingebunden. **Priorität: hoch** (schnell fixbar)
-- `useDocumentTabs` – Grenzfälle (max. Tabs, Persistenz nach Crash) sollten Testabdeckung bekommen. **Priorität: mittel**
+- `onChange` aktualisiert lokalen State für flüssiges Tippen.
+- Gleichzeitig wird sofort ein Patch an den Parent gesendet, z. B. `{ objectValue: 50000 }`.
+- Es wird niemals mehr eine vollständige Position aus einem alten Snapshot geschrieben.
 
-## 5. Sicherheit & Datenschutz
+Dadurch bleibt die Live-Berechnung sofort aktuell und es gibt keine 300-ms-Lücke mehr, in der ein alter Wert gewinnen kann.
 
-**Positiv:** Keine Backend-Anbindung → kein XSS/SQLi-Risiko in klassischer Form. DSGVO-Modus (session-only), Cookie-Banner mit Consent-Enforcement, AdSense ID korrekt.
+### 3. Prop-zu-Local-Sync absichern
 
-**Findings:**
-- `react-helmet` v6 hat bekannte Warnings, kein CVE – Migration siehe oben.
-- CSP-Header/Meta fehlt in `index.html` (nur relevant beim Hosting; falls im Hauptsystem hinter Reverse Proxy, dort setzen). **Priorität: niedrig**
-- Kein `npm audit` Ergebnis dokumentiert – Dependency-Scan sollte in CI laufen. **Priorität: mittel**
-- LocalStorage-Payloads sind Zod-validiert – gut. Bei fremden Payloads (Import-Funktion?) sicherstellen, dass Import-Pfade Zod validieren.
+Die lokalen States werden nur noch synchronisiert, wenn sich die echte Position-Identität ändert oder ein externer Wert wirklich neu ist.
 
-## 6. Konsistenz & Wartbarkeit
+Dafür wird pro Feld ein `useRef` für den letzten vom Nutzer geschriebenen Wert genutzt. Ein externer Sync darf keinen Wert zurückschreiben, der gerade vom Nutzer gesetzt wurde.
 
-**Findings:**
-- Zwei parallele Berechnungspfade (Service + utils) → Inkonsistenzrisiko. **Priorität: mittel**
-- Umlauten-Mix in Kommentaren (ä/ae) – rein kosmetisch. **Priorität: niedrig**
-- Fehlerbehandlung: mancherorts `toast.error`, mancherorts `logError` – Guideline in Doc festhalten. **Priorität: niedrig**
+Praktisch heißt das:
 
-## 7. Verweise & Ressourcen
+```text
+Nutzer tippt 50.000
+-> localObjectValue = 50000
+-> Parent-Patch { objectValue: 50000 }
+-> andere Position wird hinzugefügt
+-> Re-render
+-> Sync darf nicht auf alten Wert zurücksetzen
+```
 
-**Findings:**
-- `BASE_URL = https://stbv-tax-wizard.lovable.app`, echte Produktion ist `https://stbvv-rechner.de` – **Diskrepanz** zwischen `BASE_URL`, `sitemap.xml`, `robots.txt`, `og:image` und Custom Domain. **Priorität: hoch** vor Go-Live auf Custom Domain.
-- `public/placeholder.svg` prüfen ob referenziert; ansonsten entfernen. **Priorität: niedrig**
-- `docs/GDPR_COMPLIANCE.md` und `docs/QUALITY_ASSURANCE.md` vorhanden – gut gepflegt.
+### 4. Zehntelsatz prüfen und stabilisieren
 
-## 8. Dokumentation
+Der Zehntelsatz wird aktuell direkt über `handleTenthRateChange` gepatcht. Das ist grundsätzlich korrekt.
 
-- README-Aktualität prüfen (Setup, Skripte, Deploy). **Priorität: mittel**
-- Fehlender ADR/Architektur-Doc (Multi-Tab, Cent-Arithmetik, Service-Layer). **Priorität: niedrig**
+Ich prüfe und stabilisiere zusätzlich:
+- leere Eingabe soll nicht sofort auf `1` zurückspringen, während der Nutzer tippt
+- Dezimalwerte wie `4.5`, `17.5` müssen erhalten bleiben
+- bei Zwanzigstelsätzen bleibt der Nenner `20`, sonst `10`
 
-## 9. UX / Design / Responsive
+Falls nötig, bekommt auch der Zehntelsatz einen kleinen lokalen Eingabe-State, damit Zwischenzustände beim Tippen nicht zerstört werden.
 
-**Positiv:** Semantische Tokens, Dark-Mode, PageLayout einheitlich, ThemeToggle konsistent.
+### 5. Aktivitäts-/Vorlagenwechsel begrenzen
 
-**Findings:**
-- DocumentTabs: Klick öffnet Kontextmenü statt sofortigem Tab-Wechsel – für Neu-Nutzer verwirrend. Klick = wechseln, Rechts-/Long-Press = Menü. **Priorität: hoch (UX-Blocker)**
-- Floating Summary Bar auf sehr breiten Screens (2720px) – prüfen ob zentriert bleibt.
-- Barrierefreiheit: `aria-label` an Icon-Buttons stichprobenartig prüfen. **Priorität: mittel**
-- Konsistenz: `Settings.tsx` sollte `PageLayout` verwenden statt eigenem Footer (bereits refactored – erneut verifizieren).
+`handleActivityChange` darf weiterhin fachliche Defaults setzen:
+- Tätigkeit
+- Gebührentabelle
+- Zehntel-/Zwanzigstelsatz
+- ggf. Abrechnungsart bei Zeit-/Pauschalpositionen
 
-## 10. Funktionsliste & Verknüpfungen
+Aber: Es darf keine unbeteiligten Nutzerwerte zurücksetzen.
 
-### Funktionen (Kurzübersicht)
-1. **StBVV-Rechner** – Tab A–D, Zehntel/Zwanzigstel, Cent-genau, Auslagenpauschale, MwSt., Rabatt.
-2. **Multi-Dokument-Tabs** – bis N Dokumente parallel, Rename/Duplicate/Close, LocalStorage.
-3. **Vorlagen-System** – Default- und Custom-Templates, Fuse.js-Suche.
-4. **PDF-Export** – jsPDF + autoTable, Preview-Modal, Checksum, Branding.
-5. **Excel/CSV-Export** – dynamisch geladen.
-6. **Guided Wizard** – 4-Step Workflow (Template → Values → Client → Export).
-7. **Command Palette** – Ctrl+K Shortcut-Zentrale.
-8. **Branding-Settings** – Kanzlei-Logo/IBAN/Steuernr. (LocalStorage).
-9. **Document Archive & Dashboard** (nur DEV) – Umsätze, Top-Klienten, Charts.
-10. **Blog + FAQ + Rechtsseiten** – SEO-optimiert mit Helmet + JSON-LD.
-11. **PWA-Install** – manueller Install-Prompt.
-12. **Cookie/AdSense-Consent** – Enforcement bei Start.
-13. **Undo/Redo History** – über `useHistory`.
-14. **Keyboard Shortcuts** + Dialog.
-15. **Theme Toggle** (Dark/Light/System).
+Ich stelle sicher, dass nur die fachlich notwendigen Felder gepatcht werden und keine lokalen Eingabezustände anderer Felder überschrieben werden.
 
-### Verknüpfungen / Datenflüsse
-- `useDocumentTabs` ⇄ LocalStorage (`STORAGE_KEYS.tabs`) → speist `Index.tsx` → propagiert an `PositionList` → `PositionCard`.
-- `PositionCard` → `calculatePosition` (Cent) → `TotalCalculation` liest aggregiert via `calculateTotal`.
-- `useDocumentExport` → `pdfGenerator` / `excelExporter` / `csvExporter` (alle lazy).
-- `usePositionValidation` (Zod) → Badges „Vollständig/Unvollständig".
-- `CookieBanner.enforceConsent` → AdSense Script Injection.
-- `PageLayout` → Helmet-Tags (BASE_URL + canonical) → SEO.
-- `activityPresets` → `PositionCard` (Auto-Fill Zehntelsatz, Tabelle, Mindestwerte).
-- `GuidedWorkflow` schreibt final in `useDocumentTabs`.
+### 6. Browser-Verifikation
 
-### Nicht-funktionierende / fehlende Verknüpfungen
-- **`useClientDatabase`** – Toter Hook (DSGVO no-op), sollte aus Aufrufern entfernt werden.
-- **Dashboard** ist nur unter `import.meta.env.DEV` erreichbar → im Produktivsystem nicht sichtbar. Klären ob gewollt.
-- **Blog-Komponenten** `ArticleSidebar`/`NewsletterCTA` sind gebaut, aber nicht eingebunden.
-- **BASE_URL vs. Custom Domain** – SEO-Assets zeigen auf Preview-Domain, nicht auf `stbvv-rechner.de`.
-- **DocumentTabs-Click-Handler** – öffnet Kontextmenü statt zu wechseln (UX-Bug).
+Nach Umsetzung teste ich im laufenden Preview:
 
-## 11. Design
+1. Vorlage laden.
+2. Gegenstandswert in Position 1 ändern.
+3. Position hinzufügen.
+4. Prüfen: Wert in Position 1 bleibt bestehen und Gesamtberechnung bleibt identisch.
+5. Wert in Position 2 ändern.
+6. Prüfen: Position 1 bleibt unverändert.
+7. Zehntelsatz ändern.
+8. Prüfen: Zehntelsatz und Berechnung bleiben nach weiterer Positionsänderung stabil.
+9. Gewerbesteuer-/Vorlagen-Szenario nachstellen.
 
-- Header/Footer via `PageLayout` konsistent ✓
-- ThemeToggle überall vorhanden ✓
-- Responsive-Breakpoints 320/768/1024/1440 ok; 2560+ (Ultrawide) sollte auf Zentrierung geprüft werden.
-- Semantische Tokens in `index.css` konsequent → keine `text-white`/`bg-black` Fundstellen zu erwarten (Stichprobe empfehlenswert).
+## Geänderte Datei
 
----
+- `src/components/PositionCard.tsx`
 
-## Kritischste Punkte (Zusammenfassung)
+Keine Änderung an der Berechnungslogik selbst, keine Änderung an Tabellenwerten, keine Änderung an PDF-Export oder Speicherformat.
 
-**Hoch:**
-- BASE_URL / Sitemap / OG auf Custom Domain umstellen vor Go-Live auf `stbvv-rechner.de`.
-- DocumentTabs: Klick-vs-Kontextmenü UX-Fix.
-- `test`-Script in `package.json` ergänzen (Vitest CI).
+## Erwartetes Ergebnis
 
-**Mittel:**
-- CalculatorService/utils-Duplizierung auflösen.
-- `PositionCard` (746 Z.) und `Index.tsx` (617 Z.) modularisieren.
-- E2E-Testautomatisierung (Playwright) einführen.
-- Dependency-Audit in CI.
-
-**Niedrig:**
-- `react-helmet` → `react-helmet-async`.
-- Toten Code entfernen (`useClientDatabase`, ungenutzte Blog-Komponenten, ungenutzte UI-Komponenten).
-- FAQ/Anleitungen-Content in Data-Files extrahieren.
-- README/ADR aktualisieren.
-
----
-
-## Phasenplan
-
-### Phase 1 — Go-Live-Blocker (Hoch, ~1–2 h)
-1. `BASE_URL` in `src/constants/index.ts` auf `https://stbvv-rechner.de` umstellen.
-2. `public/sitemap.xml` und `public/robots.txt` auf Custom Domain aktualisieren.
-3. `index.html` OG-/Twitter-URLs und Canonical auf Custom Domain.
-4. DocumentTabs UX-Fix: Klick = Tab wechseln, Rechtsklick / Chevron-Button = Kontextmenü.
-5. `package.json`: `"test": "vitest run"`, `"test:watch": "vitest"` ergänzen.
-
-### Phase 2 — Konsolidierung & Aufräumen (Mittel, ~3–5 h)
-1. `CalculatorService` als dünnen Wrapper um `stbvvCalculator` (Cent) implementieren oder entfernen; alle Aufrufer migrieren; Cross-Validation-Tests durchlaufen lassen.
-2. `useClientDatabase` und Aufrufer entfernen.
-3. `hooks/index.ts` konsolidieren (`useHistory` exportieren, tote Exporte prüfen).
-4. Ungenutzte shadcn-UI-Komponenten identifizieren (via `rg`) und löschen.
-5. Ungenutzte Blog-Komponenten entweder in BlogArticle einbinden oder löschen.
-
-### Phase 3 — Struktur-Refactor (Mittel, ~4–6 h)
-1. `PositionCard` in `ObjectValueInput`, `HourlyInput`, `FlatRateInput`, `ActivitySelector`, `TenthRateSelector` zerlegen.
-2. `Index.tsx`: Tab-/Export-/Import-Handler in `useCalculatorPage`-Hook auslagern.
-3. FAQ/Anleitungen-Inhalt in `src/data/*.ts` extrahieren (Content-first, testbar).
-
-### Phase 4 — Qualitäts-Guardrails (Mittel, ~3–4 h)
-1. Playwright installieren, kritische Flows scripten: Position anlegen, Tabs wechseln, PDF-Export, Legal-Seiten.
-2. GitHub-Action / npm-Script `audit:ci` einrichten.
-3. Bundle-Size-Report (rollup-plugin-visualizer) einmalig prüfen; große Deps identifizieren.
-
-### Phase 5 — Politur (Niedrig, ~2–3 h)
-1. `react-helmet` → `react-helmet-async`.
-2. README + ADR (Multi-Tab, Cent-Arithmetik, Service-Layer, DSGVO).
-3. Ultrawide-Responsive-Feintuning (Max-Width Container).
-4. A11y-Stichprobe: `aria-label` an allen Icon-Buttons.
-
-**Kritische Sicherung:** Vor Phase 2–3 den kompletten Vitest-Suite grün ziehen; nach jeder strukturellen Änderung erneut ausführen. Keine Änderung an `stbvvCalculator.ts`, `pdfGenerator.ts`, `excelExporter.ts`, `stbvvTables.ts`, `centArithmetic.ts`, `activityPresets.ts` ohne Golden-Reference-Test-Bestätigung.
-
-### Technische Datei-Referenz
-| Bereich | Dateien |
-|---|---|
-| Go-Live | `src/constants/index.ts`, `public/sitemap.xml`, `public/robots.txt`, `index.html`, `src/components/calculator/DocumentTabs.tsx`, `package.json` |
-| Konsolidierung | `src/services/CalculatorService.ts`, `src/hooks/useClientDatabase.ts`, `src/hooks/index.ts`, `src/components/ui/*`, `src/components/blog/{ArticleSidebar,NewsletterCTA}.tsx` |
-| Refactor | `src/components/PositionCard.tsx`, `src/pages/Index.tsx`, `src/pages/FAQ.tsx`, `src/pages/Anleitungen.tsx`, `src/data/*` (neu) |
-| Guardrails | `playwright.config.ts` (neu), `package.json`, CI-Config |
-| Politur | `src/components/PageLayout.tsx`, `README.md`, `docs/ADR-*.md` (neu) |
-
-Nach Abschluss der Phasen 1–2 ist die App uneingeschränkt Go-Live-tauglich auf `stbvv-rechner.de` in Steuerberater-Qualität; Phasen 3–5 heben die Codebase auf langfristige Enterprise-Wartbarkeit.
+Die App überschreibt eingegebene Beträge und Zehntelsätze nicht mehr, wenn eine Vorlage geladen, eine neue Position hinzugefügt oder eine andere Position bearbeitet wird. Die Berechnung bleibt konsistent und steuerberater-tauglich stabil.
