@@ -35,6 +35,8 @@ interface PositionCardProps {
   onSelectionChange?: (id: string, selected: boolean) => void;
 }
 
+type NumericInputField = 'objectValue' | 'hourlyRate' | 'hours' | 'flatRate' | 'tenthRate';
+
 const PositionCard: React.FC<PositionCardProps> = ({
   position,
   index,
@@ -58,7 +60,8 @@ const PositionCard: React.FC<PositionCardProps> = ({
   const [localFlatRate, setLocalFlatRate] = useState(position.flatRate || 0);
   const [localTenthRateInput, setLocalTenthRateInput] = useState(String(position.tenthRate.numerator));
   const lastPositionIdRef = useRef(position.id);
-  const activeNumericFieldRef = useRef<null | 'objectValue' | 'hourlyRate' | 'hours' | 'flatRate' | 'tenthRate'>(null);
+  const activeNumericFieldRef = useRef<null | NumericInputField>(null);
+  const pendingNumericValuesRef = useRef<Partial<Record<NumericInputField, number | string>>>({});
   
   // Validation states
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
@@ -68,6 +71,27 @@ const PositionCard: React.FC<PositionCardProps> = ({
   const handleChange = useCallback((field: keyof Position, value: any) => {
     onUpdate(position.id, { [field]: value });
   }, [position.id, onUpdate]);
+
+  const syncNumericInput = useCallback((
+    field: NumericInputField,
+    externalValue: number | string,
+    localValue: number | string,
+    setLocalValue: (value: any) => void
+  ) => {
+    const pendingValue = pendingNumericValuesRef.current[field];
+
+    if (pendingValue !== undefined) {
+      if (String(externalValue) === String(pendingValue)) {
+        delete pendingNumericValuesRef.current[field];
+      } else {
+        return;
+      }
+    }
+
+    if (activeNumericFieldRef.current !== field && String(externalValue) !== String(localValue)) {
+      setLocalValue(externalValue);
+    }
+  }, []);
 
   // Sync local input mirrors only from the authoritative position data.
   // Because numeric edits patch the parent immediately, this cannot replay stale debounced values.
@@ -79,24 +103,15 @@ const PositionCard: React.FC<PositionCardProps> = ({
       setLocalHours(position.hours || 0);
       setLocalFlatRate(position.flatRate || 0);
       setLocalTenthRateInput(String(position.tenthRate.numerator));
+      pendingNumericValuesRef.current = {};
       return;
     }
 
-    if (activeNumericFieldRef.current !== 'objectValue' && position.objectValue !== localObjectValue) {
-      setLocalObjectValue(position.objectValue);
-    }
-    if (activeNumericFieldRef.current !== 'hourlyRate' && (position.hourlyRate || 0) !== localHourlyRate) {
-      setLocalHourlyRate(position.hourlyRate || 0);
-    }
-    if (activeNumericFieldRef.current !== 'hours' && (position.hours || 0) !== localHours) {
-      setLocalHours(position.hours || 0);
-    }
-    if (activeNumericFieldRef.current !== 'flatRate' && (position.flatRate || 0) !== localFlatRate) {
-      setLocalFlatRate(position.flatRate || 0);
-    }
-    if (activeNumericFieldRef.current !== 'tenthRate' && String(position.tenthRate.numerator) !== localTenthRateInput) {
-      setLocalTenthRateInput(String(position.tenthRate.numerator));
-    }
+    syncNumericInput('objectValue', position.objectValue, localObjectValue, setLocalObjectValue);
+    syncNumericInput('hourlyRate', position.hourlyRate || 0, localHourlyRate, setLocalHourlyRate);
+    syncNumericInput('hours', position.hours || 0, localHours, setLocalHours);
+    syncNumericInput('flatRate', position.flatRate || 0, localFlatRate, setLocalFlatRate);
+    syncNumericInput('tenthRate', String(position.tenthRate.numerator), localTenthRateInput, setLocalTenthRateInput);
   }, [
     position.id,
     position.objectValue,
@@ -109,6 +124,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
     localHours,
     localFlatRate,
     localTenthRateInput,
+    syncNumericInput,
   ]);
   
   const {
