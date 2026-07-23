@@ -58,6 +58,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
   const [localFlatRate, setLocalFlatRate] = useState(position.flatRate || 0);
   const [localTenthRateInput, setLocalTenthRateInput] = useState(String(position.tenthRate.numerator));
   const lastPositionIdRef = useRef(position.id);
+  const activeNumericFieldRef = useRef<null | 'objectValue' | 'hourlyRate' | 'hours' | 'flatRate' | 'tenthRate'>(null);
   
   // Validation states
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
@@ -81,19 +82,19 @@ const PositionCard: React.FC<PositionCardProps> = ({
       return;
     }
 
-    if (position.objectValue !== localObjectValue) {
+    if (activeNumericFieldRef.current !== 'objectValue' && position.objectValue !== localObjectValue) {
       setLocalObjectValue(position.objectValue);
     }
-    if ((position.hourlyRate || 0) !== localHourlyRate) {
+    if (activeNumericFieldRef.current !== 'hourlyRate' && (position.hourlyRate || 0) !== localHourlyRate) {
       setLocalHourlyRate(position.hourlyRate || 0);
     }
-    if ((position.hours || 0) !== localHours) {
+    if (activeNumericFieldRef.current !== 'hours' && (position.hours || 0) !== localHours) {
       setLocalHours(position.hours || 0);
     }
-    if ((position.flatRate || 0) !== localFlatRate) {
+    if (activeNumericFieldRef.current !== 'flatRate' && (position.flatRate || 0) !== localFlatRate) {
       setLocalFlatRate(position.flatRate || 0);
     }
-    if (String(position.tenthRate.numerator) !== localTenthRateInput) {
+    if (activeNumericFieldRef.current !== 'tenthRate' && String(position.tenthRate.numerator) !== localTenthRateInput) {
       setLocalTenthRateInput(String(position.tenthRate.numerator));
     }
   }, [
@@ -417,6 +418,12 @@ const PositionCard: React.FC<PositionCardProps> = ({
                 <Input
                   type="number"
                   value={localObjectValue === 0 ? '' : localObjectValue}
+                  onFocus={() => {
+                    activeNumericFieldRef.current = 'objectValue';
+                  }}
+                  onBlur={() => {
+                    activeNumericFieldRef.current = null;
+                  }}
                   onChange={(e) => {
                     const value = Math.max(0, parseFloat(e.target.value) || 0);
                     setLocalObjectValue(value);
@@ -464,6 +471,12 @@ const PositionCard: React.FC<PositionCardProps> = ({
                 <Input
                   type="number"
                   value={localHourlyRate === 0 ? '' : localHourlyRate}
+                  onFocus={() => {
+                    activeNumericFieldRef.current = 'hourlyRate';
+                  }}
+                  onBlur={() => {
+                    activeNumericFieldRef.current = null;
+                  }}
                   onChange={(e) => {
                     const value = Math.max(0, parseFloat(e.target.value) || 0);
                     handleHourlyRateChange(value);
@@ -489,6 +502,12 @@ const PositionCard: React.FC<PositionCardProps> = ({
                 <Input
                   type="number"
                   value={localFlatRate === 0 ? '' : localFlatRate}
+                  onFocus={() => {
+                    activeNumericFieldRef.current = 'flatRate';
+                  }}
+                  onBlur={() => {
+                    activeNumericFieldRef.current = null;
+                  }}
                   onChange={(e) => {
                     const value = Math.max(0, parseFloat(e.target.value) || 0);
                     setLocalFlatRate(value);
@@ -613,6 +632,15 @@ const PositionCard: React.FC<PositionCardProps> = ({
                       <Input
                         type="number"
                         value={localTenthRateInput}
+                        onFocus={() => {
+                          activeNumericFieldRef.current = 'tenthRate';
+                        }}
+                        onBlur={() => {
+                          activeNumericFieldRef.current = null;
+                          if (localTenthRateInput.trim() === '' || Number(localTenthRateInput) <= 0) {
+                            setLocalTenthRateInput(String(position.tenthRate.numerator));
+                          }
+                        }}
                         onChange={(e) => handleTenthRateChange(e.target.value)}
                         min="0.1"
                         max={preset.rateType === 'twentieth' ? "20" : "50"}
@@ -644,6 +672,12 @@ const PositionCard: React.FC<PositionCardProps> = ({
                   <Input
                     type="number"
                     value={localHours === 0 ? '' : localHours}
+                    onFocus={() => {
+                      activeNumericFieldRef.current = 'hours';
+                    }}
+                    onBlur={() => {
+                      activeNumericFieldRef.current = null;
+                    }}
                     onChange={(e) => {
                       const value = Math.max(0, parseFloat(e.target.value) || 0);
                       setLocalHours(value);
