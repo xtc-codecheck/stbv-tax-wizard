@@ -236,6 +236,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
     }
 
     const denominator = preset?.rateType === 'twentieth' ? 20 : 10;
+    pendingNumericValuesRef.current.tenthRate = num;
     // Send as patch
     onUpdate(position.id, {
       tenthRate: { numerator: num, denominator }
@@ -245,6 +246,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
   // Smart defaults: Save hourly rate when changed
   const handleHourlyRateChange = (value: number) => {
     setLocalHourlyRate(value);
+    pendingNumericValuesRef.current.hourlyRate = value;
     handleChange('hourlyRate', value);
     if (value > 0) {
       updateSmartDefaults({ lastHourlyRate: value });
@@ -443,6 +445,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
                   onChange={(e) => {
                     const value = Math.max(0, parseFloat(e.target.value) || 0);
                     setLocalObjectValue(value);
+                    pendingNumericValuesRef.current.objectValue = value;
                     handleChange('objectValue', value);
                     handleFieldChange('objectValue', value);
                   }}
@@ -468,6 +471,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
                       <button 
                         onClick={() => {
                           setLocalObjectValue(preset.minObjectValue!);
+                          pendingNumericValuesRef.current.objectValue = preset.minObjectValue!;
                           handleChange('objectValue', preset.minObjectValue!);
                         }}
                         className="block mt-1 text-amber-700 hover:text-amber-900 underline font-medium"
@@ -527,6 +531,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
                   onChange={(e) => {
                     const value = Math.max(0, parseFloat(e.target.value) || 0);
                     setLocalFlatRate(value);
+                    pendingNumericValuesRef.current.flatRate = value;
                     handleChange('flatRate', value);
                     handleFieldChange('flatRate', value);
                   }}
@@ -697,6 +702,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
                     onChange={(e) => {
                       const value = Math.max(0, parseFloat(e.target.value) || 0);
                       setLocalHours(value);
+                      pendingNumericValuesRef.current.hours = value;
                       handleChange('hours', value);
                       handleFieldChange('hours', value);
                     }}
