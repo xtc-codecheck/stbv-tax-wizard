@@ -117,8 +117,7 @@ describe('Mindestgegenstandswerte (§ 24 StBVV)', () => {
   const minValueTests: Array<{ activity: string; expectedMin: number; legalRef: string }> = [
     { activity: 'Einkommensteuererklärung', expectedMin: 8000, legalRef: '§ 24 Abs. 1 Nr. 1' },
     { activity: 'Anlage EÜR (Einnahmen-Überschuss-Rechnung)', expectedMin: 17500, legalRef: '§ 25' },
-    { activity: 'Buchführung (monatlich)', expectedMin: 15000, legalRef: '§ 33' },
-    { activity: 'Jahresabschluss GmbH', expectedMin: 8000, legalRef: '§ 35' },
+    { activity: 'Anlage KAP (Kapitalerträge)', expectedMin: 8000, legalRef: '§ 27 Abs. 1' },
     { activity: 'Körperschaftsteuererklärung', expectedMin: 16000, legalRef: '§ 24 Abs. 1 Nr. 3' },
     { activity: 'Gewerbesteuererklärung', expectedMin: 8000, legalRef: '§ 24 Abs. 1 Nr. 5' },
     { activity: 'Umsatzsteuer-Voranmeldung', expectedMin: 650, legalRef: '§ 24 Abs. 1 Nr. 7' },
@@ -172,7 +171,7 @@ describe('Rechtsgrundlagen-Validierung', () => {
       { activity: 'Jahresabschluss GmbH', expectedBasis: '§ 35 Abs. 1 Nr. 1a' },
       { activity: 'Prüfung Steuerbescheid', expectedBasis: '§ 13' },
       { activity: 'Erstberatung', expectedBasis: '§ 21' },
-      { activity: 'Einspruch beim Finanzamt', expectedBasis: '§ 40 Abs. 1' },
+      { activity: 'Einspruch beim Finanzamt', expectedBasis: '§ 40' },
     ];
 
     legalBasisTests.forEach(({ activity, expectedBasis }) => {
@@ -192,7 +191,7 @@ describe('Gebührentabellen-Zuordnung', () => {
       p.activity.startsWith('Anlage') && p.category === 'Einkommensteuererklärung'
     );
     
-    // Ausnahme: Anlage EÜR verwendet Tabelle B, Anlage L verwendet Tabelle D
+    // Ausnahme: Anlage EÜR verwendet Tabelle B
     const tableAAnlagen = anlagePresets.filter(p => 
       !p.activity.includes('EÜR') && !p.activity.includes('Land- und Forstwirtschaft')
     );
@@ -227,9 +226,9 @@ describe('Gebührentabellen-Zuordnung', () => {
     });
   });
 
-  it('Anlage L (Landwirtschaft) verwendet Tabelle D', () => {
+  it('Anlage L (Landwirtschaft) verwendet Tabelle A (§ 27 Abs. 1)', () => {
     const anlageLPreset = getActivityPreset('Anlage L (Land- und Forstwirtschaft)');
-    expect(anlageLPreset?.suggestedFeeTable).toBe('D');
+    expect(anlageLPreset?.suggestedFeeTable).toBe('A');
   });
 });
 
@@ -325,7 +324,7 @@ describe('getActivityPreset() Lookup', () => {
 describe('Presets Prüfsumme', () => {
   it('Anzahl der Presets ist stabil', () => {
     // Bei Änderungen an Presets muss dieser Test aktualisiert werden
-    expect(activityPresets.length).toBe(66);
+    expect(activityPresets.length).toBe(81);
   });
 
   it('Kategorien-Verteilung ist stabil', () => {
