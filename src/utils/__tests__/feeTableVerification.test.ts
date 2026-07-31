@@ -9,7 +9,17 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { feeTableA, feeTableB, feeTableC, feeTableD, getFeeTables } from '../stbvvTables';
+import {
+  feeTableA,
+  feeTableB,
+  feeTableC,
+  feeTableD,
+  getFeeTables,
+  getFeeA,
+  getFeeB,
+  getFeeC,
+  getFeeDPartA,
+} from '../stbvvTables';
 import { FeeTableEntry } from '@/types/stbvv';
 
 // ============== Hilfsfunktionen ==============
@@ -50,8 +60,8 @@ const hasAscendingFees = (table: FeeTableEntry[]): boolean => {
 // ============== Tabelle A Tests ==============
 
 describe('Gebührentabelle A - Beratungstabelle (StBVV Anlage 1)', () => {
-  it('hat die korrekte Anzahl an Einträgen (54)', () => {
-    expect(feeTableA.length).toBe(54);
+  it('hat die korrekte Anzahl an Einträgen (49)', () => {
+    expect(feeTableA.length).toBe(49);
   });
 
   it('beginnt bei 0 €', () => {
@@ -69,29 +79,29 @@ describe('Gebührentabelle A - Beratungstabelle (StBVV Anlage 1)', () => {
   // Stichproben-Verifizierung gegen offizielle StBVV-Werte
   describe('Stichproben-Verifizierung (kritische Werte)', () => {
     const criticalValues: Array<{ value: number; expectedFee: number; description: string }> = [
-      { value: 0, expectedFee: 31, description: 'Minimaler Wert' },
-      { value: 300, expectedFee: 56, description: 'Erste Grenze' },
-      { value: 5000, expectedFee: 422, description: '5.000€ (häufig)' },
-      { value: 10000, expectedFee: 655, description: '10.000€ (häufig)' },
-      { value: 25000, expectedFee: 946, description: '25.000€ (Mittelwert)' },
-      { value: 50000, expectedFee: 1399, description: '50.000€' },
+      { value: 1, expectedFee: 31, description: 'Minimaler Wert' },
+      { value: 300, expectedFee: 31, description: 'Erste Grenze (inklusiv)' },
+      { value: 5000, expectedFee: 375, description: '5.000€ (häufig)' },
+      { value: 10000, expectedFee: 605, description: '10.000€ (häufig)' },
+      { value: 25000, expectedFee: 854, description: '25.000€ (Mittelwert)' },
+      { value: 50000, expectedFee: 1304, description: '50.000€' },
       { value: 100000, expectedFee: 1689, description: '100.000€' },
-      { value: 200000, expectedFee: 2412, description: '200.000€' },
-      { value: 500000, expectedFee: 3404, description: '500.000€ (Maximum)' },
+      { value: 200000, expectedFee: 2264, description: '200.000€' },
+      { value: 500000, expectedFee: 3234, description: '500.000€' },
+      { value: 600000, expectedFee: 3404, description: '600.000€ (letzte Tabellenstufe)' },
     ];
 
     criticalValues.forEach(({ value, expectedFee, description }) => {
       it(`liefert korrekte Gebühr für ${value.toLocaleString('de-DE')}€ (${description})`, () => {
-        const entry = feeTableA.find(e => value >= e.minValue && value < e.maxValue);
-        expect(entry?.fee).toBe(expectedFee);
+        expect(getFeeA(value)).toBe(expectedFee);
       });
     });
   });
 
   it('hat stabile Prüfsumme (Änderungsdetektion)', () => {
     const checksum = calculateTableChecksum(feeTableA);
-    // Prüfsumme bei 54 Einträgen mit Summe 74954
-    expect(checksum).toBe(74954054);
+    // Prüfsumme bei 49 Einträgen mit Summe 68335
+    expect(checksum).toBe(68335049);
   });
 });
 
@@ -116,36 +126,35 @@ describe('Gebührentabelle B - Abschlusstabelle (StBVV Anlage 2)', () => {
 
   describe('Stichproben-Verifizierung (kritische Werte)', () => {
     const criticalValues: Array<{ value: number; expectedFee: number; description: string }> = [
-      { value: 0, expectedFee: 49, description: 'Minimaler Wert' },
-      { value: 8000, expectedFee: 121, description: '8.000€ (Mindestgegenstandswert Jahresabschluss)' },
-      { value: 17500, expectedFee: 178, description: '17.500€ (Mindestgegenstandswert EÜR)' },
-      { value: 50000, expectedFee: 303, description: '50.000€' },
-      { value: 100000, expectedFee: 423, description: '100.000€' },
-      { value: 500000, expectedFee: 871, description: '500.000€' },
-      { value: 1000000, expectedFee: 1194, description: '1.000.000€' },
-      { value: 5000000, expectedFee: 2720, description: '5.000.000€' },
+      { value: 1, expectedFee: 49, description: 'Minimaler Wert' },
+      { value: 8000, expectedFee: 116, description: '8.000€ (Grenze inklusiv)' },
+      { value: 17500, expectedFee: 166, description: '17.500€ (Mindestgegenstandswert EÜR)' },
+      { value: 50000, expectedFee: 263, description: '50.000€' },
+      { value: 100000, expectedFee: 369, description: '100.000€' },
+      { value: 500000, expectedFee: 832, description: '500.000€' },
+      { value: 1000000, expectedFee: 1126, description: '1.000.000€' },
+      { value: 5000000, expectedFee: 2328, description: '5.000.000€' },
       { value: 50000000, expectedFee: 6923, description: '50.000.000€ (Maximum)' },
     ];
 
     criticalValues.forEach(({ value, expectedFee, description }) => {
       it(`liefert korrekte Gebühr für ${value.toLocaleString('de-DE')}€ (${description})`, () => {
-        const entry = feeTableB.find(e => value >= e.minValue && value < e.maxValue);
-        expect(entry?.fee).toBe(expectedFee);
+        expect(getFeeB(value)).toBe(expectedFee);
       });
     });
   });
 
   it('hat stabile Prüfsumme', () => {
     const checksum = calculateTableChecksum(feeTableB);
-    expect(checksum).toBe(103912061);
+    expect(checksum).toBe(95582061);
   });
 });
 
 // ============== Tabelle C Tests ==============
 
 describe('Gebührentabelle C - Buchführungstabelle (StBVV Anlage 3)', () => {
-  it('hat die korrekte Anzahl an Einträgen (24)', () => {
-    expect(feeTableC.length).toBe(24);
+  it('hat die korrekte Anzahl an Einträgen (23)', () => {
+    expect(feeTableC.length).toBe(23);
   });
 
   it('beginnt bei 0 €', () => {
@@ -162,33 +171,32 @@ describe('Gebührentabelle C - Buchführungstabelle (StBVV Anlage 3)', () => {
 
   describe('Stichproben-Verifizierung (kritische Werte)', () => {
     const criticalValues: Array<{ value: number; expectedFee: number; description: string }> = [
-      { value: 0, expectedFee: 72, description: 'Minimaler Wert' },
-      { value: 15000, expectedFee: 80, description: '15.000€ (Mindestgegenstandswert Buchführung)' },
-      { value: 50000, expectedFee: 145, description: '50.000€' },
-      { value: 100000, expectedFee: 209, description: '100.000€' },
-      { value: 250000, expectedFee: 359, description: '250.000€' },
+      { value: 1, expectedFee: 72, description: 'Minimaler Wert' },
+      { value: 15000, expectedFee: 72, description: '15.000€ (Grenze inklusiv)' },
+      { value: 50000, expectedFee: 138, description: '50.000€' },
+      { value: 100000, expectedFee: 188, description: '100.000€' },
+      { value: 250000, expectedFee: 317, description: '250.000€' },
       { value: 500000, expectedFee: 512, description: '500.000€ (Maximum)' },
     ];
 
     criticalValues.forEach(({ value, expectedFee, description }) => {
       it(`liefert korrekte Gebühr für ${value.toLocaleString('de-DE')}€ (${description})`, () => {
-        const entry = feeTableC.find(e => value >= e.minValue && value < e.maxValue);
-        expect(entry?.fee).toBe(expectedFee);
+        expect(getFeeC(value)).toBe(expectedFee);
       });
     });
   });
 
   it('hat stabile Prüfsumme', () => {
     const checksum = calculateTableChecksum(feeTableC);
-    expect(checksum).toBe(5379024);
+    expect(checksum).toBe(4935023);
   });
 });
 
 // ============== Tabelle D Tests ==============
 
 describe('Gebührentabelle D - Landwirtschaftstabelle (StBVV Anlage 4)', () => {
-  it('hat die korrekte Anzahl an Einträgen (60)', () => {
-    expect(feeTableD.length).toBe(60);
+  it('hat die korrekte Anzahl an Einträgen (59)', () => {
+    expect(feeTableD.length).toBe(59);
   });
 
   it('beginnt bei 0 Hektar', () => {
@@ -205,25 +213,24 @@ describe('Gebührentabelle D - Landwirtschaftstabelle (StBVV Anlage 4)', () => {
 
   describe('Stichproben-Verifizierung (kritische Werte)', () => {
     const criticalValues: Array<{ value: number; expectedFee: number; description: string }> = [
-      { value: 0, expectedFee: 369, description: 'Bis 40 ha' },
-      { value: 50, expectedFee: 444, description: '50-55 ha' },
-      { value: 100, expectedFee: 631, description: '100-110 ha' },
-      { value: 200, expectedFee: 888, description: '200-210 ha' },
-      { value: 500, expectedFee: 1409, description: '500-520 ha' },
-      { value: 1000, expectedFee: 1843, description: 'Ab 1.000 ha (Maximum)' },
+      { value: 1, expectedFee: 369, description: 'Bis 40 ha' },
+      { value: 50, expectedFee: 420, description: 'bis 50 ha (inklusiv)' },
+      { value: 100, expectedFee: 601, description: 'bis 100 ha' },
+      { value: 200, expectedFee: 865, description: 'bis 200 ha' },
+      { value: 500, expectedFee: 1379, description: 'bis 500 ha' },
+      { value: 1000, expectedFee: 1843, description: 'bis 1.000 ha (letzte Stufe)' },
     ];
 
     criticalValues.forEach(({ value, expectedFee, description }) => {
       it(`liefert korrekte Gebühr für ${value} ha (${description})`, () => {
-        const entry = feeTableD.find(e => value >= e.minValue && value < e.maxValue);
-        expect(entry?.fee).toBe(expectedFee);
+        expect(getFeeDPartA(value)).toBe(expectedFee);
       });
     });
   });
 
   it('hat stabile Prüfsumme', () => {
     const checksum = calculateTableChecksum(feeTableD);
-    expect(checksum).toBe(62620060);
+    expect(checksum).toBe(62111059);
   });
 });
 
@@ -266,8 +273,8 @@ describe('Gebührentabellen-Integrität', () => {
       calculateTableChecksum(feeTableC) +
       calculateTableChecksum(feeTableD);
     
-    // Gesamt: 74954054 + 103912061 + 5379024 + 62620060 = 246865199
-    expect(totalChecksum).toBe(246865199);
+    // Gesamt: 68335049 + 95582061 + 4935023 + 62111059 = 230963192
+    expect(totalChecksum).toBe(230963192);
   });
 });
 

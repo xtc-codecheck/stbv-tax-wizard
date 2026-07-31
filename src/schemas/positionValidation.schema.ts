@@ -7,6 +7,7 @@
  */
 
 import { z } from 'zod';
+import { getActivityPreset } from '@/utils/activityPresets';
 import { VALIDATION, MIN_OBJECT_VALUES } from '@/constants';
 import { TIME_FEE } from '@/constants';
 
@@ -123,14 +124,14 @@ export type ValidatedPosition = z.infer<typeof positionValidationSchema>;
 const activityMinValueMap: Record<string, number> = {
   'Einkommensteuererklärung': MIN_OBJECT_VALUES.EINKOMMENSTEUER,
   'Einkommensteuer Mantelbogen': MIN_OBJECT_VALUES.EINKOMMENSTEUER,
-  'Anlage N (Einkünfte aus nichtselbständiger Arbeit)': MIN_OBJECT_VALUES.EINKOMMENSTEUER,
-  'Anlage V (Vermietung und Verpachtung)': MIN_OBJECT_VALUES.EINKOMMENSTEUER,
+  'Anlage N (Einkünfte aus nichtselbständiger Arbeit)': MIN_OBJECT_VALUES.UEBERSCHUSSRECHNUNG,
+  'Anlage V (Vermietung und Verpachtung)': MIN_OBJECT_VALUES.UEBERSCHUSSRECHNUNG,
   'Anlage G (Gewerbebetrieb)': MIN_OBJECT_VALUES.EINKOMMENSTEUER,
   'Anlage S (Einkünfte aus selbständiger Arbeit)': MIN_OBJECT_VALUES.EINKOMMENSTEUER,
-  'Anlage KAP (Kapitalerträge)': MIN_OBJECT_VALUES.KAPITALERTRAGSTEUER,
-  'Anlage SO (Sonstige Einkünfte)': MIN_OBJECT_VALUES.EINKOMMENSTEUER,
-  'Anlage R (Renten)': MIN_OBJECT_VALUES.EINKOMMENSTEUER,
-  'Anlage L (Land- und Forstwirtschaft)': MIN_OBJECT_VALUES.EINKOMMENSTEUER,
+  'Anlage KAP (Kapitalerträge)': MIN_OBJECT_VALUES.UEBERSCHUSSRECHNUNG,
+  'Anlage SO (Sonstige Einkünfte)': MIN_OBJECT_VALUES.UEBERSCHUSSRECHNUNG,
+  'Anlage R (Renten)': MIN_OBJECT_VALUES.UEBERSCHUSSRECHNUNG,
+  'Anlage L (Land- und Forstwirtschaft)': MIN_OBJECT_VALUES.UEBERSCHUSSRECHNUNG,
   'Anlage EÜR (Einnahmen-Überschuss-Rechnung)': MIN_OBJECT_VALUES.EÜR,
   'Anlage Kind': MIN_OBJECT_VALUES.EINKOMMENSTEUER,
   'Anlage AV (Altersvorsorge)': MIN_OBJECT_VALUES.EINKOMMENSTEUER,
@@ -171,7 +172,10 @@ const activityMinValueMap: Record<string, number> = {
  * Holt den Mindestgegenstandswert für eine Aktivität
  */
 export const getMinObjectValue = (activity: string): number => {
-  return activityMinValueMap[activity] ?? MIN_OBJECT_VALUES.DEFAULT;
+  const mapped = activityMinValueMap[activity];
+  if (mapped !== undefined) return mapped;
+  // Fallback: Mindestgegenstandswert aus dem Preset (einzige Quelle der Wahrheit)
+  return getActivityPreset(activity)?.minObjectValue ?? MIN_OBJECT_VALUES.DEFAULT;
 };
 
 // ============== Erweiterte Validierungsfunktionen ==============
@@ -222,7 +226,7 @@ export const validatePosition = (position: ValidatedPosition): ValidationResult 
         if (minValue > 0 && position.objectValue < minValue) {
           issues.push({
             field: 'objectValue',
-            message: `Mindestgegenstandswert für "${position.activity}" ist ${minValue.toLocaleString('de-DE')} € (§ 24 StBVV)`,
+            message: `Mindestgegenstandswert für "${position.activity}" ist ${minValue.toLocaleString('de-DE')} € (StBVV)`,
             severity: 'warning',
             code: 'BELOW_MIN_OBJECT_VALUE',
             suggestion: `Mindestgegenstandswert von ${minValue.toLocaleString('de-DE')} € übernehmen`,

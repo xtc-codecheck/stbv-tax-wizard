@@ -180,12 +180,12 @@ describe('Mindestgegenstandswert-Validierung', () => {
     expect(result.issues.some(i => i.code === 'BELOW_MIN_OBJECT_VALUE')).toBe(false);
   });
 
-  it('warnt bei Unterschreitung für Buchführung (15.000€)', () => {
+  it('warnt bei Unterschreitung für Anlage KAP (8.000€, § 27 Abs. 1)', () => {
     const position = createValidPosition({
-      activity: 'Buchführung (monatlich)',
-      objectValue: 10000,
-      feeTable: 'C',
-      tenthRate: { numerator: 6.5, denominator: 10 },
+      activity: 'Anlage KAP (Kapitalerträge)',
+      objectValue: 5000,
+      feeTable: 'A',
+      tenthRate: { numerator: 6.5, denominator: 20 },
     });
     const result = validatePosition(position);
     

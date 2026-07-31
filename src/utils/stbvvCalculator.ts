@@ -7,7 +7,8 @@
  */
 
 import { Position, CalculationResult } from "@/types/stbvv";
-import { getFeeTables } from "./stbvvTables";
+import { getTableFee } from "./stbvvTables";
+import { getActivityPreset } from "./activityPresets";
 import { VAT_RATE, EXPENSE_FEE_RATE, EXPENSE_FEE_MAX } from "@/constants";
 import {
   euroToCent,
@@ -51,8 +52,8 @@ const calculatePositionCent = (position: Position): CentCalculationResult => {
       
     case 'objectValue':
     default: {
-      const objectValue = sanitizeEuro(position.objectValue);
-      if (objectValue <= 0) {
+      const rawObjectValue = sanitizeEuro(position.objectValue);
+      if (rawObjectValue <= 0) {
         return {
           baseFeeCent: 0,
           adjustedFeeCent: 0,
@@ -61,19 +62,15 @@ const calculatePositionCent = (position: Position): CentCalculationResult => {
         };
       }
 
-      const feeTables = getFeeTables();
-      const table = feeTables[position.feeTable];
-      
-      // Finde passenden Tabelleneintrag
-      const tableEntry = table.find(entry => 
-        objectValue >= entry.minValue && 
-        objectValue < entry.maxValue
-      );
-      
-      // Tabellengebühr ist bereits in Euro, konvertiere zu Cent
-      const tableFeeEuro = tableEntry ? tableEntry.fee : table[table.length - 1].fee;
+      // Gesetzlichen Mindestgegenstandswert durchsetzen (z. B. § 24, § 25, § 27 StBVV)
+      const minObjectValue = getActivityPreset(position.activity)?.minObjectValue ?? 0;
+      const objectValue = Math.max(rawObjectValue, minObjectValue);
+
+      // Tabellengebühr (Obergrenzen inklusiv, inkl. Degression oberhalb der Tabelle)
+      const secondaryValue = sanitizeEuro(position.objectValueSecondary);
+      const tableFeeEuro = getTableFee(position.feeTable, objectValue, secondaryValue);
       baseFeeCent = euroToCent(tableFeeEuro);
-      
+
       // Wende Zehntel-/Zwanzigstelsatz an
       adjustedFeeCent = applyRate(
         baseFeeCent,

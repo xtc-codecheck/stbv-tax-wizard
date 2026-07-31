@@ -51,15 +51,15 @@ describe('Szenario 1: Einkommensteuer Freiberufler', () => {
    * Position 2: Anlage EÜR
    *   - Gegenstandswert: 25.000 €
    *   - Tabelle B, 17,5/10 (§ 25)
-   *   - Tabelle B bei 25.000€: 215 € (Vollgebühr)
-   *   - 17,5/10: 215 * 1,75 = 376,25 €
-   *   - Mit Auslagenpauschale: 376,25 + 20 = 396,25 €
+   *   - Tabelle B bei 25.000€ (Obergrenze inklusiv): 201 € (Vollgebühr)
+   *   - 17,5/10: 201 * 1,75 = 351,75 €
+   *   - Mit Auslagenpauschale: 351,75 + 20 = 371,75 €
    * 
-   * Summe Positionen: 641,60 + 396,25 = 1.037,85 €
+   * Summe Positionen: 641,60 + 371,75 = 1.013,35 €
    * Dokumentenpauschale: 12 €
-   * Netto: 1.049,85 €
-   * MwSt (19%): 199,47 €
-   * Brutto: 1.249,32 €
+   * Netto: 1.025,35 €
+   * MwSt (19%): 194,82 €
+   * Brutto: 1.220,17 €
    */
 
   const positions: Position[] = [
@@ -91,19 +91,19 @@ describe('Szenario 1: Einkommensteuer Freiberufler', () => {
 
   it('berechnet Position 2 (Anlage EÜR) korrekt', () => {
     const result = calculatePosition(positions[1]);
-    expect(result.baseFee).toBe(215);
-    expect(result.adjustedFee).toBe(376.25);
+    expect(result.baseFee).toBe(201);
+    expect(result.adjustedFee).toBe(351.75);
     expect(result.expenseFee).toBe(20); // Gedeckelt auf 20€
-    expect(result.totalNet).toBe(396.25);
+    expect(result.totalNet).toBe(371.75);
   });
 
   it('berechnet Gesamtsumme korrekt', () => {
     const totals = calculateTotal(positions, 12, true);
-    expect(totals.positionsTotal).toBe(1037.85);
+    expect(totals.positionsTotal).toBe(1013.35);
     expect(totals.documentFee).toBe(12);
-    expect(totals.subtotalNet).toBe(1049.85);
-    expect(roundToEuro(totals.vatAmount)).toBe(199.47);
-    expect(roundToEuro(totals.totalGross)).toBe(1249.32);
+    expect(totals.subtotalNet).toBe(1025.35);
+    expect(roundToEuro(totals.vatAmount)).toBe(194.82);
+    expect(roundToEuro(totals.totalGross)).toBe(1220.17);
   });
 });
 
@@ -116,8 +116,8 @@ describe('Szenario 2: GmbH Jahresabschluss', () => {
    * Position 1: Jahresabschluss GmbH
    *   - Gegenstandswert: 150.000 €
    *   - Tabelle B, 25/10 (§ 35)
-   *   - Tabelle B bei 150.000€: 512 € (Vollgebühr)
-   *   - 25/10: 512 * 2,5 = 1.280 €
+   *   - Tabelle B bei 150.000€ (Obergrenze inklusiv): 471 € (Vollgebühr)
+   *   - 25/10: 471 * 2,5 = 1.177,50 €
    *   - Ohne Auslagenpauschale
    * 
    * Position 2: Körperschaftsteuererklärung
@@ -134,11 +134,11 @@ describe('Szenario 2: GmbH Jahresabschluss', () => {
    *   - 3,5/10: 1.976 * 0,35 = 691,60 €
    *   - Mit Auslagenpauschale: 691,60 + 20 = 711,60 €
    * 
-   * Summe Positionen: 1.280 + 1.008 + 711,60 = 2.999,60 €
+   * Summe Positionen: 1.177,50 + 1.008 + 711,60 = 2.897,10 €
    * Dokumentenpauschale: 15 €
-   * Netto: 3.014,60 €
-   * MwSt (19%): 572,77 €
-   * Brutto: 3.587,37 €
+   * Netto: 2.912,10 €
+   * MwSt (19%): 553,30 €
+   * Brutto: 3.465,40 €
    */
 
   const positions: Position[] = [
@@ -170,10 +170,10 @@ describe('Szenario 2: GmbH Jahresabschluss', () => {
 
   it('berechnet Jahresabschluss GmbH korrekt', () => {
     const result = calculatePosition(positions[0]);
-    expect(result.baseFee).toBe(512);
-    expect(result.adjustedFee).toBe(1280);
+    expect(result.baseFee).toBe(471);
+    expect(result.adjustedFee).toBe(1177.5);
     expect(result.expenseFee).toBe(0);
-    expect(result.totalNet).toBe(1280);
+    expect(result.totalNet).toBe(1177.5);
   });
 
   it('berechnet Körperschaftsteuererklärung korrekt', () => {
@@ -194,10 +194,10 @@ describe('Szenario 2: GmbH Jahresabschluss', () => {
 
   it('berechnet Gesamtsumme korrekt', () => {
     const totals = calculateTotal(positions, 15, true);
-    expect(totals.positionsTotal).toBe(2999.6);
-    expect(totals.subtotalNet).toBe(3014.6);
-    expect(roundToEuro(totals.vatAmount)).toBe(572.77);
-    expect(roundToEuro(totals.totalGross)).toBe(3587.37);
+    expect(totals.positionsTotal).toBe(2897.1);
+    expect(totals.subtotalNet).toBe(2912.1);
+    expect(roundToEuro(totals.vatAmount)).toBe(553.3);
+    expect(roundToEuro(totals.totalGross)).toBe(3465.4);
   });
 });
 
@@ -392,7 +392,7 @@ describe('Szenario 6: Rabatt-Varianten', () => {
     createPosition({
       id: 'test-1',
       activity: 'Testposition',
-      objectValue: 10000, // Tabelle A: 655€
+      objectValue: 10000, // Tabelle A (bis 10.000 €): 605 €
       tenthRate: { numerator: 10, denominator: 10 }, // Volle Gebühr
       feeTable: 'A',
       applyExpenseFee: false,
@@ -401,21 +401,21 @@ describe('Szenario 6: Rabatt-Varianten', () => {
 
   it('berechnet Prozent-Rabatt (10%) korrekt', () => {
     const totals = calculateTotal(positions, 0, false, { type: 'percentage', value: 10 });
-    // 655€ - 10% = 655 - 65,50 = 589,50€
-    expect(totals.discountAmount).toBe(65.5);
-    expect(totals.subtotalNet).toBe(589.5);
+    // 605€ - 10% = 605 - 60,50 = 544,50€
+    expect(totals.discountAmount).toBe(60.5);
+    expect(totals.subtotalNet).toBe(544.5);
   });
 
   it('berechnet Festbetrag-Rabatt (50€) korrekt', () => {
     const totals = calculateTotal(positions, 0, false, { type: 'fixed', value: 50 });
     expect(totals.discountAmount).toBe(50);
-    expect(totals.subtotalNet).toBe(605);
+    expect(totals.subtotalNet).toBe(555);
   });
 
   it('Rabatt kann nicht größer als Zwischensumme sein', () => {
     const totals = calculateTotal(positions, 0, false, { type: 'fixed', value: 1000 });
-    // Rabatt gedeckelt auf 655€
-    expect(totals.discountAmount).toBe(655);
+    // Rabatt gedeckelt auf 605€
+    expect(totals.discountAmount).toBe(605);
     expect(totals.subtotalNet).toBe(0);
   });
 });
@@ -520,10 +520,10 @@ describe('Szenario 9: Mindestgegenstandswerte prüfen', () => {
     });
     
     const result = calculatePosition(position);
-    // Tabelle B bei 17.500€: 178€
-    // 17,5/10: 178 * 1,75 = 311,50€
-    expect(result.baseFee).toBe(178);
-    expect(result.adjustedFee).toBe(311.5);
+    // Tabelle B bei 17.500€ (Obergrenze inklusiv): 166€
+    // 17,5/10: 166 * 1,75 = 290,50€
+    expect(result.baseFee).toBe(166);
+    expect(result.adjustedFee).toBe(290.5);
   });
 
   it('Buchführung mit Mindestwert 15.000€ berechnet korrekt', () => {
@@ -536,10 +536,10 @@ describe('Szenario 9: Mindestgegenstandswerte prüfen', () => {
     });
     
     const result = calculatePosition(position);
-    // Tabelle C bei 15.000€: 80€
-    // 6,5/10: 80 * 0,65 = 52€
-    expect(result.baseFee).toBe(80);
-    expect(result.adjustedFee).toBe(52);
+    // Tabelle C bei 15.000€ (Obergrenze inklusiv): 72€
+    // 6,5/10: 72 * 0,65 = 46,80€
+    expect(result.baseFee).toBe(72);
+    expect(result.adjustedFee).toBe(46.8);
   });
 });
 
