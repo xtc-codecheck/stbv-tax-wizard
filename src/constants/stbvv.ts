@@ -23,14 +23,14 @@ export interface StBVVVersion {
 export const STBVV_CURRENT_VERSION: StBVVVersion = {
   version: '2025',
   effectiveDate: '2025-07-01',
-  publishedDate: '2025-03-15',
-  sourceDocument: 'Fünfte Verordnung zur Änderung der Steuerberatervergütungsverordnung',
-  federalGazetteRef: 'BGBl. 2025 I Nr. 98',
+  publishedDate: '2025-12-19',
+  sourceDocument: 'Steuerberatervergütungsverordnung vom 17.12.1981, zuletzt geändert durch Artikel 5 der Verordnung vom 19.12.2025',
+  federalGazetteRef: 'BGBl. 2025 I Nr. 372 (Tabellen A–D: BGBl. 2025 I Nr. 105)',
   changes: [
-    'Anpassung der Gebührentabellen A, B, C und D um ca. 9%',
-    'Erhöhung der Zeitgebühr auf 16,50 € - 41,00 € je 15 Min. (§ 13)',
-    'Anpassung der Mindestgegenstandswerte gemäß § 24 Abs. 1',
-    'Aktualisierung der Wertgebühren für Lohnbuchhaltung (§ 34)',
+    'Anpassung der Gebührentabellen A, B, C und D (BGBl. 2025 I Nr. 105)',
+    'Zeitgebühr 16,50 € bis 41,00 € je angefangene 15 Minuten (§ 13)',
+    'Neuer Gebührentatbestand Mindeststeuererklärung (§ 24 Abs. 1 Nr. 4)',
+    'Lohnbuchführung: Betragsgebühren je Arbeitnehmer angepasst (§ 34)',
   ],
 };
 
@@ -81,11 +81,9 @@ export interface LegalReference {
 export const STBVV_LEGAL_REFERENCES: Record<string, LegalReference> = {
   '§11': {
     paragraph: '§ 11 StBVV',
-    title: 'Beratung',
-    description: 'Beratung und Bescheidprüfung nach Tabelle A',
-    feeType: 'value',
-    feeTable: 'A',
-    tenthRateRange: { min: 1, max: 10, denominator: 10 },
+    title: 'Rahmengebühren',
+    description: 'Bestimmung der Gebühr innerhalb des Rahmens nach billigem Ermessen (Umfang, Schwierigkeit, Bedeutung, Einkommens- und Vermögensverhältnisse, Haftungsrisiko)',
+    feeType: 'mixed',
   },
   '§13': {
     paragraph: '§ 13 StBVV',
@@ -93,50 +91,88 @@ export const STBVV_LEGAL_REFERENCES: Record<string, LegalReference> = {
     description: 'Zeitgebühr für Tätigkeiten ohne Wertgebühr: 16,50 € bis 41,00 € je angefangene 15 Minuten',
     feeType: 'time',
   },
+  '§21': {
+    paragraph: '§ 21 StBVV',
+    title: 'Rat, Auskunft, Erstberatung',
+    description: 'Rat oder Auskunft 1/10 bis 10/10 nach Tabelle A; Erstberatung für Verbraucher höchstens 190 €',
+    feeType: 'value',
+    feeTable: 'A',
+    tenthRateRange: { min: 1, max: 10, denominator: 10 },
+  },
+  '§22': {
+    paragraph: '§ 22 StBVV',
+    title: 'Gutachten und verbindliche Auskunft',
+    description: 'Schriftliches Gutachten mit eingehender Begründung: 10/10 bis 30/10 nach Tabelle A',
+    feeType: 'value',
+    feeTable: 'A',
+    tenthRateRange: { min: 10, max: 30, denominator: 10 },
+  },
   '§24': {
     paragraph: '§ 24 StBVV',
     title: 'Steuererklärungen',
-    description: 'Gebühren für Steuererklärungen nach Tabelle A',
+    description: 'Gebühren für Steuererklärungen nach Tabelle A mit gesetzlichen Mindestgegenstandswerten',
     feeType: 'value',
     feeTable: 'A',
     tenthRateRange: { min: 1, max: 6, denominator: 10 },
   },
   '§25': {
     paragraph: '§ 25 StBVV',
-    title: 'Jahresabschluss',
-    description: 'Aufstellung von Jahresabschlüssen nach Tabelle B',
+    title: 'Einnahmenüberschussrechnung',
+    description: 'Ermittlung des Überschusses der Betriebseinnahmen über die Betriebsausgaben: 5/10 bis 30/10 nach Tabelle B, mindestens 17.500 € Gegenstandswert',
     feeType: 'value',
     feeTable: 'B',
-    tenthRateRange: { min: 10, max: 40, denominator: 20 },
+    tenthRateRange: { min: 5, max: 30, denominator: 10 },
   },
   '§26': {
     paragraph: '§ 26 StBVV',
-    title: 'Einnahmenüberschussrechnung',
-    description: 'Ermittlung des Überschusses der Einnahmen über die Ausgaben nach Tabelle B',
+    title: 'Gewinnermittlung nach Durchschnittsätzen',
+    description: 'Ermittlung des Gewinns aus Land- und Forstwirtschaft nach Durchschnittsätzen: 5/10 bis 20/10 nach Tabelle B',
     feeType: 'value',
     feeTable: 'B',
-    tenthRateRange: { min: 5, max: 30, denominator: 20 },
+    tenthRateRange: { min: 5, max: 20, denominator: 10 },
+  },
+  '§27': {
+    paragraph: '§ 27 StBVV',
+    title: 'Überschuss der Einnahmen über die Werbungskosten',
+    description: 'Nichtselbständige Arbeit, Kapitalvermögen, Vermietung und Verpachtung, sonstige Einkünfte: 1/20 bis 12/20 nach Tabelle A, mindestens 8.000 € Gegenstandswert',
+    feeType: 'value',
+    feeTable: 'A',
+    tenthRateRange: { min: 1, max: 12, denominator: 20 },
   },
   '§33': {
     paragraph: '§ 33 StBVV',
     title: 'Buchführung',
-    description: 'Buchführung einschließlich Kontieren nach Tabelle C',
+    description: 'Buchführung einschließlich Kontieren der Belege: Monatsgebühr 2/10 bis 12/10 nach Tabelle C',
     feeType: 'value',
     feeTable: 'C',
     tenthRateRange: { min: 2, max: 12, denominator: 10 },
   },
   '§34': {
     paragraph: '§ 34 StBVV',
-    title: 'Lohnbuchhaltung',
-    description: 'Lohnbuchführung und Lohnsteueranmeldungen',
-    feeType: 'mixed',
+    title: 'Lohnbuchführung',
+    description: 'Betragsgebühren je Arbeitnehmer: Einrichtung 6,00–19,00 €, Lohnabrechnung 6,00–30,00 € je Abrechnungszeitraum',
+    feeType: 'flat',
   },
   '§35': {
     paragraph: '§ 35 StBVV',
-    title: 'Landwirtschaft',
-    description: 'Buchführung für land- und forstwirtschaftliche Betriebe nach Tabelle D',
+    title: 'Abschlussarbeiten',
+    description: 'Aufstellung eines Jahresabschlusses 10/10 bis 40/10 nach Tabelle B; Gegenstandswert nach § 35 Abs. 2',
+    feeType: 'value',
+    feeTable: 'B',
+    tenthRateRange: { min: 10, max: 40, denominator: 10 },
+  },
+  '§39': {
+    paragraph: '§ 39 StBVV',
+    title: 'Land- und Forstwirtschaft',
+    description: 'Buchführungs- und Abschlussarbeiten nach Tabelle D; volle Gebühr = Teil a (Betriebsfläche) + Teil b (Jahresumsatz)',
     feeType: 'value',
     feeTable: 'D',
+  },
+  '§40': {
+    paragraph: '§ 40 StBVV',
+    title: 'Rechtsbehelfsverfahren',
+    description: 'Sinngemäße Anwendung des Rechtsanwaltsvergütungsgesetzes (u. a. Geschäftsgebühr Nr. 2300 VV RVG)',
+    feeType: 'mixed',
   },
 };
 
@@ -150,7 +186,7 @@ export interface MinimumObjectValue {
 }
 
 /**
- * Gesetzliche Mindestgegenstandswerte nach § 24 StBVV
+ * Gesetzliche Mindestgegenstandswerte der StBVV
  */
 export const STBVV_MINIMUM_VALUES: MinimumObjectValue[] = [
   {
@@ -160,28 +196,64 @@ export const STBVV_MINIMUM_VALUES: MinimumObjectValue[] = [
     description: 'Mindestgegenstandswert für Einkommensteuererklärungen',
   },
   {
+    activity: 'Feststellungserklärung',
+    paragraph: '§ 24 Abs. 1 Nr. 2',
+    minValue: 8000,
+    description: 'Mindestgegenstandswert für Erklärungen zur gesonderten Feststellung',
+  },
+  {
     activity: 'Körperschaftsteuererklärung',
     paragraph: '§ 24 Abs. 1 Nr. 3',
     minValue: 16000,
     description: 'Mindestgegenstandswert für Körperschaftsteuererklärungen',
   },
   {
-    activity: 'Gewerbesteuererklärung',
+    activity: 'Mindeststeuererklärung',
     paragraph: '§ 24 Abs. 1 Nr. 4',
+    minValue: 16000,
+    description: 'Mindestgegenstandswert für Mindeststeuererklärungen',
+  },
+  {
+    activity: 'Gewerbesteuererklärung',
+    paragraph: '§ 24 Abs. 1 Nr. 5',
     minValue: 8000,
     description: 'Mindestgegenstandswert für Gewerbesteuererklärungen',
   },
   {
+    activity: 'Gewerbesteuerzerlegungserklärung',
+    paragraph: '§ 24 Abs. 1 Nr. 6',
+    minValue: 4000,
+    description: 'Mindestgegenstandswert für Zerlegungserklärungen',
+  },
+  {
+    activity: 'Umsatzsteuer-Voranmeldung',
+    paragraph: '§ 24 Abs. 1 Nr. 7',
+    minValue: 650,
+    description: 'Mindestgegenstandswert für Umsatzsteuer-Voranmeldungen',
+  },
+  {
     activity: 'Umsatzsteuererklärung',
-    paragraph: '§ 24 Abs. 1 Nr. 5',
+    paragraph: '§ 24 Abs. 1 Nr. 8',
     minValue: 8000,
     description: 'Mindestgegenstandswert für Umsatzsteuererklärungen (Jahreserklärung)',
   },
   {
-    activity: 'Feststellungserklärung',
-    paragraph: '§ 24 Abs. 1 Nr. 2',
+    activity: 'Kapitalertragsteueranmeldung',
+    paragraph: '§ 24 Abs. 1 Nr. 14',
+    minValue: 4000,
+    description: 'Mindestgegenstandswert für Kapitalertragsteueranmeldungen',
+  },
+  {
+    activity: 'Überschussrechnung (u. a. Kapitalvermögen, V+V, Anlage N)',
+    paragraph: '§ 27 Abs. 1',
     minValue: 8000,
-    description: 'Mindestgegenstandswert für Feststellungserklärungen',
+    description: 'Mindestgegenstandswert für die Ermittlung des Überschusses der Einnahmen über die Werbungskosten',
+  },
+  {
+    activity: 'Einnahmen-Überschuss-Rechnung',
+    paragraph: '§ 25 Abs. 1',
+    minValue: 17500,
+    description: 'Mindestgegenstandswert für die Ermittlung des Überschusses der Betriebseinnahmen über die Betriebsausgaben',
   },
 ];
 

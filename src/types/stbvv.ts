@@ -4,6 +4,8 @@ export interface Position {
   activity: string;
   description?: string;
   objectValue: number;
+  /** Nur Tabelle D (§ 39 StBVV): Jahresumsatz für Teil b; objectValue ist die Betriebsfläche */
+  objectValueSecondary?: number;
   tenthRate: {
     numerator: number;
     denominator: number;

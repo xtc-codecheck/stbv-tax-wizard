@@ -30,6 +30,7 @@ export const positionBaseSchema = z.object({
   activity: z.string().min(1, 'Tätigkeit ist erforderlich'),
   description: z.string().optional(),
   objectValue: z.number().min(0, 'Gegenstandswert darf nicht negativ sein'),
+  objectValueSecondary: z.number().min(0, 'Jahresumsatz darf nicht negativ sein').optional(),
   tenthRate: tenthRateSchema,
   quantity: z.number().int().min(1, 'Menge muss mindestens 1 sein'),
   feeTable: feeTableSchema,

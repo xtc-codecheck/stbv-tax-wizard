@@ -35,7 +35,7 @@ interface PositionCardProps {
   onSelectionChange?: (id: string, selected: boolean) => void;
 }
 
-type NumericInputField = 'objectValue' | 'hourlyRate' | 'hours' | 'flatRate' | 'tenthRate';
+type NumericInputField = 'objectValue' | 'objectValueSecondary' | 'hourlyRate' | 'hours' | 'flatRate' | 'tenthRate';
 
 const PositionCard: React.FC<PositionCardProps> = ({
   position,
@@ -431,7 +431,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
         <div className="grid grid-cols-2 gap-4">
         {position.billingType === 'objectValue' && (
             <div className="space-y-2">
-              <Label>Gegenstandswert (€) *</Label>
+              <Label>{position.feeTable === 'D' ? 'Betriebsfläche (ha) *' : 'Gegenstandswert (€) *'}</Label>
               <div className="relative">
                 <Input
                   type="number"
@@ -482,6 +482,32 @@ const PositionCard: React.FC<PositionCardProps> = ({
                   </div>
                 )}
               </div>
+            </div>
+          )}
+          {position.billingType === 'objectValue' && position.feeTable === 'D' && (
+            <div className="space-y-2">
+              <Label>Jahresumsatz (€) – Tabelle D Teil b</Label>
+              <Input
+                type="number"
+                value={!position.objectValueSecondary ? '' : position.objectValueSecondary}
+                onFocus={() => {
+                  activeNumericFieldRef.current = 'objectValueSecondary';
+                }}
+                onBlur={() => {
+                  activeNumericFieldRef.current = null;
+                }}
+                onChange={(e) => {
+                  const value = Math.max(0, parseFloat(e.target.value) || 0);
+                  pendingNumericValuesRef.current.objectValueSecondary = value;
+                  handleChange('objectValueSecondary', value);
+                }}
+                placeholder="0"
+                min="0"
+                step="0.01"
+              />
+              <p className="text-xs text-muted-foreground">
+                § 39 Abs. 1 StBVV: volle Gebühr = Tabelle D Teil a (Betriebsfläche in ha) + Teil b (Jahresumsatz).
+              </p>
             </div>
           )}
           {position.billingType === 'hourly' && (
