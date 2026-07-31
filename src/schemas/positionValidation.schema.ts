@@ -171,7 +171,10 @@ const activityMinValueMap: Record<string, number> = {
  * Holt den Mindestgegenstandswert für eine Aktivität
  */
 export const getMinObjectValue = (activity: string): number => {
-  return activityMinValueMap[activity] ?? MIN_OBJECT_VALUES.DEFAULT;
+  const mapped = activityMinValueMap[activity];
+  if (mapped !== undefined) return mapped;
+  // Fallback: Mindestgegenstandswert aus dem Preset (einzige Quelle der Wahrheit)
+  return getActivityPreset(activity)?.minObjectValue ?? MIN_OBJECT_VALUES.DEFAULT;
 };
 
 // ============== Erweiterte Validierungsfunktionen ==============
@@ -222,7 +225,7 @@ export const validatePosition = (position: ValidatedPosition): ValidationResult 
         if (minValue > 0 && position.objectValue < minValue) {
           issues.push({
             field: 'objectValue',
-            message: `Mindestgegenstandswert für "${position.activity}" ist ${minValue.toLocaleString('de-DE')} € (§ 24 StBVV)`,
+            message: `Mindestgegenstandswert für "${position.activity}" ist ${minValue.toLocaleString('de-DE')} € (StBVV)`,
             severity: 'warning',
             code: 'BELOW_MIN_OBJECT_VALUE',
             suggestion: `Mindestgegenstandswert von ${minValue.toLocaleString('de-DE')} € übernehmen`,
