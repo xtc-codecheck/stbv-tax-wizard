@@ -47,7 +47,7 @@ describe('Wizard E2E: Vollständige Rechnungs-Workflows', () => {
     it('berechnet komplette ESt + EÜR korrekt', () => {
       const positions: Position[] = [
         createPositionFromPreset('Einkommensteuererklärung', 50000),
-        createPositionFromPreset('Einnahmenüberschussrechnung (EÜR)', 25000),
+        createPositionFromPreset('Anlage EÜR (Einnahmen-Überschuss-Rechnung)', 25000),
       ];
 
       // Einzelne Positionen prüfen
