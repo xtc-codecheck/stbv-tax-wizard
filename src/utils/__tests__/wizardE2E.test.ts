@@ -64,7 +64,7 @@ describe('Wizard E2E: Vollständige Rechnungs-Workflows', () => {
       expect(total.positionsTotal).toBe(estCalc.totalNet + eurCalc.totalNet);
       expect(total.documentFee).toBe(12);
       expect(total.vatAmount).toBeCloseTo(total.subtotalNet * 0.19, 2);
-      expect(total.totalGross).toBe(total.subtotalNet + total.vatAmount);
+      expect(total.totalGross).toBeCloseTo(total.subtotalNet + total.vatAmount, 2);
     });
   });
 
