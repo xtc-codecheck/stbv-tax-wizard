@@ -240,22 +240,26 @@ const PositionCard: React.FC<PositionCardProps> = ({
 
   const handleTenthRateChange = (numerator: string) => {
     setLocalTenthRateInput(numerator);
-    if (numerator.trim() === '') {
+    const normalized = numerator.replace(',', '.').trim();
+    if (normalized === '') {
       return;
     }
 
-    const num = Math.max(0, parseFloat(numerator) || 0);
+    const num = Math.max(0, parseFloat(normalized) || 0);
     if (num <= 0) {
       return;
     }
 
-    const denominator = preset?.rateType === 'twentieth' ? 20 : 10;
+    // Der Nenner gehört zur Position selbst (§ 27 = /20). Das Preset dient nur
+    // beim Wechsel der Tätigkeit als Initialwert und darf hier nichts überschreiben.
+    const denominator = position.tenthRate.denominator ?? (preset?.rateType === 'twentieth' ? 20 : 10);
     pendingNumericValuesRef.current.tenthRate = num;
     // Send as patch
     onUpdate(position.id, {
       tenthRate: { numerator: num, denominator }
     });
   };
+
 
   // Smart defaults: Save hourly rate when changed
   const handleHourlyRateChange = (value: number) => {
@@ -704,12 +708,13 @@ const PositionCard: React.FC<PositionCardProps> = ({
                         }}
                         onChange={(e) => handleTenthRateChange(e.target.value)}
                         min="0.1"
-                        max={preset.rateType === 'twentieth' ? "20" : "50"}
+                        max={position.tenthRate.denominator === 20 ? "20" : "50"}
                         step="0.5"
                         className={`w-20 ${isRateOutOfRange() ? 'border-red-300' : ''}`}
                       />
                       <span className="text-gray-500">
-                        /{preset.rateType === 'twentieth' ? '20' : '10'}
+                        /{position.tenthRate.denominator === 20 ? '20' : '10'}
+
                       </span>
                     </div>
                     {isRateOutOfRange() && (
