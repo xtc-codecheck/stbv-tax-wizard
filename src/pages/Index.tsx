@@ -25,7 +25,7 @@ import { Position, ClientData, Template, Discount } from "@/types/stbvv";
 import { calculateTotal } from "@/utils/stbvvCalculator";
 import { saveCustomTemplate } from "@/utils/templateManager";
 import { generateUniqueId } from "@/utils/idGenerator";
-import { TIMING } from "@/constants";
+
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { KeyboardShortcutsDialog } from "@/components/KeyboardShortcutsDialog";
 import { useHistory } from "@/hooks/useHistory";
