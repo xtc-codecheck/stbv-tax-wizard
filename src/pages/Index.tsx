@@ -123,10 +123,11 @@ const Index = () => {
 
   // UI State
   const [lastTemplateLoadTime, setLastTemplateLoadTime] = useState<number>(0);
-  const [renderKey, setRenderKey] = useState<number>(0);
+  const [pendingTemplate, setPendingTemplate] = useState<Template | null>(null);
   const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false);
   const [showCommandPalette, setShowCommandPalette] = useState(false);
   const [selectedPositionIds, setSelectedPositionIds] = useState<string[]>([]);
+
   const [isBulkMode, setIsBulkMode] = useState(false);
   const [showFloatingSummary, setShowFloatingSummary] = useState(true);
   const [showWizard, setShowWizard] = useState(false);
@@ -386,16 +387,36 @@ const Index = () => {
   };
 
   // Template management
-  const loadTemplate = (template: Template) => {
-    const newPositions = template.positions.map((pos, index) => ({
+  const buildTemplatePositions = (template: Template): Position[] =>
+    template.positions.map((pos, index) => ({
       ...pos,
       id: generateUniqueId(`pos-tpl-${index}`),
     }));
+
+  const applyTemplate = (template: Template, mode: 'append' | 'replace') => {
+    const newPositions = buildTemplatePositions(template);
     setLastTemplateLoadTime(Date.now());
-    setPositions(newPositions);
-    setTimeout(() => setRenderKey((prev) => prev + 1), TIMING.RERENDER_DELAY);
-    toast.success(`Vorlage "${template.name}" mit ${newPositions.length} Positionen geladen`);
+
+    if (mode === 'append') {
+      setPositions(prev => [...prev, ...newPositions]);
+      toast.success(`Vorlage "${template.name}" mit ${newPositions.length} Positionen hinzugefügt`);
+    } else {
+      setPositions(newPositions);
+      toast.success(`Vorlage "${template.name}" ersetzt alle Positionen`, {
+        action: { label: 'Rückgängig', onClick: handleUndo },
+      });
+    }
   };
+
+  const loadTemplate = (template: Template) => {
+    // Bestehende Positionen dürfen niemals ungefragt verloren gehen.
+    if (positions.length > 0) {
+      setPendingTemplate(template);
+      return;
+    }
+    applyTemplate(template, 'append');
+  };
+
 
   const saveAsTemplate = (name: string) => {
     saveCustomTemplate(name, positions);
