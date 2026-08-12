@@ -8,7 +8,18 @@ import { Helmet } from 'react-helmet';
 import { BASE_URL } from '@/constants';
 import { useDocumentTabs } from '@/hooks/useDocumentTabs';
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Plus } from "lucide-react";
+
 import { toast } from "sonner";
 import { Position, ClientData, Template, Discount } from "@/types/stbvv";
 import { calculateTotal } from "@/utils/stbvvCalculator";
@@ -605,6 +616,40 @@ const Index = () => {
           onDownload={handleDownloadFromPreview}
           documentType={documentType}
         />
+
+        {/* Vorlagen-Dialog: bestehende Positionen dürfen nicht verloren gehen */}
+        <AlertDialog open={pendingTemplate !== null} onOpenChange={(open) => !open && setPendingTemplate(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Vorlage "{pendingTemplate?.name}" laden</AlertDialogTitle>
+              <AlertDialogDescription>
+                Es sind bereits {positions.length} Position(en) erfasst. Sollen die Positionen der
+                Vorlage hinzugefügt oder die vorhandenen Positionen ersetzt werden?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Abbrechen</AlertDialogCancel>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  if (pendingTemplate) applyTemplate(pendingTemplate, 'replace');
+                  setPendingTemplate(null);
+                }}
+              >
+                Ersetzen
+              </Button>
+              <AlertDialogAction
+                onClick={() => {
+                  if (pendingTemplate) applyTemplate(pendingTemplate, 'append');
+                  setPendingTemplate(null);
+                }}
+              >
+                Hinzufügen
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
 
         {/* Floating Summary Bar */}
         {positions.length > 0 && showFloatingSummary && (

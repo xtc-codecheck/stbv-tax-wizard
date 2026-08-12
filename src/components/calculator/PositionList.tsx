@@ -78,8 +78,8 @@ function PositionListComponent({
   return (
     <DndContext
       sensors={sensors}
-
       collisionDetection={closestCenter}
+
       onDragEnd={handleDragEnd}
     >
       <SortableContext items={positionIds} strategy={verticalListSortingStrategy}>
