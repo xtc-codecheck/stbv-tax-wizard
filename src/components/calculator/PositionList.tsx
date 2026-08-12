@@ -77,8 +77,8 @@ function PositionListComponent({
 
   return (
     <DndContext
-      key={renderKey}
       sensors={sensors}
+
       collisionDetection={closestCenter}
       onDragEnd={handleDragEnd}
     >
