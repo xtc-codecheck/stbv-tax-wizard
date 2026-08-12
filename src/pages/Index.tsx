@@ -530,7 +530,7 @@ const Index = () => {
 
               <PositionList
                 positions={positions}
-                renderKey={renderKey}
+                
                 isBulkMode={isBulkMode}
                 selectedPositionIds={selectedPositionIds}
                 onUpdatePosition={updatePosition}

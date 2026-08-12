@@ -15,7 +15,8 @@ import { Position } from "@/types/stbvv";
 
 interface PositionListProps {
   positions: Position[];
-  renderKey: number;
+  /** @deprecated Remount-Key wird nicht mehr benötigt; Liste läuft über Positions-IDs */
+  renderKey?: number;
   isBulkMode: boolean;
   selectedPositionIds: string[];
   // CHANGED: Now accepts a patch (Partial<Position>) instead of full Position
@@ -29,7 +30,6 @@ interface PositionListProps {
 
 function PositionListComponent({
   positions,
-  renderKey,
   isBulkMode,
   selectedPositionIds,
   onUpdatePosition,
@@ -39,6 +39,7 @@ function PositionListComponent({
   onToggleSelection,
   onReorder,
 }: PositionListProps) {
+
   // DnD sensors - memoized
   const sensors = useSensors(
     useSensor(PointerSensor),
