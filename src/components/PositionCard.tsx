@@ -93,8 +93,25 @@ const PositionCard: React.FC<PositionCardProps> = ({
     }
   }, []);
 
+  // Keep the latest local mirrors in a ref so the sync effect only depends on props.
+  // Otherwise every keystroke re-runs the effect and can fight with the parent state.
+  const localValuesRef = useRef({
+    objectValue: localObjectValue as number | string,
+    hourlyRate: localHourlyRate as number | string,
+    hours: localHours as number | string,
+    flatRate: localFlatRate as number | string,
+    tenthRate: localTenthRateInput as number | string,
+  });
+  localValuesRef.current = {
+    objectValue: localObjectValue,
+    hourlyRate: localHourlyRate,
+    hours: localHours,
+    flatRate: localFlatRate,
+    tenthRate: localTenthRateInput,
+  };
+
   // Sync local input mirrors only from the authoritative position data.
-  // Because numeric edits patch the parent immediately, this cannot replay stale debounced values.
+  // Because numeric edits patch the parent immediately, this cannot replay stale values.
   useEffect(() => {
     if (lastPositionIdRef.current !== position.id) {
       lastPositionIdRef.current = position.id;
@@ -107,11 +124,12 @@ const PositionCard: React.FC<PositionCardProps> = ({
       return;
     }
 
-    syncNumericInput('objectValue', position.objectValue, localObjectValue, setLocalObjectValue);
-    syncNumericInput('hourlyRate', position.hourlyRate || 0, localHourlyRate, setLocalHourlyRate);
-    syncNumericInput('hours', position.hours || 0, localHours, setLocalHours);
-    syncNumericInput('flatRate', position.flatRate || 0, localFlatRate, setLocalFlatRate);
-    syncNumericInput('tenthRate', String(position.tenthRate.numerator), localTenthRateInput, setLocalTenthRateInput);
+    const local = localValuesRef.current;
+    syncNumericInput('objectValue', position.objectValue, local.objectValue, setLocalObjectValue);
+    syncNumericInput('hourlyRate', position.hourlyRate || 0, local.hourlyRate, setLocalHourlyRate);
+    syncNumericInput('hours', position.hours || 0, local.hours, setLocalHours);
+    syncNumericInput('flatRate', position.flatRate || 0, local.flatRate, setLocalFlatRate);
+    syncNumericInput('tenthRate', String(position.tenthRate.numerator), local.tenthRate, setLocalTenthRateInput);
   }, [
     position.id,
     position.objectValue,
@@ -119,13 +137,9 @@ const PositionCard: React.FC<PositionCardProps> = ({
     position.hours,
     position.flatRate,
     position.tenthRate.numerator,
-    localObjectValue,
-    localHourlyRate,
-    localHours,
-    localFlatRate,
-    localTenthRateInput,
     syncNumericInput,
   ]);
+
   
   const {
     attributes,
@@ -226,22 +240,26 @@ const PositionCard: React.FC<PositionCardProps> = ({
 
   const handleTenthRateChange = (numerator: string) => {
     setLocalTenthRateInput(numerator);
-    if (numerator.trim() === '') {
+    const normalized = numerator.replace(',', '.').trim();
+    if (normalized === '') {
       return;
     }
 
-    const num = Math.max(0, parseFloat(numerator) || 0);
+    const num = Math.max(0, parseFloat(normalized) || 0);
     if (num <= 0) {
       return;
     }
 
-    const denominator = preset?.rateType === 'twentieth' ? 20 : 10;
+    // Der Nenner gehört zur Position selbst (§ 27 = /20). Das Preset dient nur
+    // beim Wechsel der Tätigkeit als Initialwert und darf hier nichts überschreiben.
+    const denominator = position.tenthRate.denominator ?? (preset?.rateType === 'twentieth' ? 20 : 10);
     pendingNumericValuesRef.current.tenthRate = num;
     // Send as patch
     onUpdate(position.id, {
       tenthRate: { numerator: num, denominator }
     });
   };
+
 
   // Smart defaults: Save hourly rate when changed
   const handleHourlyRateChange = (value: number) => {
@@ -690,12 +708,13 @@ const PositionCard: React.FC<PositionCardProps> = ({
                         }}
                         onChange={(e) => handleTenthRateChange(e.target.value)}
                         min="0.1"
-                        max={preset.rateType === 'twentieth' ? "20" : "50"}
+                        max={position.tenthRate.denominator === 20 ? "20" : "50"}
                         step="0.5"
                         className={`w-20 ${isRateOutOfRange() ? 'border-red-300' : ''}`}
                       />
                       <span className="text-gray-500">
-                        /{preset.rateType === 'twentieth' ? '20' : '10'}
+                        /{position.tenthRate.denominator === 20 ? '20' : '10'}
+
                       </span>
                     </div>
                     {isRateOutOfRange() && (

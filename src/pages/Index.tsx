@@ -8,13 +8,24 @@ import { Helmet } from 'react-helmet';
 import { BASE_URL } from '@/constants';
 import { useDocumentTabs } from '@/hooks/useDocumentTabs';
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Plus } from "lucide-react";
+
 import { toast } from "sonner";
 import { Position, ClientData, Template, Discount } from "@/types/stbvv";
 import { calculateTotal } from "@/utils/stbvvCalculator";
 import { saveCustomTemplate } from "@/utils/templateManager";
 import { generateUniqueId } from "@/utils/idGenerator";
-import { TIMING } from "@/constants";
+
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { KeyboardShortcutsDialog } from "@/components/KeyboardShortcutsDialog";
 import { useHistory } from "@/hooks/useHistory";
@@ -123,10 +134,11 @@ const Index = () => {
 
   // UI State
   const [lastTemplateLoadTime, setLastTemplateLoadTime] = useState<number>(0);
-  const [renderKey, setRenderKey] = useState<number>(0);
+  const [pendingTemplate, setPendingTemplate] = useState<Template | null>(null);
   const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false);
   const [showCommandPalette, setShowCommandPalette] = useState(false);
   const [selectedPositionIds, setSelectedPositionIds] = useState<string[]>([]);
+
   const [isBulkMode, setIsBulkMode] = useState(false);
   const [showFloatingSummary, setShowFloatingSummary] = useState(true);
   const [showWizard, setShowWizard] = useState(false);
@@ -386,16 +398,36 @@ const Index = () => {
   };
 
   // Template management
-  const loadTemplate = (template: Template) => {
-    const newPositions = template.positions.map((pos, index) => ({
+  const buildTemplatePositions = (template: Template): Position[] =>
+    template.positions.map((pos, index) => ({
       ...pos,
       id: generateUniqueId(`pos-tpl-${index}`),
     }));
+
+  const applyTemplate = (template: Template, mode: 'append' | 'replace') => {
+    const newPositions = buildTemplatePositions(template);
     setLastTemplateLoadTime(Date.now());
-    setPositions(newPositions);
-    setTimeout(() => setRenderKey((prev) => prev + 1), TIMING.RERENDER_DELAY);
-    toast.success(`Vorlage "${template.name}" mit ${newPositions.length} Positionen geladen`);
+
+    if (mode === 'append') {
+      setPositions(prev => [...prev, ...newPositions]);
+      toast.success(`Vorlage "${template.name}" mit ${newPositions.length} Positionen hinzugefügt`);
+    } else {
+      setPositions(newPositions);
+      toast.success(`Vorlage "${template.name}" ersetzt alle Positionen`, {
+        action: { label: 'Rückgängig', onClick: handleUndo },
+      });
+    }
   };
+
+  const loadTemplate = (template: Template) => {
+    // Bestehende Positionen dürfen niemals ungefragt verloren gehen.
+    if (positions.length > 0) {
+      setPendingTemplate(template);
+      return;
+    }
+    applyTemplate(template, 'append');
+  };
+
 
   const saveAsTemplate = (name: string) => {
     saveCustomTemplate(name, positions);
@@ -509,7 +541,7 @@ const Index = () => {
 
               <PositionList
                 positions={positions}
-                renderKey={renderKey}
+                
                 isBulkMode={isBulkMode}
                 selectedPositionIds={selectedPositionIds}
                 onUpdatePosition={updatePosition}
@@ -584,6 +616,40 @@ const Index = () => {
           onDownload={handleDownloadFromPreview}
           documentType={documentType}
         />
+
+        {/* Vorlagen-Dialog: bestehende Positionen dürfen nicht verloren gehen */}
+        <AlertDialog open={pendingTemplate !== null} onOpenChange={(open) => !open && setPendingTemplate(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Vorlage "{pendingTemplate?.name}" laden</AlertDialogTitle>
+              <AlertDialogDescription>
+                Es sind bereits {positions.length} Position(en) erfasst. Sollen die Positionen der
+                Vorlage hinzugefügt oder die vorhandenen Positionen ersetzt werden?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Abbrechen</AlertDialogCancel>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  if (pendingTemplate) applyTemplate(pendingTemplate, 'replace');
+                  setPendingTemplate(null);
+                }}
+              >
+                Ersetzen
+              </Button>
+              <AlertDialogAction
+                onClick={() => {
+                  if (pendingTemplate) applyTemplate(pendingTemplate, 'append');
+                  setPendingTemplate(null);
+                }}
+              >
+                Hinzufügen
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
 
         {/* Floating Summary Bar */}
         {positions.length > 0 && showFloatingSummary && (
