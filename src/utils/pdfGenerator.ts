@@ -111,7 +111,7 @@ const addPageFooter = (ctx: PDFContext): void => {
   
   // Branding-Informationen
   if (branding) {
-    let brandFooterY = footerY + 10;
+    const brandFooterY = footerY + 10;
     doc.setFontSize(6);
     
     const brandingParts: string[] = [];
@@ -188,7 +188,7 @@ const calculateTotalPages = (options: PDFGeneratorOptions): number => {
   const TOTALS_HEIGHT = includeVAT ? 70 : 55;
   const DISCOUNT_HEIGHT = discount?.value ? 10 : 0;
   
-  let contentHeight = HEADER_HEIGHT + METADATA_HEIGHT + CLIENT_HEIGHT + 
+  const contentHeight = HEADER_HEIGHT + METADATA_HEIGHT + CLIENT_HEIGHT + 
                       (positions.length * ROW_HEIGHT) + 
                       TOTALS_HEIGHT + DISCOUNT_HEIGHT + 40; // 40 for signatures
   

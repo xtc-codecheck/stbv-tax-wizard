@@ -122,7 +122,7 @@ export function useAsyncEffect<T>(
     isExecuted: false,
   });
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   useCallback(() => {
     let isMounted = true;
 
