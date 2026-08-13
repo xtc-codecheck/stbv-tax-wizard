@@ -12,7 +12,7 @@ const Impressum = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-3xl"><h1>Impressum</h1></CardTitle>
+            <h1 className="text-3xl font-semibold leading-none tracking-tight">Impressum</h1>
           </CardHeader>
           <CardContent className="space-y-6">
             <section>

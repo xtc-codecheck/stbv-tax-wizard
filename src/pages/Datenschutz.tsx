@@ -13,7 +13,7 @@ const Datenschutz = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-3xl"><h1>Datenschutzerklärung</h1></CardTitle>
+            <h1 className="text-3xl font-semibold leading-none tracking-tight">Datenschutzerklärung</h1>
           </CardHeader>
           <CardContent className="space-y-6">
             <section>
