@@ -476,7 +476,7 @@ export const validateField = (
       }
       break;
 
-    case 'quantity':
+    case 'quantity': {
       const numValue = Number(value);
       if (isNaN(numValue) || numValue < 1) {
         return {
@@ -487,6 +487,7 @@ export const validateField = (
         };
       }
       break;
+    }
   }
 
   return null;
