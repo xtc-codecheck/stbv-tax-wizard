@@ -6,7 +6,7 @@
 import { ActivityPreset } from "@/types/stbvv";
 import { MIN_OBJECT_VALUES } from "@/constants";
 
-export const sonstigeTatigkeitenPresets: ActivityPreset[] = [,
+export const sonstigeTatigkeitenPresets: ActivityPreset[] = [
   { 
     activity: 'Fristverlängerung beantragen', 
     defaultTenthRate: 80,

@@ -6,7 +6,7 @@
 import { ActivityPreset } from "@/types/stbvv";
 import { MIN_OBJECT_VALUES } from "@/constants";
 
-export const lohnbuchhaltungPresets: ActivityPreset[] = [,
+export const lohnbuchhaltungPresets: ActivityPreset[] = [
   { 
     activity: 'Lohnbuchhaltung', 
     defaultTenthRate: 6.5,

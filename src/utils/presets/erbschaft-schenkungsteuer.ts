@@ -6,7 +6,7 @@
 import { ActivityPreset } from "@/types/stbvv";
 import { MIN_OBJECT_VALUES } from "@/constants";
 
-export const erbschaftSchenkungsteuerPresets: ActivityPreset[] = [,
+export const erbschaftSchenkungsteuerPresets: ActivityPreset[] = [
   { 
     activity: 'Erbschaftsteuererklärung', 
     defaultTenthRate: 6,

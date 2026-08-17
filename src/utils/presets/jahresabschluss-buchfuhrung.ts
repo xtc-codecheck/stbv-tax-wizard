@@ -6,7 +6,7 @@
 import { ActivityPreset } from "@/types/stbvv";
 import { MIN_OBJECT_VALUES } from "@/constants";
 
-export const jahresabschlussBuchfuhrungPresets: ActivityPreset[] = [,
+export const jahresabschlussBuchfuhrungPresets: ActivityPreset[] = [
   { 
     activity: 'Jahresabschluss GmbH', 
     defaultTenthRate: 25,

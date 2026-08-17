@@ -6,7 +6,7 @@
 import { ActivityPreset } from "@/types/stbvv";
 import { MIN_OBJECT_VALUES } from "@/constants";
 
-export const rechtsbehelfsverfahrenPresets: ActivityPreset[] = [,
+export const rechtsbehelfsverfahrenPresets: ActivityPreset[] = [
   { 
     activity: 'Einspruch beim Finanzamt', 
     defaultTenthRate: 4.5,

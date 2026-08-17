@@ -6,7 +6,7 @@
 import { ActivityPreset } from "@/types/stbvv";
 import { MIN_OBJECT_VALUES } from "@/constants";
 
-export const beratungsleistungenPresets: ActivityPreset[] = [,
+export const beratungsleistungenPresets: ActivityPreset[] = [
   { 
     activity: 'Beratung allgemein', 
     defaultTenthRate: 5.5,

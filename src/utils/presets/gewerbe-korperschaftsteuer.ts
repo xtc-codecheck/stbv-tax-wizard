@@ -6,7 +6,7 @@
 import { ActivityPreset } from "@/types/stbvv";
 import { MIN_OBJECT_VALUES } from "@/constants";
 
-export const gewerbeKorperschaftsteuerPresets: ActivityPreset[] = [,
+export const gewerbeKorperschaftsteuerPresets: ActivityPreset[] = [
   { 
     activity: 'Gewerbesteuererklärung', 
     defaultTenthRate: 3.5,
