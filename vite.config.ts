@@ -100,9 +100,28 @@ export default defineConfig(({ mode }) => ({
       }
     })
   ].filter(Boolean),
+  build: {
+    chunkSizeWarningLimit: 700,
+    rollupOptions: {
+      output: {
+        manualChunks: (id: string) => {
+          if (!id.includes('node_modules')) return undefined;
+          if (id.includes('jspdf') || id.includes('canvg') || id.includes('html2canvas')) return 'pdf';
+          if (id.includes('xlsx')) return 'xlsx';
+          if (id.includes('recharts') || id.includes('d3-')) return 'charts';
+          if (id.includes('@dnd-kit')) return 'dnd';
+          if (id.includes('@radix-ui')) return 'ui-radix';
+          if (id.includes('react-router')) return 'router';
+          if (id.includes('/react/') || id.includes('/react-dom/') || id.includes('scheduler')) return 'react-vendor';
+          return undefined;
+        },
+      },
+    },
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
+
 }));
