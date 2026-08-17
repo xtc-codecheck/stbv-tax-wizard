@@ -162,7 +162,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
   const preset = React.useMemo(() => getActivityPreset(position.activity), [position.activity]);
 
   // Validation helper
-  const validateField = (field: string, value: unknown): string | null => {
+  const validateField = (field: string, value: string | number | undefined | null): string | null => {
     switch (field) {
       case 'activity':
         return !value ? 'Bitte wählen Sie eine Tätigkeit aus' : null;
@@ -275,7 +275,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
     setValidationErrors(prev => error ? { ...prev, hourlyRate: error } : { ...prev, hourlyRate: '' });
   };
 
-  const handleFieldChange = (field: string, value: unknown) => {
+  const handleFieldChange = (field: string, value: string | number | undefined | null) => {
     const error = validateField(field, value);
     setValidationErrors(prev => error ? { ...prev, [field]: error } : { ...prev, [field]: '' });
   };
