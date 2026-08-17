@@ -69,7 +69,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 
   // Stable handleChange callback - NOW SENDS PATCH instead of full object
   // This is the key fix: we only send the changed field, not the entire position
-  const handleChange = useCallback((field: keyof Position, value: any) => {
+  const handleChange = useCallback((field: keyof Position, value: Position[keyof Position]) => {
     onUpdate(position.id, { [field]: value });
   }, [position.id, onUpdate]);
 
@@ -77,7 +77,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
     field: NumericInputField,
     externalValue: number | string,
     localValue: number | string,
-    setLocalValue: (value: any) => void
+    setLocalValue: (value: never) => void
   ) => {
     const pendingValue = pendingNumericValuesRef.current[field];
 
@@ -90,7 +90,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
     }
 
     if (activeNumericFieldRef.current !== field && String(externalValue) !== String(localValue)) {
-      setLocalValue(externalValue);
+      setLocalValue(externalValue as never);
     }
   }, []);
 
@@ -162,26 +162,29 @@ const PositionCard: React.FC<PositionCardProps> = ({
   const preset = React.useMemo(() => getActivityPreset(position.activity), [position.activity]);
 
   // Validation helper
-  const validateField = (field: string, value: any): string | null => {
+  const validateField = (field: string, value: string | number | undefined | null): string | null => {
+    const numeric = typeof value === 'string' ? Number(value.replace(',', '.')) : (value ?? 0);
+    const isPositive = Number.isFinite(numeric) && numeric > 0;
     switch (field) {
       case 'activity':
         return !value ? 'Bitte wählen Sie eine Tätigkeit aus' : null;
       case 'objectValue':
-        return position.billingType === 'objectValue' && (!value || value <= 0) 
+        return position.billingType === 'objectValue' && !isPositive
           ? 'Gegenstandswert muss größer als 0 sein' : null;
       case 'hourlyRate':
-        return position.billingType === 'hourly' && (!value || value <= 0)
+        return position.billingType === 'hourly' && !isPositive
           ? 'Stundensatz muss größer als 0 sein' : null;
       case 'hours':
-        return position.billingType === 'hourly' && (!value || value <= 0)
+        return position.billingType === 'hourly' && !isPositive
           ? 'Stunden müssen größer als 0 sein' : null;
       case 'flatRate':
-        return position.billingType === 'flatRate' && (!value || value <= 0)
+        return position.billingType === 'flatRate' && !isPositive
           ? 'Pauschalbetrag muss größer als 0 sein' : null;
       default:
         return null;
     }
   };
+
 
   // handleChange is now defined via useCallback above (line 73)
 
@@ -275,7 +278,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
     setValidationErrors(prev => error ? { ...prev, hourlyRate: error } : { ...prev, hourlyRate: '' });
   };
 
-  const handleFieldChange = (field: string, value: any) => {
+  const handleFieldChange = (field: string, value: string | number | undefined | null) => {
     const error = validateField(field, value);
     setValidationErrors(prev => error ? { ...prev, [field]: error } : { ...prev, [field]: '' });
   };
