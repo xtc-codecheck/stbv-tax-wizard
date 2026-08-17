@@ -110,4 +110,5 @@ export const beratungRechtsbehelfeTemplates: Template[] = [
         billingType: 'objectValue'
       }
     ]
+  }
 ];

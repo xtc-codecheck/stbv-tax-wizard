@@ -4,7 +4,6 @@
  */
 
 import { Template } from "@/types/stbvv";
-import { TIME_FEE } from "@/constants";
 
 export const sonstigeSteuernTemplates: Template[] = [
   // ==========================================
