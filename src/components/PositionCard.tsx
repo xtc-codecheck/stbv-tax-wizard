@@ -626,15 +626,8 @@ const PositionCard: React.FC<PositionCardProps> = ({
           
           <CollapsibleContent className="space-y-4 mt-4">
             {/* Legal Basis */}
-            {preset && (
-              <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-                <div className="flex items-center text-sm text-blue-700">
-                  <Scale className="w-4 h-4 mr-2" />
-                  <span className="font-medium">Rechtsgrundlage:</span>
-                  <span className="ml-2">{preset.legalBasis} StBVV</span>
-                </div>
-              </div>
-            )}
+            {preset && <PositionLegalBasis legalBasis={preset.legalBasis} />}
+
 
             {/* Description */}
             <div className="space-y-2">
