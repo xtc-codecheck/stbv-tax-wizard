@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Combobox } from "@/components/ui/combobox";
-import { Trash2, Calculator, AlertTriangle, AlertCircle, CheckCircle2, Scale, ArrowUp, ArrowDown, ChevronDown, Copy, GripVertical, Info } from "lucide-react";
+import { Trash2, Calculator, AlertTriangle, AlertCircle, CheckCircle2, ArrowUp, ArrowDown, ChevronDown, Copy, GripVertical, Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { Position } from "@/types/stbvv";
@@ -18,6 +18,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { updateSmartDefaults, addRecentActivity } from '@/utils/smartDefaults';
 import { cn, formatCurrency } from '@/lib/utils';
+import { PositionFeeSummary, PositionLegalBasis } from '@/components/position/PositionFeeSummary';
 
 interface PositionCardProps {
   position: Position;
