@@ -39,7 +39,7 @@ interface DocumentTabsProps {
   hasUnsavedChanges: (tabId: string) => boolean;
 }
 
-export function DocumentTabs({
+function DocumentTabsComponent({
   tabs,
   activeTabId,
   canAddTab,
@@ -245,3 +245,7 @@ export function DocumentTabs({
     </>
   );
 }
+
+// Memoized export for performance
+export const DocumentTabs = React.memo(DocumentTabsComponent);
+DocumentTabs.displayName = 'DocumentTabs';

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Combobox } from "@/components/ui/combobox";
-import { Trash2, Calculator, AlertTriangle, AlertCircle, CheckCircle2, Scale, ArrowUp, ArrowDown, ChevronDown, Copy, GripVertical, Info } from "lucide-react";
+import { Trash2, Calculator, AlertTriangle, AlertCircle, CheckCircle2, ArrowUp, ArrowDown, ChevronDown, Copy, GripVertical, Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { Position } from "@/types/stbvv";
@@ -18,6 +18,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { updateSmartDefaults, addRecentActivity } from '@/utils/smartDefaults';
 import { cn, formatCurrency } from '@/lib/utils';
+import { PositionFeeSummary, PositionLegalBasis } from '@/components/position/PositionFeeSummary';
 
 interface PositionCardProps {
   position: Position;
@@ -626,15 +627,8 @@ const PositionCard: React.FC<PositionCardProps> = ({
           
           <CollapsibleContent className="space-y-4 mt-4">
             {/* Legal Basis */}
-            {preset && (
-              <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-                <div className="flex items-center text-sm text-blue-700">
-                  <Scale className="w-4 h-4 mr-2" />
-                  <span className="font-medium">Rechtsgrundlage:</span>
-                  <span className="ml-2">{preset.legalBasis} StBVV</span>
-                </div>
-              </div>
-            )}
+            {preset && <PositionLegalBasis legalBasis={preset.legalBasis} />}
+
 
             {/* Description */}
             <div className="space-y-2">
@@ -787,26 +781,9 @@ const PositionCard: React.FC<PositionCardProps> = ({
 
             {/* Calculation Display */}
             {canCalculate() && (
-              <div className="p-4 bg-gray-50 rounded-lg border">
-                <h4 className="font-semibold text-gray-800 mb-2">Berechnung:</h4>
-                <div className="space-y-1 text-sm">
-                  <div className="flex justify-between">
-                    <span>Gebühr:</span>
-                    <span>{formatCurrency(calculation.adjustedFee)}</span>
-                  </div>
-                  {calculation.expenseFee > 0 && (
-                    <div className="flex justify-between">
-                      <span>Auslagenpauschale:</span>
-                      <span>{formatCurrency(calculation.expenseFee)}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between font-semibold pt-1 border-t">
-                    <span>Gesamt (× {position.quantity}):</span>
-                    <span>{formatCurrency(calculation.totalNet)}</span>
-                  </div>
-                </div>
-              </div>
+              <PositionFeeSummary calculation={calculation} quantity={position.quantity} />
             )}
+
           </CollapsibleContent>
         </Collapsible>
       </CardContent>

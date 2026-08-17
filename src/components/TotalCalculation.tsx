@@ -21,6 +21,8 @@ interface TotalCalculationProps {
   documentFee: number;
   includeVAT: boolean;
   discount: Discount | null;
+  /** Bereits berechnete Summen (vermeidet doppelte Berechnung im Parent) */
+  totals?: ReturnType<typeof calculateTotal>;
   onDocumentFeeChange: (fee: number) => void;
   onVATChange: (include: boolean) => void;
   onDiscountChange: (discount: Discount | null) => void;
@@ -31,15 +33,18 @@ const TotalCalculation: React.FC<TotalCalculationProps> = ({
   documentFee,
   includeVAT,
   discount,
+  totals: providedTotals,
   onDocumentFeeChange,
   onVATChange,
   onDiscountChange
 }) => {
-  // Memoize calculation to prevent unnecessary recalculations
-  const totals = useMemo(
-    () => calculateTotal(positions, documentFee, includeVAT, discount),
-    [positions, documentFee, includeVAT, discount]
+  // Nutzt die Summen des Parents, sonst Fallback-Berechnung
+  const fallbackTotals = useMemo(
+    () => (providedTotals ? null : calculateTotal(positions, documentFee, includeVAT, discount)),
+    [providedTotals, positions, documentFee, includeVAT, discount]
   );
+  const totals = providedTotals ?? fallbackTotals!;
+
 
   // Memoized handlers to prevent child re-renders
   const handleDiscountTypeChange = useCallback((type: 'percentage' | 'fixed') => {

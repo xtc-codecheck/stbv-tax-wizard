@@ -3,7 +3,7 @@
  * @module hooks/useDocumentTabs
  */
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { DocumentTabData, DocumentTabsState, createEmptyTabData } from '@/types/documentTab';
 import { Position } from '@/types/stbvv';
 import { generateUniqueId } from '@/utils/idGenerator';
@@ -40,14 +40,34 @@ export function useDocumentTabs() {
     };
   });
 
-  // Persist tabs to localStorage
-  useEffect(() => {
+  // Persist tabs to localStorage (debounced, mit Flush beim Verlassen)
+  const latestStateRef = useRef(tabsState);
+  latestStateRef.current = tabsState;
+
+  const persist = useCallback(() => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(tabsState));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(latestStateRef.current));
     } catch (error) {
       console.error('[useDocumentTabs] Error saving tabs:', error);
     }
-  }, [tabsState]);
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(persist, 300);
+    return () => clearTimeout(timer);
+  }, [tabsState, persist]);
+
+  useEffect(() => {
+    const flush = () => persist();
+    window.addEventListener('beforeunload', flush);
+    document.addEventListener('visibilitychange', flush);
+    return () => {
+      window.removeEventListener('beforeunload', flush);
+      document.removeEventListener('visibilitychange', flush);
+      flush();
+    };
+  }, [persist]);
+
 
   const activeTab = tabsState.tabs.find(t => t.id === tabsState.activeTabId) || tabsState.tabs[0];
 
