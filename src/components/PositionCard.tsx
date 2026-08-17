@@ -787,26 +787,9 @@ const PositionCard: React.FC<PositionCardProps> = ({
 
             {/* Calculation Display */}
             {canCalculate() && (
-              <div className="p-4 bg-gray-50 rounded-lg border">
-                <h4 className="font-semibold text-gray-800 mb-2">Berechnung:</h4>
-                <div className="space-y-1 text-sm">
-                  <div className="flex justify-between">
-                    <span>Gebühr:</span>
-                    <span>{formatCurrency(calculation.adjustedFee)}</span>
-                  </div>
-                  {calculation.expenseFee > 0 && (
-                    <div className="flex justify-between">
-                      <span>Auslagenpauschale:</span>
-                      <span>{formatCurrency(calculation.expenseFee)}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between font-semibold pt-1 border-t">
-                    <span>Gesamt (× {position.quantity}):</span>
-                    <span>{formatCurrency(calculation.totalNet)}</span>
-                  </div>
-                </div>
-              </div>
+              <PositionFeeSummary calculation={calculation} quantity={position.quantity} />
             )}
+
           </CollapsibleContent>
         </Collapsible>
       </CardContent>
