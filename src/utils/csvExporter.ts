@@ -1,5 +1,7 @@
 import { Position, BrandingSettings } from "@/types/stbvv";
 import { calculatePosition } from "@/utils/stbvvCalculator";
+import { euroToCent, centToEuro, percentOfCent, addCent } from "@/utils/centArithmetic";
+import { VAT_RATE_PERCENT } from "@/constants";
 import { STBVV_CURRENT_VERSION, generateDocumentChecksum } from "@/constants/stbvv";
 
 const formatNumber = (value: number): string => {
@@ -66,8 +68,10 @@ export const exportToCSV = (data: ExportData): void => {
     // Calculate totals for this position
     const calculation = calculatePosition(pos);
     const totalNet = formatNumber(calculation.totalNet);
-    const totalVat = formatNumber(calculation.totalNet * 0.19);
-    const totalGross = formatNumber(calculation.totalNet * 1.19);
+    const netCent = euroToCent(calculation.totalNet);
+    const vatCent = percentOfCent(netCent, VAT_RATE_PERCENT);
+    const totalVat = formatNumber(centToEuro(vatCent));
+    const totalGross = formatNumber(centToEuro(addCent(netCent, vatCent)));
     
     const description = pos.description?.replace(/,/g, ";").replace(/\n/g, " ") || "";
     const activity = pos.activity?.replace(/,/g, ";") || "";
@@ -83,7 +87,7 @@ export const exportToCSV = (data: ExportData): void => {
     csvContent += `,,,,,,,,Rabatt,-${formatNumber(totals.discountAmount)}\n`;
   }
   csvContent += `,,,,,,,,Gesamt netto,${formatNumber(totals.subtotalNet)}\n`;
-  csvContent += `,,,,,,,,MwSt. (19%),${formatNumber(totals.vatAmount)}\n`;
+  csvContent += `,,,,,,,,MwSt. (${VAT_RATE_PERCENT}%),${formatNumber(totals.vatAmount)}\n`;
   csvContent += `,,,,,,,,Gesamt brutto,${formatNumber(totals.totalGross)}\n`;
   
   // Create download link

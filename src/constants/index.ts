@@ -9,6 +9,7 @@ export const BASE_URL = "https://stbvv-rechner.de";
 // Fees
 export {
   VAT_RATE,
+  VAT_RATE_PERCENT,
   EXPENSE_FEE_RATE,
   EXPENSE_FEE_MAX,
   DEFAULT_DOCUMENT_FEE,

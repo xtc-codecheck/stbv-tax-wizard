@@ -6,6 +6,9 @@
 /** MwSt.-Satz 19% */
 export const VAT_RATE = 0.19;
 
+/** MwSt.-Satz als Prozentwert (für Anzeige/Labels) */
+export const VAT_RATE_PERCENT = VAT_RATE * 100;
+
 /** Auslagenpauschale: 20% der Nettogebühr */
 export const EXPENSE_FEE_RATE = 0.2;
 
