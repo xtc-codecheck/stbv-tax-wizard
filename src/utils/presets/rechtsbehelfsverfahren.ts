@@ -18,7 +18,7 @@ export const rechtsbehelfsverfahrenPresets: ActivityPreset[] = [
     category: 'Rechtsbehelfsverfahren',
     searchKeywords: ['Einspruch', 'Widerspruch', 'Rechtsbehelf'],
     minObjectValue: MIN_OBJECT_VALUES.SONSTIGE
-  },,
+  },
   { 
     activity: 'Aussetzung der Vollziehung (AdV)', 
     defaultTenthRate: 4.5,
@@ -30,7 +30,7 @@ export const rechtsbehelfsverfahrenPresets: ActivityPreset[] = [
     category: 'Rechtsbehelfsverfahren',
     searchKeywords: ['AdV', 'Aussetzung', 'Vollziehung', 'Stundung'],
     minObjectValue: MIN_OBJECT_VALUES.SONSTIGE
-  },,
+  },
   { 
     activity: 'Prüfung Steuerbescheid', 
     defaultTenthRate: 0,
@@ -43,7 +43,7 @@ export const rechtsbehelfsverfahrenPresets: ActivityPreset[] = [
     category: 'Rechtsbehelfsverfahren',
     searchKeywords: ['Steuerbescheid', 'Prüfung', 'Bescheidprüfung', 'Kontrolle'],
     minObjectValue: 0  // Zeitgebühr, kein Gegenstandswert
-  },,
+  },
   { 
     activity: 'Betriebsprüfung begleiten', 
     defaultTenthRate: 0,
@@ -56,7 +56,7 @@ export const rechtsbehelfsverfahrenPresets: ActivityPreset[] = [
     category: 'Rechtsbehelfsverfahren',
     searchKeywords: ['Betriebsprüfung', 'Außenprüfung', 'Prüfer', 'Finanzamt'],
     minObjectValue: 0  // Stundenbasiert
-  },,
+  },
   { 
     activity: 'Anpassungsantrag', 
     defaultTenthRate: 4.5,
@@ -68,7 +68,7 @@ export const rechtsbehelfsverfahrenPresets: ActivityPreset[] = [
     category: 'Rechtsbehelfsverfahren',
     searchKeywords: ['Anpassungsantrag', 'Änderungsantrag', '§ 164 AO', '§ 172 AO', 'Änderung'],
     minObjectValue: MIN_OBJECT_VALUES.SONSTIGE
-  },,
+  },
   {
     activity: 'Selbstanzeige',
     defaultTenthRate: 20,

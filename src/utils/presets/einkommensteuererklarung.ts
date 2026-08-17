@@ -18,7 +18,7 @@ export const einkommensteuererklarungPresets: ActivityPreset[] = [
     category: 'Einkommensteuererklärung',
     searchKeywords: ['EST', 'Einkommensteuer', 'Steuererklärung', 'Mantelbogen'],
     minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER  // 8.000 € gemäß § 24 Abs. 1 Nr. 1
-  },,
+  },
   { 
     activity: 'Einkommensteuer Mantelbogen', 
     defaultTenthRate: 3.5,
@@ -30,7 +30,7 @@ export const einkommensteuererklarungPresets: ActivityPreset[] = [
     category: 'Einkommensteuererklärung',
     searchKeywords: ['EST', 'Mantelbogen', 'Hauptformular', 'Hauptvordruck'],
     minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER
-  },,
+  },
   { 
     activity: 'Anlage N (Einkünfte aus nichtselbständiger Arbeit)', 
     defaultTenthRate: 6.5,
@@ -42,7 +42,7 @@ export const einkommensteuererklarungPresets: ActivityPreset[] = [
     category: 'Einkommensteuererklärung',
     searchKeywords: ['Anlage N', 'Arbeitnehmer', 'Lohn', 'Gehalt', 'nichtselbständig'],
     minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER
-  },,
+  },
   { 
     activity: 'Anlage V (Vermietung und Verpachtung)', 
     defaultTenthRate: 6.5,
@@ -54,7 +54,7 @@ export const einkommensteuererklarungPresets: ActivityPreset[] = [
     category: 'Einkommensteuererklärung',
     searchKeywords: ['Anlage V', 'Vermietung', 'Verpachtung', 'Miete', 'Immobilien'],
     minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER
-  },,
+  },
   { 
     activity: 'Anlage G (Gewerbebetrieb)', 
     defaultTenthRate: 6.5,
@@ -66,7 +66,7 @@ export const einkommensteuererklarungPresets: ActivityPreset[] = [
     category: 'Einkommensteuererklärung',
     searchKeywords: ['Anlage G', 'Gewerbebetrieb', 'Gewerbe', 'Einzelunternehmen'],
     minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER
-  },,
+  },
   { 
     activity: 'Anlage S (Einkünfte aus selbständiger Arbeit)', 
     defaultTenthRate: 6.5,
@@ -78,7 +78,7 @@ export const einkommensteuererklarungPresets: ActivityPreset[] = [
     category: 'Einkommensteuererklärung',
     searchKeywords: ['Anlage S', 'Selbständig', 'Freiberufler', 'Freiberuflich'],
     minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER
-  },,
+  },
   { 
     activity: 'Anlage KAP (Kapitalerträge)', 
     defaultTenthRate: 6.5,
@@ -90,7 +90,7 @@ export const einkommensteuererklarungPresets: ActivityPreset[] = [
     category: 'Einkommensteuererklärung',
     searchKeywords: ['Anlage KAP', 'Kapitalerträge', 'Zinsen', 'Dividenden', 'Aktien'],
     minObjectValue: MIN_OBJECT_VALUES.UEBERSCHUSSRECHNUNG  // 8.000 € gemäß § 27 Abs. 1
-  },,
+  },
   { 
     activity: 'Anlage SO (Sonstige Einkünfte)', 
     defaultTenthRate: 6.5,
@@ -102,7 +102,7 @@ export const einkommensteuererklarungPresets: ActivityPreset[] = [
     category: 'Einkommensteuererklärung',
     searchKeywords: ['Anlage SO', 'Sonstige Einkünfte', 'Spekulationsgeschäfte'],
     minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER
-  },,
+  },
   { 
     activity: 'Anlage R (Renten)', 
     defaultTenthRate: 6.5,
@@ -114,7 +114,7 @@ export const einkommensteuererklarungPresets: ActivityPreset[] = [
     category: 'Einkommensteuererklärung',
     searchKeywords: ['Anlage R', 'Renten', 'Altersrente', 'Pension'],
     minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER
-  },,
+  },
   { 
     activity: 'Anlage L (Land- und Forstwirtschaft)', 
     defaultTenthRate: 6.5,
@@ -126,7 +126,7 @@ export const einkommensteuererklarungPresets: ActivityPreset[] = [
     category: 'Einkommensteuererklärung',
     searchKeywords: ['Anlage L', 'Landwirtschaft', 'Forstwirtschaft', 'Landwirt'],
     minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER
-  },,
+  },
   { 
     activity: 'Anlage EÜR (Einnahmen-Überschuss-Rechnung)', 
     defaultTenthRate: 17.5,
@@ -138,7 +138,7 @@ export const einkommensteuererklarungPresets: ActivityPreset[] = [
     category: 'Einkommensteuererklärung',
     searchKeywords: ['EÜR', 'Einnahmen-Überschuss', 'Anlage EÜR', '4/3-Rechnung'],
     minObjectValue: MIN_OBJECT_VALUES.EÜR  // 17.500 € gemäß § 25 StBVV
-  },,
+  },
   { 
     activity: 'Anlage Kind', 
     defaultTenthRate: 3,
@@ -150,7 +150,7 @@ export const einkommensteuererklarungPresets: ActivityPreset[] = [
     category: 'Einkommensteuererklärung',
     searchKeywords: ['Anlage Kind', 'Kindergeld', 'Kinderfreibetrag', 'Kinder'],
     minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER
-  },,
+  },
   { 
     activity: 'Anlage AV (Altersvorsorge)', 
     defaultTenthRate: 3,
@@ -162,7 +162,7 @@ export const einkommensteuererklarungPresets: ActivityPreset[] = [
     category: 'Einkommensteuererklärung',
     searchKeywords: ['Anlage AV', 'Altersvorsorge', 'Riester', 'Rürup'],
     minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER
-  },,
+  },
   { 
     activity: 'Anlage Unterhalt', 
     defaultTenthRate: 4,
@@ -174,7 +174,7 @@ export const einkommensteuererklarungPresets: ActivityPreset[] = [
     category: 'Einkommensteuererklärung',
     searchKeywords: ['Anlage Unterhalt', 'Unterhaltszahlungen', 'Kindesunterhalt'],
     minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER
-  },,
+  },
   { 
     activity: 'Anlage Vorsorgeaufwand', 
     defaultTenthRate: 3,
@@ -186,7 +186,7 @@ export const einkommensteuererklarungPresets: ActivityPreset[] = [
     category: 'Einkommensteuererklärung',
     searchKeywords: ['Anlage Vorsorge', 'Versicherungen', 'Krankenversicherung'],
     minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER
-  },,
+  },
   { 
     activity: 'Anlage Sonderausgaben', 
     defaultTenthRate: 3,
@@ -198,7 +198,7 @@ export const einkommensteuererklarungPresets: ActivityPreset[] = [
     category: 'Einkommensteuererklärung',
     searchKeywords: ['Anlage Sonderausgaben', 'Spenden', 'Kirchensteuer'],
     minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER
-  },,
+  },
   { 
     activity: 'Anlage Außergewöhnliche Belastungen', 
     defaultTenthRate: 3,
@@ -210,7 +210,7 @@ export const einkommensteuererklarungPresets: ActivityPreset[] = [
     category: 'Einkommensteuererklärung',
     searchKeywords: ['Außergewöhnliche Belastungen', 'Krankheitskosten', 'Pflegekosten'],
     minObjectValue: MIN_OBJECT_VALUES.EINKOMMENSTEUER
-  },,
+  },
   { 
     activity: 'Anlage Haushaltsnahe Aufwendungen', 
     defaultTenthRate: 2,

@@ -18,7 +18,7 @@ export const umsatzsteuerPresets: ActivityPreset[] = [
     category: 'Umsatzsteuer',
     searchKeywords: ['UVA', 'Umsatzsteuer', 'Voranmeldung', 'USt-VA', 'Mehrwertsteuer'],
     minObjectValue: MIN_OBJECT_VALUES.UST_VORANMELDUNG  // 650 € gemäß § 24 Abs. 1 Nr. 7
-  },,
+  },
   { 
     activity: 'Umsatzsteuererklärung', 
     defaultTenthRate: 4.5,
@@ -30,7 +30,7 @@ export const umsatzsteuerPresets: ActivityPreset[] = [
     category: 'Umsatzsteuer',
     searchKeywords: ['USt', 'Umsatzsteuer', 'Jahreserklärung', 'Mehrwertsteuer'],
     minObjectValue: MIN_OBJECT_VALUES.UST_JAHRESERKLAERUNG  // 8.000 € gemäß § 24 Abs. 1 Nr. 8
-  },,
+  },
   { 
     activity: 'Zusammenfassende Meldung (ZM)', 
     defaultTenthRate: 2,
@@ -42,7 +42,7 @@ export const umsatzsteuerPresets: ActivityPreset[] = [
     category: 'Umsatzsteuer',
     searchKeywords: ['ZM', 'Zusammenfassende Meldung', 'Innergemeinschaftlich', 'EU'],
     minObjectValue: MIN_OBJECT_VALUES.UST_JAHRESERKLAERUNG
-  },,
+  },
   { 
     activity: 'Antrag auf Vorsteuer-Vergütung', 
     defaultTenthRate: 3.5,

@@ -18,7 +18,7 @@ export const gewerbeKorperschaftsteuerPresets: ActivityPreset[] = [
     category: 'Gewerbe- & Körperschaftsteuer',
     searchKeywords: ['GewSt', 'Gewerbesteuer', 'Gemeinde'],
     minObjectValue: MIN_OBJECT_VALUES.GEWERBESTEUER  // 8.000 € gemäß § 24 Abs. 1 Nr. 5
-  },,
+  },
   { 
     activity: 'Gewerbesteuerzerlegungserklärung', 
     defaultTenthRate: 3.5,
@@ -30,7 +30,7 @@ export const gewerbeKorperschaftsteuerPresets: ActivityPreset[] = [
     category: 'Gewerbe- & Körperschaftsteuer',
     searchKeywords: ['Zerlegung', 'Gewerbesteuer', 'Arbeitslöhne'],
     minObjectValue: MIN_OBJECT_VALUES.GEWERBESTEUER_ZERLEGUNG  // 4.000 € gemäß § 24 Abs. 1 Nr. 6
-  },,
+  },
   { 
     activity: 'Körperschaftsteuererklärung', 
     defaultTenthRate: 5,
@@ -42,7 +42,7 @@ export const gewerbeKorperschaftsteuerPresets: ActivityPreset[] = [
     category: 'Gewerbe- & Körperschaftsteuer',
     searchKeywords: ['KSt', 'Körperschaftsteuer', 'GmbH', 'Kapitalgesellschaft'],
     minObjectValue: MIN_OBJECT_VALUES.KOERPERSCHAFTSTEUER  // 16.000 € gemäß § 24 Abs. 1 Nr. 3
-  },,
+  },
   {
     activity: 'Mindeststeuererklärung',
     defaultTenthRate: 4.5,

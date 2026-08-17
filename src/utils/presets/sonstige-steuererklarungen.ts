@@ -18,7 +18,7 @@ export const sonstigeSteuererklarungenPresets: ActivityPreset[] = [
     category: 'Sonstige Steuererklärungen',
     searchKeywords: ['Grundsteuer', 'Grundsteuerwert', 'Grundsteuermessbetrag'],
     minObjectValue: MIN_OBJECT_VALUES.GRUNDSTEUER  // 25.000 € gemäß § 24 Abs. 1 Nr. 11a
-  },,
+  },
   { 
     activity: 'Grunderwerbsteuererklärung', 
     defaultTenthRate: 3.5,
@@ -30,7 +30,7 @@ export const sonstigeSteuererklarungenPresets: ActivityPreset[] = [
     category: 'Sonstige Steuererklärungen',
     searchKeywords: ['GrESt', 'Grunderwerbsteuer', 'Immobilienkauf', 'Grundstück'],
     minObjectValue: MIN_OBJECT_VALUES.SONSTIGE  // 8.000 € gemäß § 24 Abs. 1 Nr. 26
-  },,
+  },
   { 
     activity: 'Antrag auf Feststellung des verbleibenden Verlustvortrags', 
     defaultTenthRate: 3.5,
@@ -42,7 +42,7 @@ export const sonstigeSteuererklarungenPresets: ActivityPreset[] = [
     category: 'Sonstige Steuererklärungen',
     searchKeywords: ['Verlustvortrag', 'Feststellungserklärung', 'Verlust'],
     minObjectValue: MIN_OBJECT_VALUES.SONSTIGE
-  },,
+  },
   { 
     activity: 'Gesonderte und einheitliche Feststellung', 
     defaultTenthRate: 3,
@@ -54,7 +54,7 @@ export const sonstigeSteuererklarungenPresets: ActivityPreset[] = [
     category: 'Sonstige Steuererklärungen',
     searchKeywords: ['Feststellungserklärung', 'GuE', 'Personengesellschaft', 'Mitunternehmerschaft'],
     minObjectValue: MIN_OBJECT_VALUES.GESONDERTE_FESTSTELLUNG  // 8.000 € gemäß § 24 Abs. 1 Nr. 2
-  },,
+  },
   { 
     activity: 'Kapitalertragsteueranmeldung', 
     defaultTenthRate: 3.5,
@@ -66,7 +66,7 @@ export const sonstigeSteuererklarungenPresets: ActivityPreset[] = [
     category: 'Sonstige Steuererklärungen',
     searchKeywords: ['Kapitalertragsteuer', 'KapESt', 'Dividenden'],
     minObjectValue: MIN_OBJECT_VALUES.KAPITALERTRAGSTEUER  // 4.000 € gemäß § 24 Abs. 1 Nr. 14
-  },,
+  },
   {
     activity: 'Vermögensteuererklärung (natürliche Person)',
     defaultTenthRate: 9.5,
@@ -78,7 +78,7 @@ export const sonstigeSteuererklarungenPresets: ActivityPreset[] = [
     category: 'Sonstige Steuererklärungen',
     searchKeywords: ['Vermögensteuer', 'Rohvermögen'],
     minObjectValue: MIN_OBJECT_VALUES.VERMOEGEN_NATUERLICH
-  },,
+  },
   {
     activity: 'Vermögensteuererklärung (Körperschaft)',
     defaultTenthRate: 9.5,
@@ -90,7 +90,7 @@ export const sonstigeSteuererklarungenPresets: ActivityPreset[] = [
     category: 'Sonstige Steuererklärungen',
     searchKeywords: ['Vermögensteuer', 'Körperschaft', 'Rohvermögen'],
     minObjectValue: MIN_OBJECT_VALUES.VERMOEGEN_KOERPERSCHAFT
-  },,
+  },
   {
     activity: 'Verbrauchsteueranmeldung',
     defaultTenthRate: 2,
@@ -102,7 +102,7 @@ export const sonstigeSteuererklarungenPresets: ActivityPreset[] = [
     category: 'Sonstige Steuererklärungen',
     searchKeywords: ['Verbrauchsteuer', 'Energiesteuer', 'Stromsteuer'],
     minObjectValue: MIN_OBJECT_VALUES.LOHNSTEUER_ANMELDUNG
-  },,
+  },
   {
     activity: 'Antrag auf Erstattung von Kapitalertragsteuer',
     defaultTenthRate: 3.5,
@@ -114,7 +114,7 @@ export const sonstigeSteuererklarungenPresets: ActivityPreset[] = [
     category: 'Sonstige Steuererklärungen',
     searchKeywords: ['Kapitalertragsteuer', 'Erstattung', 'Anrechnung'],
     minObjectValue: MIN_OBJECT_VALUES.KAPITALERTRAGSTEUER_ERSTATTUNG
-  },,
+  },
   {
     activity: 'Anmeldung Steuerabzug Bauleistungen',
     defaultTenthRate: 3.5,
