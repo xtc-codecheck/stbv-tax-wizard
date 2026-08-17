@@ -6,8 +6,7 @@
 import { ActivityPreset } from "@/types/stbvv";
 import { MIN_OBJECT_VALUES } from "@/constants";
 
-export const jahresabschlussBuchfuhrungPresets: ActivityPreset[] = [
-  ,
+export const jahresabschlussBuchfuhrungPresets: ActivityPreset[] = [,
   { 
     activity: 'Jahresabschluss GmbH', 
     defaultTenthRate: 25,
@@ -19,8 +18,7 @@ export const jahresabschlussBuchfuhrungPresets: ActivityPreset[] = [
     category: 'Jahresabschluss & Buchführung',
     searchKeywords: ['Jahresabschluss', 'GmbH', 'Bilanz', 'GuV'],
     minObjectValue: MIN_OBJECT_VALUES.JAHRESABSCHLUSS  // 8.000 € gemäß § 35 StBVV
-  },
-  ,
+  },,
   { 
     activity: 'Jahresabschluss Einzelunternehmen', 
     defaultTenthRate: 25,
@@ -32,8 +30,7 @@ export const jahresabschlussBuchfuhrungPresets: ActivityPreset[] = [
     category: 'Jahresabschluss & Buchführung',
     searchKeywords: ['Jahresabschluss', 'Einzelunternehmen', 'Bilanz'],
     minObjectValue: MIN_OBJECT_VALUES.JAHRESABSCHLUSS
-  },
-  ,
+  },,
   { 
     activity: 'Jahresabschluss Übermittlung an Bundesanzeiger', 
     defaultTenthRate: 25,
@@ -45,8 +42,7 @@ export const jahresabschlussBuchfuhrungPresets: ActivityPreset[] = [
     category: 'Jahresabschluss & Buchführung',
     searchKeywords: ['Bundesanzeiger', 'Offenlegung', 'Veröffentlichung'],
     minObjectValue: MIN_OBJECT_VALUES.JAHRESABSCHLUSS
-  },
-  ,
+  },,
   { 
     activity: 'Jahresabschluss Übermittlung an das Finanzamt', 
     defaultTenthRate: 25,
@@ -58,8 +54,7 @@ export const jahresabschlussBuchfuhrungPresets: ActivityPreset[] = [
     category: 'Jahresabschluss & Buchführung',
     searchKeywords: ['Finanzamt', 'E-Bilanz', 'Übermittlung'],
     minObjectValue: MIN_OBJECT_VALUES.JAHRESABSCHLUSS
-  },
-  ,
+  },,
   { 
     activity: 'Überleitung Handelsbilanz nach Steuerbilanz', 
     defaultTenthRate: 8.5,
@@ -71,8 +66,7 @@ export const jahresabschlussBuchfuhrungPresets: ActivityPreset[] = [
     category: 'Jahresabschluss & Buchführung',
     searchKeywords: ['Überleitung', 'Handelsbilanz', 'Steuerbilanz', 'Mehr-Weniger-Rechnung'],
     minObjectValue: MIN_OBJECT_VALUES.JAHRESABSCHLUSS
-  },
-  ,
+  },,
   { 
     activity: 'Buchführung (monatlich)', 
     defaultTenthRate: 7,
@@ -84,8 +78,7 @@ export const jahresabschlussBuchfuhrungPresets: ActivityPreset[] = [
     category: 'Jahresabschluss & Buchführung',
     searchKeywords: ['Buchführung', 'Fibu', 'Buchhaltung', 'Belege'],
     minObjectValue: MIN_OBJECT_VALUES.BUCHFÜHRUNG  // 15.000 € gemäß § 33 StBVV
-  },
-  ,
+  },,
   { 
     activity: 'E-Bilanz Übermittlung', 
     defaultTenthRate: 2,
@@ -97,8 +90,7 @@ export const jahresabschlussBuchfuhrungPresets: ActivityPreset[] = [
     category: 'Jahresabschluss & Buchführung',
     searchKeywords: ['E-Bilanz', 'Elektronische Bilanz', 'XBRL', 'Taxonomie'],
     minObjectValue: MIN_OBJECT_VALUES.JAHRESABSCHLUSS
-  },
-  ,
+  },,
   { 
     activity: 'Liquidationsbilanz', 
     defaultTenthRate: 25,
@@ -110,8 +102,7 @@ export const jahresabschlussBuchfuhrungPresets: ActivityPreset[] = [
     category: 'Jahresabschluss & Buchführung',
     searchKeywords: ['Liquidation', 'Liquidationsbilanz', 'Auflösung', 'Schlussbilanz'],
     minObjectValue: MIN_OBJECT_VALUES.JAHRESABSCHLUSS
-  },
-  ,
+  },,
   { 
     activity: 'Überleitungsrechnung (§ 60 Abs. 3 EStG)', 
     defaultTenthRate: 6,
@@ -123,8 +114,7 @@ export const jahresabschlussBuchfuhrungPresets: ActivityPreset[] = [
     category: 'Jahresabschluss & Buchführung',
     searchKeywords: ['Überleitungsrechnung', 'Anlageverzeichnis', 'Steuerbilanz'],
     minObjectValue: MIN_OBJECT_VALUES.JAHRESABSCHLUSS
-  },
-  ,
+  },,
   { 
     activity: 'Elektronische Übermittlung Bundesanzeiger', 
     defaultTenthRate: 2,
@@ -136,8 +126,7 @@ export const jahresabschlussBuchfuhrungPresets: ActivityPreset[] = [
     category: 'Jahresabschluss & Buchführung',
     searchKeywords: ['E-Bilanz', 'Bundesanzeiger', 'Elektronische Übermittlung', 'Offenlegung'],
     minObjectValue: MIN_OBJECT_VALUES.JAHRESABSCHLUSS
-  },
-  ,
+  },,
   { 
     activity: 'Elektronische Übermittlung Finanzamt', 
     defaultTenthRate: 2,
@@ -149,8 +138,7 @@ export const jahresabschlussBuchfuhrungPresets: ActivityPreset[] = [
     category: 'Jahresabschluss & Buchführung',
     searchKeywords: ['E-Bilanz', 'Finanzamt', 'Elektronische Übermittlung', 'ELSTER'],
     minObjectValue: MIN_OBJECT_VALUES.JAHRESABSCHLUSS
-  },
-  ,
+  },,
   { 
     activity: 'Jahresabschluss (Kapitalgesellschaften)', 
     defaultTenthRate: 25,
@@ -162,8 +150,7 @@ export const jahresabschlussBuchfuhrungPresets: ActivityPreset[] = [
     category: 'Jahresabschluss & Buchführung',
     searchKeywords: ['Jahresabschluss', 'GmbH', 'AG', 'Kapitalgesellschaft', 'Bilanz'],
     minObjectValue: MIN_OBJECT_VALUES.JAHRESABSCHLUSS
-  },
-  ,
+  },,
   { 
     activity: 'Jahresabschluss (Personengesellschaften)', 
     defaultTenthRate: 17.5,
@@ -175,8 +162,7 @@ export const jahresabschlussBuchfuhrungPresets: ActivityPreset[] = [
     category: 'Jahresabschluss & Buchführung',
     searchKeywords: ['Jahresabschluss', 'GbR', 'OHG', 'KG', 'Personengesellschaft'],
     minObjectValue: MIN_OBJECT_VALUES.JAHRESABSCHLUSS  // 17.500 €
-  },
-  ,
+  },,
   { 
     activity: 'Kontieren der Belege', 
     defaultTenthRate: 3.5,
@@ -188,8 +174,7 @@ export const jahresabschlussBuchfuhrungPresets: ActivityPreset[] = [
     category: 'Jahresabschluss & Buchführung',
     searchKeywords: ['Kontieren', 'Belege', 'Vorkontierung'],
     minObjectValue: MIN_OBJECT_VALUES.BUCHFÜHRUNG  // 15.000 €
-  },
-  ,
+  },,
   { 
     activity: 'Buchführung (quartal)', 
     defaultTenthRate: 6.5,
@@ -201,8 +186,7 @@ export const jahresabschlussBuchfuhrungPresets: ActivityPreset[] = [
     category: 'Jahresabschluss & Buchführung',
     searchKeywords: ['Buchführung', 'Fibu', 'Buchhaltung', 'quartal', 'vierteljährlich'],
     minObjectValue: MIN_OBJECT_VALUES.BUCHFÜHRUNG
-  },
-  ,
+  },,
   {
     activity: 'Vermögensstatus / Finanzstatus',
     defaultTenthRate: 10,
@@ -214,8 +198,7 @@ export const jahresabschlussBuchfuhrungPresets: ActivityPreset[] = [
     category: 'Jahresabschluss & Buchführung',
     searchKeywords: ['Vermögensstatus', 'Finanzstatus', 'Status'],
     minObjectValue: 0
-  },
-  ,
+  },,
   {
     activity: 'Erteilung von Bescheinigungen',
     defaultTenthRate: 3.5,
@@ -227,8 +210,7 @@ export const jahresabschlussBuchfuhrungPresets: ActivityPreset[] = [
     category: 'Jahresabschluss & Buchführung',
     searchKeywords: ['Bescheinigung', 'Testat', 'Bestätigung'],
     minObjectValue: 0
-  },
-  ,
+  },,
   {
     activity: 'Erläuterungsbericht zum Jahresabschluss',
     defaultTenthRate: 7,

@@ -6,8 +6,7 @@
 import { ActivityPreset } from "@/types/stbvv";
 import { MIN_OBJECT_VALUES } from "@/constants";
 
-export const sonstigeTatigkeitenPresets: ActivityPreset[] = [
-  ,
+export const sonstigeTatigkeitenPresets: ActivityPreset[] = [,
   { 
     activity: 'Fristverlängerung beantragen', 
     defaultTenthRate: 80,
@@ -19,8 +18,7 @@ export const sonstigeTatigkeitenPresets: ActivityPreset[] = [
     category: 'Sonstige Tätigkeiten',
     searchKeywords: ['Fristverlängerung', 'Frist', 'Verlängerung', 'Antrag'],
     minObjectValue: 0  // Stundenbasiert
-  },
-  ,
+  },,
   { 
     activity: 'Bescheinigungen ausstellen', 
     defaultTenthRate: 80,
@@ -32,8 +30,7 @@ export const sonstigeTatigkeitenPresets: ActivityPreset[] = [
     category: 'Sonstige Tätigkeiten',
     searchKeywords: ['Bescheinigung', 'Bestätigung', 'Nachweis'],
     minObjectValue: 0  // Stundenbasiert
-  },
-  ,
+  },,
   { 
     activity: 'Auslagen für externe Kosten', 
     defaultTenthRate: 5.5,

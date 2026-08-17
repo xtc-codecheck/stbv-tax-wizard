@@ -6,8 +6,7 @@
 import { ActivityPreset } from "@/types/stbvv";
 import { MIN_OBJECT_VALUES } from "@/constants";
 
-export const erbschaftSchenkungsteuerPresets: ActivityPreset[] = [
-  ,
+export const erbschaftSchenkungsteuerPresets: ActivityPreset[] = [,
   { 
     activity: 'Erbschaftsteuererklärung', 
     defaultTenthRate: 6,
@@ -19,8 +18,7 @@ export const erbschaftSchenkungsteuerPresets: ActivityPreset[] = [
     category: 'Erbschaft- & Schenkungsteuer',
     searchKeywords: ['ErbSt', 'Erbschaftsteuer', 'Erbe', 'Nachlass'],
     minObjectValue: MIN_OBJECT_VALUES.ERBSCHAFTSTEUER  // 16.000 € gemäß § 24 Abs. 1 Nr. 12
-  },
-  ,
+  },,
   { 
     activity: 'Schenkungsteuererklärung', 
     defaultTenthRate: 6,
@@ -32,8 +30,7 @@ export const erbschaftSchenkungsteuerPresets: ActivityPreset[] = [
     category: 'Erbschaft- & Schenkungsteuer',
     searchKeywords: ['SchenkSt', 'Schenkungsteuer', 'Schenkung'],
     minObjectValue: MIN_OBJECT_VALUES.SCHENKUNGSTEUER  // 16.000 € gemäß § 24 Abs. 1 Nr. 13
-  },
-  ,
+  },,
   { 
     activity: 'Feststellung nach Bewertungsgesetz', 
     defaultTenthRate: 9,
@@ -45,8 +42,7 @@ export const erbschaftSchenkungsteuerPresets: ActivityPreset[] = [
     category: 'Erbschaft- & Schenkungsteuer',
     searchKeywords: ['Bewertung', 'Feststellung', 'Grundbesitzwert'],
     minObjectValue: MIN_OBJECT_VALUES.FESTSTELLUNG_BEWERTUNG  // 25.000 € gemäß § 24 Abs. 1 Nr. 11
-  },
-  ,
+  },,
   { 
     activity: 'Ermittlung Zugewinnausgleichsforderung (§ 5 ErbStG)', 
     defaultTenthRate: 10,

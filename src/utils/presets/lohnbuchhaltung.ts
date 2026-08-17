@@ -6,8 +6,7 @@
 import { ActivityPreset } from "@/types/stbvv";
 import { MIN_OBJECT_VALUES } from "@/constants";
 
-export const lohnbuchhaltungPresets: ActivityPreset[] = [
-  ,
+export const lohnbuchhaltungPresets: ActivityPreset[] = [,
   { 
     activity: 'Lohnbuchhaltung', 
     defaultTenthRate: 6.5,
@@ -19,8 +18,7 @@ export const lohnbuchhaltungPresets: ActivityPreset[] = [
     category: 'Lohnbuchhaltung',
     searchKeywords: ['Lohnbuchhaltung', 'Lohn', 'Gehalt', 'Personalabrechnung'],
     minObjectValue: MIN_OBJECT_VALUES.LOHNBUCHHALTUNG
-  },
-  ,
+  },,
   { 
     activity: 'Lohnabrechnung pro Arbeitnehmer (monatlich)', 
     defaultTenthRate: 0,
@@ -33,8 +31,7 @@ export const lohnbuchhaltungPresets: ActivityPreset[] = [
     category: 'Lohnbuchhaltung',
     searchKeywords: ['Lohnabrechnung', 'Gehaltsabrechnung', 'Mitarbeiter'],
     minObjectValue: MIN_OBJECT_VALUES.LOHNBUCHHALTUNG
-  },
-  ,
+  },,
   { 
     activity: 'Anmeldung Lohnsteuer', 
     defaultTenthRate: 2.5,
@@ -46,8 +43,7 @@ export const lohnbuchhaltungPresets: ActivityPreset[] = [
     category: 'Lohnbuchhaltung',
     searchKeywords: ['Lohnsteueranmeldung', 'Lohnsteuer', 'LSt'],
     minObjectValue: MIN_OBJECT_VALUES.LOHNSTEUER_ANMELDUNG  // 1.000 € gemäß § 24 Abs. 1 Nr. 15
-  },
-  ,
+  },,
   { 
     activity: 'Lohnsteuer-Ermäßigung', 
     defaultTenthRate: 2.5,
@@ -59,8 +55,7 @@ export const lohnbuchhaltungPresets: ActivityPreset[] = [
     category: 'Lohnbuchhaltung',
     searchKeywords: ['Lohnsteuer-Ermäßigung', 'Freibetrag', 'Eintragung'],
     minObjectValue: MIN_OBJECT_VALUES.LOHNSTEUER_ERMAESSIGUNG  // 4.500 € gemäß § 24 Abs. 4
-  },
-  ,
+  },,
   { 
     activity: 'Lohnkonto', 
     defaultTenthRate: 7.5,
