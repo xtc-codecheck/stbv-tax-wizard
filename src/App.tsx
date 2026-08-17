@@ -30,6 +30,7 @@ const App = () => (
     <Toaster />
     <ErrorBoundary>
       <BrowserRouter>
+        <ErrorBoundary>
         <Suspense fallback={<PageLoadingFallback />}>
           <Routes>
             <Route path="/" element={<Index />} />
@@ -51,6 +52,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
+        </ErrorBoundary>
         <CookieBanner />
       </BrowserRouter>
     </ErrorBoundary>
