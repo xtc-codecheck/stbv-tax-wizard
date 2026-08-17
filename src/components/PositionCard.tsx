@@ -163,25 +163,28 @@ const PositionCard: React.FC<PositionCardProps> = ({
 
   // Validation helper
   const validateField = (field: string, value: string | number | undefined | null): string | null => {
+    const numeric = typeof value === 'string' ? Number(value.replace(',', '.')) : (value ?? 0);
+    const isPositive = Number.isFinite(numeric) && numeric > 0;
     switch (field) {
       case 'activity':
         return !value ? 'Bitte wählen Sie eine Tätigkeit aus' : null;
       case 'objectValue':
-        return position.billingType === 'objectValue' && (!value || value <= 0) 
+        return position.billingType === 'objectValue' && !isPositive
           ? 'Gegenstandswert muss größer als 0 sein' : null;
       case 'hourlyRate':
-        return position.billingType === 'hourly' && (!value || value <= 0)
+        return position.billingType === 'hourly' && !isPositive
           ? 'Stundensatz muss größer als 0 sein' : null;
       case 'hours':
-        return position.billingType === 'hourly' && (!value || value <= 0)
+        return position.billingType === 'hourly' && !isPositive
           ? 'Stunden müssen größer als 0 sein' : null;
       case 'flatRate':
-        return position.billingType === 'flatRate' && (!value || value <= 0)
+        return position.billingType === 'flatRate' && !isPositive
           ? 'Pauschalbetrag muss größer als 0 sein' : null;
       default:
         return null;
     }
   };
+
 
   // handleChange is now defined via useCallback above (line 73)
 
