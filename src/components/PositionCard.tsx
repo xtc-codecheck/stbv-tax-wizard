@@ -90,7 +90,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
     }
 
     if (activeNumericFieldRef.current !== field && String(externalValue) !== String(localValue)) {
-      setLocalValue(externalValue);
+      setLocalValue(externalValue as never);
     }
   }, []);
 
