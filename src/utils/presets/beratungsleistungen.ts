@@ -4,7 +4,7 @@
  */
 
 import { ActivityPreset } from "@/types/stbvv";
-import { MIN_OBJECT_VALUES } from "@/constants";
+import { MIN_OBJECT_VALUES, TIME_FEE } from "@/constants";
 
 export const beratungsleistungenPresets: ActivityPreset[] = [
   { 
@@ -22,7 +22,7 @@ export const beratungsleistungenPresets: ActivityPreset[] = [
   { 
     activity: 'Beratung bei Betriebseröffnung/-übernahme', 
     defaultTenthRate: 0,
-    defaultHourlyRate: 115,
+    defaultHourlyRate: TIME_FEE.DEFAULT_HOURLY,
     suggestedFeeTable: 'A', 
     legalBasis: '§ 13 StBVV (Zeitgebühr)', 
     rateType: 'hourly', 
@@ -35,7 +35,7 @@ export const beratungsleistungenPresets: ActivityPreset[] = [
   { 
     activity: 'Beratung bei Umstrukturierung', 
     defaultTenthRate: 0,
-    defaultHourlyRate: 115,
+    defaultHourlyRate: TIME_FEE.DEFAULT_HOURLY,
     suggestedFeeTable: 'A', 
     legalBasis: '§ 13 StBVV (Zeitgebühr)', 
     rateType: 'hourly', 
@@ -60,7 +60,7 @@ export const beratungsleistungenPresets: ActivityPreset[] = [
   { 
     activity: 'Betriebswirtschaftliche Beratung', 
     defaultTenthRate: 0,
-    defaultHourlyRate: 115,
+    defaultHourlyRate: TIME_FEE.DEFAULT_HOURLY,
     suggestedFeeTable: 'A', 
     legalBasis: '§ 13 StBVV (Zeitgebühr)', 
     rateType: 'hourly', 
@@ -73,7 +73,7 @@ export const beratungsleistungenPresets: ActivityPreset[] = [
   { 
     activity: 'Finanzplanung und Liquiditätsplanung', 
     defaultTenthRate: 0,
-    defaultHourlyRate: 115,
+    defaultHourlyRate: TIME_FEE.DEFAULT_HOURLY,
     suggestedFeeTable: 'A', 
     legalBasis: '§ 13 StBVV (Zeitgebühr)', 
     rateType: 'hourly', 
@@ -86,7 +86,7 @@ export const beratungsleistungenPresets: ActivityPreset[] = [
   { 
     activity: 'Steuerschätzung', 
     defaultTenthRate: 0,
-    defaultHourlyRate: 115,
+    defaultHourlyRate: TIME_FEE.DEFAULT_HOURLY,
     suggestedFeeTable: 'A', 
     legalBasis: '§ 13 StBVV (Zeitgebühr)', 
     rateType: 'hourly', 

@@ -1,4 +1,5 @@
 import { Position, Template } from "@/types/stbvv";
+import { TIME_FEE } from "@/constants";
 
 // Predefined Templates with correct tenthRates according to StBVV
 // Sortiert nach Tätigkeitsbereichen:
@@ -52,7 +53,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         feeTable: 'A',
         applyExpenseFee: false,
         billingType: 'hourly',
-        hourlyRate: 115,
+        hourlyRate: TIME_FEE.DEFAULT_HOURLY,
         hours: 0.5
       }
     ]
@@ -106,7 +107,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         feeTable: 'A',
         applyExpenseFee: false,
         billingType: 'hourly',
-        hourlyRate: 115,
+        hourlyRate: TIME_FEE.DEFAULT_HOURLY,
         hours: 0.5
       }
     ]
@@ -149,7 +150,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         feeTable: 'A',
         applyExpenseFee: false,
         billingType: 'hourly',
-        hourlyRate: 115,
+        hourlyRate: TIME_FEE.DEFAULT_HOURLY,
         hours: 0.5
       }
     ]
@@ -214,7 +215,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         feeTable: 'A',
         applyExpenseFee: false,
         billingType: 'hourly',
-        hourlyRate: 115,
+        hourlyRate: TIME_FEE.DEFAULT_HOURLY,
         hours: 0.5
       }
     ]
@@ -279,7 +280,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         feeTable: 'A',
         applyExpenseFee: false,
         billingType: 'hourly',
-        hourlyRate: 115,
+        hourlyRate: TIME_FEE.DEFAULT_HOURLY,
         hours: 0.5
       }
     ]
@@ -348,7 +349,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         feeTable: 'A',
         applyExpenseFee: false,
         billingType: 'hourly',
-        hourlyRate: 115,
+        hourlyRate: TIME_FEE.DEFAULT_HOURLY,
         hours: 0.5
       }
     ]
@@ -428,7 +429,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         feeTable: 'A',
         applyExpenseFee: false,
         billingType: 'hourly',
-        hourlyRate: 115,
+        hourlyRate: TIME_FEE.DEFAULT_HOURLY,
         hours: 0.5
       }
     ]
@@ -504,7 +505,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         feeTable: 'A',
         applyExpenseFee: false,
         billingType: 'hourly',
-        hourlyRate: 115,
+        hourlyRate: TIME_FEE.DEFAULT_HOURLY,
         hours: 0.5
       }
     ]
@@ -580,7 +581,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         feeTable: 'A',
         applyExpenseFee: false,
         billingType: 'hourly',
-        hourlyRate: 115,
+        hourlyRate: TIME_FEE.DEFAULT_HOURLY,
         hours: 0.5
       }
     ]
@@ -678,7 +679,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         feeTable: 'A',
         applyExpenseFee: false,
         billingType: 'hourly',
-        hourlyRate: 115,
+        hourlyRate: TIME_FEE.DEFAULT_HOURLY,
         hours: 0.5
       }
     ]
@@ -931,7 +932,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         feeTable: 'A',
         applyExpenseFee: false,
         billingType: 'hourly',
-        hourlyRate: 115,
+        hourlyRate: TIME_FEE.DEFAULT_HOURLY,
         hours: 1
       }
     ]
@@ -952,7 +953,7 @@ export const DEFAULT_TEMPLATES: Template[] = [
         feeTable: 'A',
         applyExpenseFee: false,
         billingType: 'hourly',
-        hourlyRate: 115,
+        hourlyRate: TIME_FEE.DEFAULT_HOURLY,
         hours: 0.5
       }
     ]

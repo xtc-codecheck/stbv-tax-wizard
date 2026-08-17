@@ -4,7 +4,7 @@
  */
 
 import { ActivityPreset } from "@/types/stbvv";
-import { MIN_OBJECT_VALUES } from "@/constants";
+import { MIN_OBJECT_VALUES, TIME_FEE } from "@/constants";
 
 export const rechtsbehelfsverfahrenPresets: ActivityPreset[] = [
   { 
@@ -34,7 +34,7 @@ export const rechtsbehelfsverfahrenPresets: ActivityPreset[] = [
   { 
     activity: 'Prüfung Steuerbescheid', 
     defaultTenthRate: 0,
-    defaultHourlyRate: 115,  // Stand: 01.07.2025
+    defaultHourlyRate: TIME_FEE.DEFAULT_HOURLY,  // Stand: 01.07.2025
     suggestedFeeTable: 'A', 
     legalBasis: '§ 13 StBVV (Zeitgebühr ab 01.07.2025)', 
     rateType: 'hourly', 
@@ -47,7 +47,7 @@ export const rechtsbehelfsverfahrenPresets: ActivityPreset[] = [
   { 
     activity: 'Betriebsprüfung begleiten', 
     defaultTenthRate: 0,
-    defaultHourlyRate: 115,
+    defaultHourlyRate: TIME_FEE.DEFAULT_HOURLY,
     suggestedFeeTable: 'A', 
     legalBasis: '§ 29 Nr. 1 StBVV (Zeitgebühr)', 
     rateType: 'hourly', 
