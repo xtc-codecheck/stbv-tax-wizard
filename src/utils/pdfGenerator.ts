@@ -396,7 +396,7 @@ const createPDFDocument = (options: PDFGeneratorOptions): jsPDF => {
   
   // ============== SUMMEN-BEREICH ==============
   
-  let finalY = (doc as any).lastAutoTable.finalY + 10;
+  let finalY = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10;
   
   // Prüfe ob genug Platz für Summen
   const summaryHeight = includeVAT ? 60 : 50;

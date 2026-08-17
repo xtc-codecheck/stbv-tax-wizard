@@ -51,7 +51,7 @@ export class AppError extends Error {
 
     // Erhält den Stack Trace
     if ('captureStackTrace' in Error) {
-      (Error as any).captureStackTrace(this, this.constructor);
+      (Error as unknown as { captureStackTrace: (t: object, c: unknown) => void }).captureStackTrace(this, this.constructor);
     }
   }
 

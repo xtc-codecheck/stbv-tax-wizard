@@ -415,7 +415,7 @@ describe('Extreme Value Tests', () => {
       const position = createTestPosition({
         billingType: 'flatRate',
         flatRate: 100,
-        quantity: undefined as any,
+        quantity: undefined as unknown as number,
         applyExpenseFee: false,
       });
 

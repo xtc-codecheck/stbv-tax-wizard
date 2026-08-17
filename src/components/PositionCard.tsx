@@ -69,7 +69,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 
   // Stable handleChange callback - NOW SENDS PATCH instead of full object
   // This is the key fix: we only send the changed field, not the entire position
-  const handleChange = useCallback((field: keyof Position, value: any) => {
+  const handleChange = useCallback((field: keyof Position, value: Position[keyof Position]) => {
     onUpdate(position.id, { [field]: value });
   }, [position.id, onUpdate]);
 
@@ -77,7 +77,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
     field: NumericInputField,
     externalValue: number | string,
     localValue: number | string,
-    setLocalValue: (value: any) => void
+    setLocalValue: (value: never) => void
   ) => {
     const pendingValue = pendingNumericValuesRef.current[field];
 
@@ -162,7 +162,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
   const preset = React.useMemo(() => getActivityPreset(position.activity), [position.activity]);
 
   // Validation helper
-  const validateField = (field: string, value: any): string | null => {
+  const validateField = (field: string, value: unknown): string | null => {
     switch (field) {
       case 'activity':
         return !value ? 'Bitte wählen Sie eine Tätigkeit aus' : null;
@@ -275,7 +275,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
     setValidationErrors(prev => error ? { ...prev, hourlyRate: error } : { ...prev, hourlyRate: '' });
   };
 
-  const handleFieldChange = (field: string, value: any) => {
+  const handleFieldChange = (field: string, value: unknown) => {
     const error = validateField(field, value);
     setValidationErrors(prev => error ? { ...prev, [field]: error } : { ...prev, [field]: '' });
   };
