@@ -3,7 +3,7 @@
  * @module hooks/useDocumentTabs
  */
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { DocumentTabData, DocumentTabsState, createEmptyTabData } from '@/types/documentTab';
 import { Position } from '@/types/stbvv';
 import { generateUniqueId } from '@/utils/idGenerator';
