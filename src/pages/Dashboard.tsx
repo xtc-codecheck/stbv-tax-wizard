@@ -37,6 +37,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { formatCurrency } from "@/lib/utils";
 import { toast } from 'sonner';
 
 export default function Dashboard() {
@@ -49,14 +50,6 @@ export default function Dashboard() {
     deleteDocument,
     clearArchive 
   } = useDocumentArchive();
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('de-DE', {
-      style: 'currency',
-      currency: 'EUR',
-      minimumFractionDigits: 2,
-    }).format(value);
-  };
 
   const handleDeleteDocument = (id: string) => {
     deleteDocument(id);
