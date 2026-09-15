@@ -51,6 +51,8 @@ import {
   DocumentTabs,
 } from "@/components/calculator";
 import { GuidedWorkflow } from "@/components/wizard";
+import { JsonLd, softwareSchema } from "@/components/seo";
+import { IntroSection } from "@/components/calculator/IntroSection";
 
 const Index = () => {
   // Multi-Tab State Management
@@ -360,10 +362,11 @@ const Index = () => {
   return (
     <>
       <Helmet>
-        <title>StBVV-Rechner – Steuerberater-Gebühren online berechnen</title>
-        <meta name="description" content="Kostenloser StBVV-Rechner: Berechnen Sie Steuerberatergebühren nach der Steuerberatervergütungsverordnung 2025. Mit PDF-Export, Vorlagen und Mehrfach-Positionen." />
+        <title>StBVV-Rechner 2026 – Steuerberatergebühren online berechnen</title>
+        <meta name="description" content="Kostenloser StBVV-Rechner: Steuerberatergebühren nach Tabelle A bis D berechnen – mit Zehntelsätzen, Zeitgebühr, Vorlagen und PDF für Angebot und Rechnung." />
         <link rel="canonical" href={`${BASE_URL}/`} />
       </Helmet>
+      <JsonLd data={softwareSchema()} />
       <KeyboardShortcutsDialog open={showKeyboardShortcuts} onOpenChange={setShowKeyboardShortcuts} />
 
       <CommandPalette
