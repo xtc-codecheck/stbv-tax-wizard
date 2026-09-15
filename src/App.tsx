@@ -24,6 +24,9 @@ const Blog = React.lazy(() => import("./pages/Blog"));
 const BlogArticle = React.lazy(() => import("./pages/BlogArticle"));
 const NotFound = React.lazy(() => import("./pages/NotFound"));
 const Dashboard = React.lazy(() => import("./pages/Dashboard"));
+const StbvvTabelle = React.lazy(() => import("./pages/StbvvTabelle"));
+const KostenLanding = React.lazy(() => import("./pages/KostenLanding"));
+const Vergleich = React.lazy(() => import("./pages/Vergleich"));
 
 const App = () => (
   <TooltipProvider>
