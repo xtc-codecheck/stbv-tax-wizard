@@ -463,6 +463,178 @@ Sowohl Zeit- als auch Wertgebühr haben ihre Berechtigung in der Steuerberatung.
 *Nutzen Sie unseren StBVV-Rechner, um beide Gebührenarten schnell und korrekt zu berechnen.*
     `.trim(),
   },
+  {
+    id: '6',
+    slug: 'was-kostet-ein-steuerberater',
+    title: 'Was kostet ein Steuerberater? Gebühren nach StBVV verstehen',
+    excerpt:
+      'Steuerberaterkosten sind kein Zufallspreis, sondern folgen der StBVV. Wie sich Gegenstandswert, Tabelle und Zehntelsatz zum Honorar zusammensetzen.',
+    metaDescription:
+      'Was kostet ein Steuerberater? Wie sich Gebühren aus Gegenstandswert, Tabelle und Zehntelsatz nach StBVV zusammensetzen – mit Beispielen und Rechner.',
+    date: '2026-01-15',
+    readTime: '7 Min.',
+    category: 'Praxis-Tipps',
+    author: 'Redaktion',
+    content: `
+## Warum es keinen Pauschalpreis gibt
+
+Die Vergütung von Steuerberaterinnen und Steuerberatern richtet sich nach der Steuerberatervergütungsverordnung (StBVV). Sie legt für die meisten Tätigkeiten keinen festen Betrag fest, sondern einen Rahmen. Der konkrete Betrag ergibt sich aus drei Faktoren.
+
+## Die drei Bausteine jeder Wertgebühr
+
+### 1. Der Gegenstandswert
+
+Der Gegenstandswert ist die wirtschaftliche Bezugsgröße der Tätigkeit – zum Beispiel die Summe der Einnahmen bei einer Einnahmenüberschussrechnung oder die Summe der Einkünfte bei einer Einkommensteuererklärung. Für viele Tätigkeiten schreibt die StBVV einen Mindestgegenstandswert vor.
+
+### 2. Die Gebührentabelle
+
+Zu jedem Gegenstandswert gehört eine volle Gebühr aus einer der Tabellen A bis D. Welche Tabelle gilt, bestimmt die jeweilige Vorschrift der StBVV: Tabelle A für Beratung und Vertretung, Tabelle B für Abschlussarbeiten, Tabelle C für die laufende Buchführung, Tabelle D für land- und forstwirtschaftliche Betriebe.
+
+### 3. Der Zehntelsatz
+
+Innerhalb des Rahmens wird ein Bruchteil der vollen Gebühr angesetzt, üblicherweise in Zehnteln. Liegt der Rahmen beispielsweise bei 1/10 bis 6/10, ist die Mittelgebühr 3,5/10. Die Ausübung des Ermessens richtet sich nach § 11 StBVV: Umfang, Schwierigkeit, Bedeutung der Angelegenheit sowie Einkommens- und Vermögensverhältnisse.
+
+## Was noch dazukommt
+
+- **Auslagenpauschale** nach § 16 StBVV für Post und Telekommunikation
+- **Zeitgebühr** nach § 13 StBVV, wenn die Verordnung keine Wertgebühr vorsieht
+- **Umsatzsteuer** auf die Gesamtvergütung
+
+## Ein einfaches Rechenbeispiel
+
+Für eine Tätigkeit mit einem Gegenstandswert von 50.000 Euro nach Tabelle A und einem Zehntelsatz von 5/10 gilt: volle Gebühr aus Tabelle A, davon fünf Zehntel, zuzüglich Auslagen und Umsatzsteuer. Unser Rechner zeigt jeden Zwischenschritt einzeln an, sodass die Rechnung für Mandanten nachvollziehbar bleibt.
+
+## Fazit
+
+Steuerberaterkosten sind rechnerisch vollständig herleitbar. Wer Gegenstandswert, Tabelle und Zehntelsatz kennt, kann jede Position der Rechnung prüfen.
+
+*Mit dem StBVV-Rechner berechnen Sie alle Positionen eines Mandats in einem Dokument.*
+    `.trim(),
+  },
+  {
+    id: '7',
+    slug: 'stbvv-tabelle-a-einfach-erklaert',
+    title: 'StBVV Tabelle A einfach erklärt',
+    excerpt:
+      'Tabelle A ist die Beratungstabelle der StBVV. Wofür sie gilt, wie die Werte abgelesen werden und worauf bei den Wertgrenzen zu achten ist.',
+    metaDescription:
+      'StBVV Tabelle A verständlich erklärt: Anwendungsbereich, Ablesen der vollen Gebühr, Wertgrenzen und Zehntelsätze – mit kostenlosem Rechner.',
+    date: '2026-01-22',
+    readTime: '6 Min.',
+    category: 'Recht & Gesetz',
+    author: 'Redaktion',
+    content: `
+## Wofür Tabelle A gilt
+
+Tabelle A ist die Beratungstabelle der StBVV. Sie kommt unter anderem bei der Anfertigung von Steuererklärungen, bei Beratungsleistungen und bei der Vertretung in außergerichtlichen Rechtsbehelfsverfahren zur Anwendung. Die jeweilige Einzelvorschrift nennt die maßgebliche Tabelle und den Gebührenrahmen.
+
+## So lesen Sie die Tabelle
+
+Die Tabelle ordnet jedem Wertbereich eine volle Gebühr zu. Maßgeblich ist die Zeile, in deren Bereich der Gegenstandswert fällt; die angegebene Obergrenze ist eingeschlossen ("bis ... Euro"). Oberhalb des letzten ausgewiesenen Wertes steigt die Gebühr degressiv in festen Schritten weiter.
+
+## Vom Tabellenwert zur Gebühr
+
+Die volle Gebühr ist nur der Ausgangspunkt. Angesetzt wird ein Bruchteil davon, in der Regel in Zehnteln, innerhalb des in der Vorschrift genannten Rahmens. Ohne besondere Umstände ist die Mittelgebühr der sachgerechte Ansatz.
+
+## Typische Fehlerquellen
+
+- Verwechslung von Tabelle A und Tabelle B bei Abschlussarbeiten
+- Übersehene Mindestgegenstandswerte einzelner Vorschriften
+- Zehntelsatz außerhalb des zulässigen Rahmens
+- Fehlende Begründung, wenn deutlich über der Mittelgebühr abgerechnet wird
+
+## Fazit
+
+Tabelle A ist unkompliziert, sobald Gegenstandswert und Rahmen feststehen. Die Sorgfalt liegt in der Auswahl der richtigen Tabelle und in der Begründung des Zehntelsatzes.
+
+*Die vollständige Tabelle A finden Sie auf unserer Tabellenseite, die Berechnung übernimmt der Rechner.*
+    `.trim(),
+  },
+  {
+    id: '8',
+    slug: 'mittelgebuehr-richtig-ansetzen',
+    title: 'Mittelgebühr richtig ansetzen',
+    excerpt:
+      'Die Mittelgebühr ist der Regelfall – aber kein Automatismus. Wie § 11 StBVV das Ermessen steuert und wie Abweichungen begründet werden.',
+    metaDescription:
+      'Mittelgebühr nach StBVV richtig ansetzen: Kriterien des § 11 StBVV, Abweichungen nach oben und unten, Dokumentation und praktische Beispiele.',
+    date: '2026-01-29',
+    readTime: '6 Min.',
+    category: 'Praxis-Tipps',
+    author: 'Redaktion',
+    content: `
+## Was die Mittelgebühr ist
+
+Die Mittelgebühr ist der arithmetische Mittelwert des jeweiligen Gebührenrahmens. Bei einem Rahmen von 1/10 bis 6/10 beträgt sie 3,5/10. Sie gilt als angemessener Ansatz für eine Angelegenheit von durchschnittlichem Umfang und durchschnittlicher Schwierigkeit.
+
+## Die Kriterien des § 11 StBVV
+
+Das Ermessen ist nach billigem Ermessen auszuüben und richtet sich nach:
+
+- dem **Umfang** der Tätigkeit
+- der **Schwierigkeit** der Tätigkeit
+- der **Bedeutung** der Angelegenheit für den Auftraggeber
+- den **Einkommens- und Vermögensverhältnissen** des Auftraggebers
+- einem besonderen **Haftungsrisiko**
+
+## Abweichungen nach oben
+
+Ein überdurchschnittlicher Sachverhalt rechtfertigt einen höheren Satz – etwa umfangreiche Belegarbeit, mehrere Einkunftsarten, Auslandsbezug oder erhebliche steuerliche Auswirkungen. Wichtig ist, dass die tragenden Umstände in der Handakte festgehalten werden.
+
+## Abweichungen nach unten
+
+Ein einfach gelagerter Fall mit geringem Aufwand trägt einen niedrigeren Satz. Das gilt insbesondere bei gut vorbereiteten Unterlagen oder wiederkehrenden Vorgängen aus einem Dauermandat.
+
+## Dokumentation entscheidet
+
+In Auseinandersetzungen über die Höhe der Vergütung ist die Begründung des Ansatzes das wesentliche Argument. Eine kurze Notiz je Position genügt in der Regel, muss aber konkret auf die Kriterien Bezug nehmen.
+
+## Fazit
+
+Die Mittelgebühr ist der begründungsarme Regelfall, jede Abweichung ist begründungspflichtig. Wer die Kriterien sauber dokumentiert, argumentiert später deutlich leichter.
+
+*Im StBVV-Rechner ist der Zehntelsatz je Position frei wählbar und wird im Dokument mitgeführt.*
+    `.trim(),
+  },
+  {
+    id: '9',
+    slug: 'stbvv-2026-was-gilt',
+    title: 'StBVV 2026: Welcher Rechtsstand jetzt gilt',
+    excerpt:
+      'Welche Fassung der StBVV aktuell anzuwenden ist, was sich zuletzt geändert hat und wie Kanzleien den Rechtsstand in der Rechnung ausweisen.',
+    metaDescription:
+      'StBVV 2026: aktueller Rechtsstand, zuletzt geänderte Werte wie der Stundensatz nach § 13 StBVV und was Kanzleien in der Rechnung ausweisen sollten.',
+    date: '2026-02-05',
+    readTime: '5 Min.',
+    category: 'Aktuelles',
+    author: 'Redaktion',
+    content: `
+## Der maßgebliche Rechtsstand
+
+Für Vergütungen gilt die Fassung der StBVV, die im Zeitpunkt der Auftragserteilung in Kraft war. Unser Rechner arbeitet mit dem Rechtsstand vom 1. Juli 2025 in der zuletzt veröffentlichten Fassung (BGBl. 2025 I Nr. 372, veröffentlicht am 19. Dezember 2025).
+
+## Was sich zuletzt geändert hat
+
+- Die **Gebührentabellen A bis D** wurden in ihren Beträgen angepasst.
+- Der **Stundensatz der Zeitgebühr** nach § 13 StBVV liegt bei 115 Euro je angefangene halbe Stunde beziehungsweise dem daraus abgeleiteten Stundenwert.
+- Einzelne **Mindestgegenstandswerte** wurden angepasst, etwa bei der Einnahmenüberschussrechnung.
+
+Für laufende Dauermandate bedeutet das: Neue Aufträge folgen dem neuen Rechtsstand, bereits erteilte Aufträge bleiben bei der zum Auftragszeitpunkt geltenden Fassung.
+
+## Was Kanzleien jetzt tun sollten
+
+1. Vorlagen und Kanzleisoftware auf die aktuellen Tabellenwerte prüfen
+2. Vergütungsvereinbarungen auf Verweise mit veraltetem Datum durchsehen
+3. Den Rechtsstand in Angebot und Rechnung ausweisen – das beugt Rückfragen vor
+4. Mandanten bei spürbaren Änderungen aktiv informieren
+
+## Fazit
+
+Der Rechtsstand ist kein Detail, sondern Teil der Prüfbarkeit der Rechnung. Wer ihn im Dokument ausweist, macht die Abrechnung nachvollziehbar.
+
+*Unser Rechner führt den Rechtsstand automatisch in jedem erzeugten PDF mit.*
+    `.trim(),
+  },
 ];
 
 /**
