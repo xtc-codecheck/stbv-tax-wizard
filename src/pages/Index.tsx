@@ -420,6 +420,8 @@ const Index = () => {
             onStartWizard={() => setShowWizard(true)}
           />
 
+          <IntroSection />
+
           {/* Multi-Tab Bar */}
           <DocumentTabs
             tabs={tabs}
