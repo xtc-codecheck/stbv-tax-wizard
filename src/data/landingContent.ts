@@ -356,4 +356,224 @@ export const COST_LANDINGS: Record<string, CostLandingContent> = {
       },
     ],
   },
+  '/steuerberatungskosten-absetzen': {
+    path: '/steuerberatungskosten-absetzen',
+    title: 'Steuerberatungskosten absetzen',
+    metaTitle: 'Steuerberatungskosten absetzen – was ist steuerlich abziehbar?',
+    metaDescription:
+      'Welche Steuerberaterkosten sind absetzbar? Betriebsausgaben, Werbungskosten, private Anteile und wo Sie die Kosten eintragen – verständlich erklärt.',
+    intro:
+      'Steuerberatungskosten sind nur teilweise absetzbar. Entscheidend ist, ob sie mit Einkünften zusammenhängen (Betriebsausgaben oder Werbungskosten) oder die private Steuererklärung betreffen.',
+    legalBasis: '§ 4 Abs. 4, § 9 Abs. 1 EStG; BMF-Schreiben vom 21.12.2007',
+    sections: [
+      {
+        heading: 'Voll absetzbar: Kosten mit Bezug zu Einkünften',
+        text:
+          'Kosten für Buchführung, Jahresabschluss, EÜR, Gewerbe- und Umsatzsteuererklärung sind Betriebsausgaben. Die Anteile für Anlage N, V oder KAP-nahe Überschussermittlungen gelten als Werbungskosten.',
+      },
+      {
+        heading: 'Nicht absetzbar: der private Teil',
+        text:
+          'Kosten für den Mantelbogen, Sonderausgaben, außergewöhnliche Belastungen oder haushaltsnahe Dienstleistungen sind seit 2006 privat veranlasst und nicht abziehbar. Eine Rechnung nach StBVV mit getrennten Positionen macht die Aufteilung einfach.',
+      },
+      {
+        heading: 'Aufteilung bei gemischten Kosten',
+        text:
+          'Lassen sich Kosten nicht eindeutig zuordnen, dürfen Beträge bis 100 Euro im Jahr nach Wahl den Betriebsausgaben oder Werbungskosten zugeordnet werden. Darüber ist eine sachgerechte Aufteilung nötig.',
+      },
+    ],
+    bullets: [
+      'Betriebsausgaben: Buchführung, Abschluss, EÜR, betriebliche Steuererklärungen',
+      'Werbungskosten: Anlage N, Anlage V und weitere Einkunftsanlagen',
+      'Nicht abziehbar: Mantelbogen, Sonderausgaben, außergewöhnliche Belastungen',
+      'Vereinfachung: gemischte Kosten bis 100 Euro frei zuordenbar',
+    ],
+    faq: [
+      {
+        question: 'Kann ich die Kosten für meinen Steuerberater absetzen?',
+        answer:
+          'Ja, soweit die Kosten auf betriebliche Tätigkeiten oder die Ermittlung von Einkünften entfallen. Der private Teil, etwa für Sonderausgaben, ist nicht abziehbar.',
+      },
+      {
+        question: 'Wo trage ich die Steuerberaterkosten ein?',
+        answer:
+          'Betriebliche Kosten gehören in die EÜR oder die Gewinnermittlung, Werbungskosten in die jeweilige Anlage (zum Beispiel Anlage N oder Anlage V).',
+      },
+      {
+        question: 'Sind Steuerberaterkosten für Arbeitnehmer absetzbar?',
+        answer:
+          'Der Anteil für die Anlage N ist als Werbungskosten absetzbar. Wird der Arbeitnehmer-Pauschbetrag von 1.230 Euro nicht überschritten, wirkt sich das allerdings nicht aus.',
+      },
+    ],
+  },
+  '/buchhaltung-kosten': {
+    path: '/buchhaltung-kosten',
+    title: 'Buchhaltung beim Steuerberater: Kosten',
+    metaTitle: 'Buchhaltung Steuerberater Kosten – Buchführung nach § 33 StBVV',
+    metaDescription:
+      'Was kostet die Buchhaltung beim Steuerberater? Laufende Buchführung nach § 33 StBVV, Tabelle C, Gegenstandswert und Beispiel – kostenlos berechnen.',
+    intro:
+      'Die laufende Finanzbuchhaltung wird nach § 33 StBVV abgerechnet. Grundlage ist Tabelle C, der Gegenstandswert richtet sich nach dem Jahresumsatz oder dem höheren Aufwand.',
+    legalBasis: '§ 33 StBVV, Tabelle C',
+    sections: [
+      {
+        heading: 'Monatliche Gebühr',
+        text:
+          'Die Gebühr für die laufende Buchführung wird als Monatsgebühr berechnet. Der Zehntelrahmen hängt davon ab, ob der Steuerberater nur kontiert oder die komplette Buchführung übernimmt.',
+      },
+      {
+        heading: 'Gegenstandswert',
+        text:
+          'Maßgeblich ist der Jahresumsatz oder die Summe des Aufwands, je nachdem, welcher Betrag höher ist. Der Rechner übernimmt die passende Stufe aus Tabelle C automatisch.',
+      },
+    ],
+    bullets: [
+      'Abrechnung als Monatsgebühr nach Tabelle C',
+      'Gegenstandswert: Jahresumsatz oder höherer Aufwand',
+      'Zusätzlich möglich: Einrichtung der Buchführung und Kontierung',
+      'Dazu Auslagen und 19 Prozent Umsatzsteuer',
+    ],
+    faq: [
+      {
+        question: 'Was kostet die Buchhaltung beim Steuerberater im Monat?',
+        answer:
+          'Das hängt vom Jahresumsatz und vom angesetzten Zehntelsatz ab. Kleine Betriebe liegen oft im niedrigen dreistelligen Bereich pro Monat. Der Rechner zeigt den genauen Betrag.',
+      },
+      {
+        question: 'Kann ich Kosten sparen, wenn ich selbst vorkontiere?',
+        answer:
+          'Ja. Übernehmen Sie die Kontierung selbst, fällt ein niedrigerer Zehntelsatz an als bei der vollständigen Buchführung durch die Kanzlei.',
+      },
+    ],
+  },
+  '/lohnbuchhaltung-kosten': {
+    path: '/lohnbuchhaltung-kosten',
+    title: 'Lohnabrechnung beim Steuerberater: Kosten',
+    metaTitle: 'Lohnabrechnung Kosten Steuerberater – Lohnbuchhaltung nach § 34 StBVV',
+    metaDescription:
+      'Was kostet die Lohnabrechnung beim Steuerberater? Gebühr je Arbeitnehmer und Monat nach § 34 StBVV, Zusatzleistungen und Beispiel – jetzt berechnen.',
+    intro:
+      'Lohn- und Gehaltsabrechnungen werden nach § 34 StBVV je Arbeitnehmer und Abrechnungszeitraum berechnet. Die Gebühr ist ein fester Betragsrahmen, unabhängig vom Gehalt.',
+    legalBasis: '§ 34 StBVV',
+    sections: [
+      {
+        heading: 'Gebühr je Arbeitnehmer',
+        text:
+          'Für jede Abrechnung eines Arbeitnehmers fällt ein Betrag aus dem gesetzlichen Rahmen an. Der Rechner verwendet 12 Euro je Arbeitnehmer und Monat als praxisüblichen Ansatz.',
+      },
+      {
+        heading: 'Zusatzleistungen',
+        text:
+          'Einrichtung eines Lohnkontos, Lohnsteuer-Anmeldung und Sonderfälle werden gesondert berechnet. Beratungen zum Lohn sind nicht enthalten.',
+      },
+    ],
+    bullets: [
+      'Abrechnung je Arbeitnehmer und Monat',
+      'Praxisansatz im Rechner: 12 Euro je Arbeitnehmer',
+      'Einrichtung Lohnkonto und Anmeldungen gesondert',
+      'Dazu Auslagen und 19 Prozent Umsatzsteuer',
+    ],
+    faq: [
+      {
+        question: 'Was kostet eine Lohnabrechnung beim Steuerberater?',
+        answer:
+          'Die Gebühr richtet sich nach § 34 StBVV und wird je Arbeitnehmer und Monat berechnet – unabhängig von der Gehaltshöhe.',
+      },
+      {
+        question: 'Was kostet die Lohnabrechnung für einen Minijobber?',
+        answer:
+          'Grundsätzlich gilt derselbe Rahmen je Abrechnung wie für andere Arbeitnehmer; der Aufwand ist meist geringer, daher wird oft ein niedrigerer Betrag angesetzt.',
+      },
+    ],
+  },
+  '/erstberatung-kosten': {
+    path: '/erstberatung-kosten',
+    title: 'Erstberatung beim Steuerberater: Kosten',
+    metaTitle: 'Erstberatung Steuerberater Kosten – höchstens 190 Euro (§ 21 StBVV)',
+    metaDescription:
+      'Was kostet die Erstberatung beim Steuerberater? Für Verbraucher höchstens 190 Euro nach § 21 StBVV – plus Auslagen und Umsatzsteuer.',
+    intro:
+      'Für ein erstes Beratungsgespräch mit einem Verbraucher darf der Steuerberater nach § 21 Abs. 1 StBVV höchstens 190 Euro berechnen, zuzüglich Auslagen und Umsatzsteuer.',
+    legalBasis: '§ 21 Abs. 1 StBVV',
+    sections: [
+      {
+        heading: 'Was als Erstberatung gilt',
+        text:
+          'Erstberatung ist ein erstes, pauschales Gespräch zur Einschätzung der Lage. Folgen weitere Tätigkeiten, gelten die normalen Gebühren nach Gegenstandswert oder Zeit.',
+      },
+      {
+        heading: 'Nur für Verbraucher',
+        text:
+          'Die Kappung auf 190 Euro gilt nur für Verbraucher. Für Unternehmen wird eine Beratung nach § 21 StBVV mit 1/10 bis 10/10 nach Tabelle A oder nach Zeit berechnet.',
+      },
+    ],
+    bullets: [
+      'Höchstbetrag: 190 Euro netto',
+      'Gilt nur für Verbraucher',
+      'Dazu Auslagen und 19 Prozent Umsatzsteuer',
+      'Maximal brutto rund 250 Euro inklusive Auslagen',
+    ],
+    faq: [
+      {
+        question: 'Ist die Erstberatung beim Steuerberater kostenlos?',
+        answer:
+          'Nicht automatisch. Viele Kanzleien bieten ein kostenloses Kennenlerngespräch an, gesetzlich dürfen für eine Erstberatung aber bis zu 190 Euro netto berechnet werden.',
+      },
+      {
+        question: 'Was darf ein Beratungsgespräch beim Steuerberater kosten?',
+        answer:
+          'Für Verbraucher beim ersten Gespräch höchstens 190 Euro netto. Weitere Beratungen werden nach Gegenstandswert (Tabelle A) oder nach Zeitgebühr abgerechnet.',
+      },
+    ],
+  },
+  '/steuerberaterverguetungsverordnung': {
+    path: '/steuerberaterverguetungsverordnung',
+    title: 'Steuerberatervergütungsverordnung (StBVV) einfach erklärt',
+    metaTitle: 'Steuerberatervergütungsverordnung (StBVV) 2026 – einfach erklärt',
+    metaDescription:
+      'Die StBVV einfach erklärt: Aufbau, Tabellen A bis D, Wertgebühr, Zeitgebühr, Mittelgebühr und aktueller Rechtsstand – mit kostenlosem Rechner.',
+    intro:
+      'Die Steuerberatervergütungsverordnung (StBVV) regelt, wie Steuerberater ihre Leistungen abrechnen. Sie gibt Gebührenrahmen vor, innerhalb derer die konkrete Gebühr bestimmt wird.',
+    legalBasis: 'StBVV, zuletzt geändert durch BGBl. 2025 I Nr. 372',
+    sections: [
+      {
+        heading: 'Aufbau der Verordnung',
+        text:
+          'Die StBVV enthält allgemeine Regeln (§§ 1–16), Gebühren für einzelne Tätigkeiten wie Steuererklärungen, Buchführung und Abschlüsse (§§ 21–39) sowie Regeln für Rechtsbehelfs- und Gerichtsverfahren (§§ 40 ff.).',
+      },
+      {
+        heading: 'Wertgebühr, Zeitgebühr, Pauschale',
+        text:
+          'Meist gilt die Wertgebühr: volle Gebühr aus einer der Tabellen A bis D mal Zehntelsatz. Wo kein Gegenstandswert bestimmbar ist, gilt die Zeitgebühr. Pauschalvereinbarungen sind nach § 14 StBVV schriftlich möglich.',
+      },
+      {
+        heading: 'Die vier Tabellen',
+        text:
+          'Tabelle A (Beratung), Tabelle B (Abschlüsse), Tabelle C (Buchführung) und Tabelle D (Landwirtschaft). Jede Tabelle ordnet dem Gegenstandswert eine volle Gebühr zu.',
+      },
+    ],
+    bullets: [
+      'Gilt für alle Steuerberater in Deutschland',
+      'Gebührenrahmen statt Festpreise',
+      'Mittelgebühr als Regelansatz bei durchschnittlichen Fällen',
+      'Vergütungsvereinbarung nach § 4 StBVV möglich',
+    ],
+    faq: [
+      {
+        question: 'Was ist die StBVV?',
+        answer:
+          'Die Steuerberatervergütungsverordnung ist die gesetzliche Gebührenordnung für Steuerberater. Sie legt fest, wie Honorare berechnet werden.',
+      },
+      {
+        question: 'Ist die StBVV verbindlich?',
+        answer:
+          'Ja, sofern keine abweichende schriftliche Vergütungsvereinbarung getroffen wurde. Im gerichtlichen Verfahren darf die gesetzliche Vergütung nicht unterschritten werden.',
+      },
+      {
+        question: 'Welche Fassung der StBVV gilt aktuell?',
+        answer:
+          'Maßgeblich ist die Fassung mit Wirkung zum 01.07.2025, bekannt gemacht im BGBl. 2025 I Nr. 372. Der Rechner verwendet diesen Stand.',
+      },
+    ],
+  },
 };
