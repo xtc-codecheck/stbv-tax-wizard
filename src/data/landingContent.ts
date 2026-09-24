@@ -411,10 +411,10 @@ export const COST_LANDINGS: Record<string, CostLandingContent> = {
     title: 'Buchhaltung beim Steuerberater: Kosten',
     metaTitle: 'Buchhaltung Steuerberater Kosten – Buchführung nach § 33 StBVV',
     metaDescription:
-      'Was kostet die Buchhaltung beim Steuerberater? Laufende Buchführung nach § 33 StBVV, Tabelle D, Gegenstandswert und Beispiel – kostenlos berechnen.',
+      'Was kostet die Buchhaltung beim Steuerberater? Laufende Buchführung nach § 33 StBVV, Tabelle C, Gegenstandswert und Beispiel – kostenlos berechnen.',
     intro:
-      'Die laufende Finanzbuchhaltung wird nach § 33 StBVV abgerechnet. Grundlage ist Tabelle D, der Gegenstandswert richtet sich nach dem Jahresumsatz oder dem höheren Aufwand.',
-    legalBasis: '§ 33 StBVV, Tabelle D',
+      'Die laufende Finanzbuchhaltung wird nach § 33 StBVV abgerechnet. Grundlage ist Tabelle C, der Gegenstandswert richtet sich nach dem Jahresumsatz oder dem höheren Aufwand.',
+    legalBasis: '§ 33 StBVV, Tabelle C',
     sections: [
       {
         heading: 'Monatliche Gebühr',
@@ -424,11 +424,11 @@ export const COST_LANDINGS: Record<string, CostLandingContent> = {
       {
         heading: 'Gegenstandswert',
         text:
-          'Maßgeblich ist der Jahresumsatz oder die Summe des Aufwands, je nachdem, welcher Betrag höher ist. Der Rechner übernimmt die passende Stufe aus Tabelle D automatisch.',
+          'Maßgeblich ist der Jahresumsatz oder die Summe des Aufwands, je nachdem, welcher Betrag höher ist. Der Rechner übernimmt die passende Stufe aus Tabelle C automatisch.',
       },
     ],
     bullets: [
-      'Abrechnung als Monatsgebühr nach Tabelle D',
+      'Abrechnung als Monatsgebühr nach Tabelle C',
       'Gegenstandswert: Jahresumsatz oder höherer Aufwand',
       'Zusätzlich möglich: Einrichtung der Buchführung und Kontierung',
       'Dazu Auslagen und 19 Prozent Umsatzsteuer',
