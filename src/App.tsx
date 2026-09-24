@@ -63,6 +63,15 @@ const App = () => (
             />
             <Route path="/euer-kosten" element={<KostenLanding path="/euer-kosten" />} />
             <Route path="/zeitgebuehr" element={<KostenLanding path="/zeitgebuehr" />} />
+            {[
+              '/steuerberatungskosten-absetzen',
+              '/buchhaltung-kosten',
+              '/lohnbuchhaltung-kosten',
+              '/erstberatung-kosten',
+              '/steuerberaterverguetungsverordnung',
+            ].map((p) => (
+              <Route key={p} path={p} element={<KostenLanding path={p} />} />
+            ))}
             <Route path="/vergleich" element={<Vergleich />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
