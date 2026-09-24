@@ -13,7 +13,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'placeholder.svg'],
+      includeAssets: ['placeholder.svg'],
       manifest: {
         name: 'STBVV-Rechner',
         short_name: 'STBVV',
